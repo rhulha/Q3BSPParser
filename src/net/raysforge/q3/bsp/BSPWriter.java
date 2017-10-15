@@ -164,4 +164,41 @@ public class BSPWriter {
 		}
 		System.out.println("normals written");
 	}
+
+	public void writeTexCoords(List<Vertex> vertexes, String filename) {
+		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
+			for (Vertex vertex : vertexes) {
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.texCoord.x) );
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.texCoord.y) );
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("texCoords written");
+	}
+
+	public void writeLmCoords(List<Vertex> vertexes, String filename) {
+		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
+			for (Vertex vertex : vertexes) {
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.lmCoord.x) );
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.lmCoord.y) );
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("texCoords written");
+	}
+
+	public void writeColors(List<Vertex> vertexes, String filename) {
+		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
+			for (Vertex vertex : vertexes) {
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.color.x) );
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.color.y) );
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.color.z) );
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("texCoords written");
+	}
 }
