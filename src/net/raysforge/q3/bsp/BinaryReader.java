@@ -19,6 +19,10 @@ public class BinaryReader {
 		this.bais = new ByteArrayInputStream(buffer);
 	}
 
+	public byte[] readBytes(int i) throws IOException {
+		return readFully(new byte[i]);
+	}
+
 	public int readInt() throws IOException {
 		byte[] b = new byte[4];
 		if (bais != null)
@@ -77,11 +81,12 @@ public class BinaryReader {
 		return (int)(bais != null ? buffer.length : raf.length());
 	}
 
-	public void readFully(byte[] b) throws IOException {
+	public byte[] readFully(byte[] b) throws IOException {
 		if (bais != null)
 			bais.read(b);
 		else
 			raf.readFully(b);
+		return b;
 	}
 
 }

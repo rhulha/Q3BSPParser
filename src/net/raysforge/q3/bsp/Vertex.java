@@ -30,8 +30,7 @@ public class Vertex {
 		this.position = br.readFloat(3);
 		this.texcoord = br.readFloat(4);
 		this.normal = br.readFloat(3);
-		this.color = new byte[4]; 
-		br.readFully(this.color);
+		this.color = br.readBytes(4);
 	}
 
 }

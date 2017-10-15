@@ -34,10 +34,9 @@ public class ReadBSP {
 			int length = lumpsLength[i];
 			count += length;
 			br.seek(offset);
-			lumps[i] = new byte[length];
+			lumps[i] = br.readBytes(length);
 			System.out.println(offset);
 			System.out.println(length);
-			br.readFully(lumps[i]);
 		}
 
 		assert_(count + 145 == br.length());
@@ -153,10 +152,20 @@ public class ReadBSP {
 	}
 
 	public byte[] getLightmaps() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.Lightmaps);
-		byte[] lm = new byte[128*128*3]; 
-		br.readFully(lm);
-		return lm;
+		return getLumpReader(LumpTypes.Lightmaps).readBytes(128*128*3);
+	}
+
+	public Lightvol[] getLightvols() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.Lightvols);
+		Lightvol[] lightvols = new Lightvol[br.length() / Lightvol.size];
+		for (int i = 0; i < lightvols.length; i++) {
+			lightvols[i] = new Lightvol(br);
+		}
+		return lightvols;
+	}
+
+	public Visdata getVisdata() throws IOException {
+		return new Visdata(getLumpReader(LumpTypes.Visdata));
 	}
 
 	public Plane[] getPlanes() throws IOException {
