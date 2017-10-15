@@ -9,7 +9,7 @@ import net.raysforge.q3.map.Plane;
 
 public class BSPVerifier {
 
-	public static void verifyValues(ReadBSP bsp) throws IOException {
+	public static void verifyValues(BSPReader bsp) throws IOException {
 		Plane[] planes = bsp.getPlanes();
 		for (Plane plane : planes) {
 			String format = f(plane.normal.x);

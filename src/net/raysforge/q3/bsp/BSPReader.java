@@ -9,11 +9,11 @@ import java.util.Map;
 import net.raysforge.q3.map.Plane;
 import net.raysforge.q3.map.Point;
 
-public class ReadBSP {
+public class BSPReader {
 
 	private byte[][] lumps;
 
-	public ReadBSP(String name) throws IOException {
+	public BSPReader(String name) throws IOException {
 
 		BinaryReader br = new BinaryReader(new RandomAccessFile(name, "r"));
 

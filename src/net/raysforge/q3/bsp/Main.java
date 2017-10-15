@@ -9,7 +9,7 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 
-		ReadBSP bsp = new ReadBSP("q3dm17.bsp");
+		BSPReader bsp = new BSPReader("q3dm17.bsp");
 		
 		Node[] nodes = bsp.getNodes();
 		Gson gson = new Gson();
@@ -22,7 +22,7 @@ public class Main {
 		
 	}
 
-	public static void writeBasics(ReadBSP bsp) throws IOException {
+	public static void writeBasics(BSPReader bsp) throws IOException {
 		Face[] faces = bsp.getFaces();
 		Texture[] textures = bsp.getTextures();
 		List<Vertex> verts = bsp.getVertexes();
