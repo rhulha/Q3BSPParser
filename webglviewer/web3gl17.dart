@@ -24,22 +24,33 @@ void main() {
   FlyingCamera fc = new FlyingCamera(camera);
   chronosGL.addAnimatable('fc', fc);
   
-  ShaderProgram sp = chronosGL.getShaderLib().createFixedVertexColorShaderProgram();
-  
-  var verts = loadFile( 'q3dm17.verts');
-  var indices = loadFile( 'q3dm17.indices');
-  
-  Future.wait([verts,indices]).then( (List list) {
-    Float32List vs = new Float32List.view( list.first);
-    Uint16List xs = new Uint16List.view( list.last);
+  Utils utils = chronosGL.getUtils();
+  TextureCache textureCache = chronosGL.getTextureCache();
+  textureCache.add("textures/skybox_nx.png");
+  textureCache.add("textures/skybox_px.png");
+  textureCache.add("textures/skybox_ny.png");
+  textureCache.add("textures/skybox_py.png");
+  textureCache.add("textures/skybox_nz.png");
+  textureCache.add("textures/skybox_pz.png");
+  textureCache.loadAllThenExecute((){
     
-    for( var a =0; a<vs.length ;a++) {
-      vs[a] = vs[a] / 100;
-    }
+    utils.addSkybox( "textures/skybox_", ".png", "nx", "px", "nz", "pz", "ny", "py");
     
-    sp.add( new MeshData(vertices: vs, vertexIndices: xs).createMesh());
-    chronosGL.run();
-  });
- 
+    ShaderProgram sp = chronosGL.getShaderLib().createFixedVertexColorShaderProgram();
+    
+    var verts = loadFile( 'q3dm17.verts');
+    var indices = loadFile( 'q3dm17.indices');
+    
+    Future.wait([verts,indices]).then( (List list) {
+      Float32List vs = new Float32List.view( list.first);
+      Uint16List xs = new Uint16List.view( list.last);
+      
+      for( var a =0; a<vs.length ;a++) {
+        vs[a] = vs[a] / 100;
+      }
+      
+      sp.add( new MeshData(vertices: vs, vertexIndices: xs).createMesh());
+      chronosGL.run();
+    });
+  }); 
 }
-
