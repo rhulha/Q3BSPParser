@@ -1,33 +1,68 @@
 package net.raysforge.q3.bsp;
 
-import static net.raysforge.q3.bsp.DecimalFormater.f;
-
 import java.io.IOException;
-import java.util.List;
-
-import net.raysforge.q3.map.Plane;
+import java.util.HashSet;
+import java.util.Set;
 
 public class BSPVerifier {
 
-	public static void verifyValues(BSPReader bsp) throws IOException {
-		Plane[] planes = bsp.getPlanes();
-		for (Plane plane : planes) {
-			String format = f(plane.normal.x);
-			System.out.println("XXX: " + format + " q3bsp.js:133");
+	public static void main(String[] args) throws IOException {
+		BSPReader bsp = new BSPReader("q3dm17.bsp");
+
+		printAllBrushSidesShader(bsp);
+		// verifyValues(bsp);
+	}
+
+	static void printAllShader(BSPReader bsp) throws IOException {
+		Shader[] shaders = bsp.getShaders();
+		for (Shader shader : shaders) {
+			System.out.println(shader.shader);
 		}
-		List<Vertex> vertexes = bsp.getDrawVerts();
-		for (Vertex v : vertexes) {
-			String s = v.toString();
-			System.out.println("XXX: " + s + " q3bsp.js:133");
+	}
+
+	static void printAllBrushSidesShader(BSPReader bsp) throws IOException {
+		Shader[] shaders = bsp.getShaders();
+
+		Set<String> uniqueShader = new HashSet<String>();
+
+		int[][] brushSides = bsp.getBrushSides();
+		
+		for (int[] brushSide : brushSides) {
+			uniqueShader.add(shaders[brushSide[1]].shader);
 		}
-		List<Integer> meshverts = bsp.getDrawIndexes();
-		for (int i : meshverts) {
-			System.out.print(i + ",");
+		
+		for (String string : uniqueShader) {
+			System.out.println(string);
 		}
-		Surface[] faces = bsp.getSurfaces();
-		for (Surface fc : faces) {
-			String s = fc.toString();
-			System.out.println("XXX: " + s + " q3bsp.js:133");
+	}
+
+	static void printAllBrushesShader(BSPReader bsp) throws IOException {
+		Shader[] shaders = bsp.getShaders();
+
+		Set<String> uniqueShader = new HashSet<String>();
+
+		int[][] brushes = bsp.getBrushes();
+		
+		for (int[] brush : brushes) {
+			uniqueShader.add(shaders[brush[2]].shader);
+		}
+		
+		for (String string : uniqueShader) {
+			System.out.println(string);
+		}
+	}
+
+	static void printAllSurfacesShader(BSPReader bsp) throws IOException {
+		Shader[] shaders = bsp.getShaders();
+
+		Set<String> uniqueShader = new HashSet<String>();
+
+		for (Surface face : bsp.getSurfaces()) {
+			uniqueShader.add(shaders[face.shaderNum].shader);
+		}
+
+		for (String string : uniqueShader) {
+			System.out.println(string);
 		}
 	}
 

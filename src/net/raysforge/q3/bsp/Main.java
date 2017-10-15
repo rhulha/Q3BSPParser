@@ -2,7 +2,10 @@ package net.raysforge.q3.bsp;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+
+import net.raysforge.q3.map.Point;
 
 public class Main {
 	
@@ -54,15 +57,82 @@ public class Main {
 
 		Shader[] textures = bsp.getShaders();
 		bspWriter.writeObjectAsJSON( textures, "q3dm17.textures");
+		
+		List<String> skip = new ArrayList<String>();
+		skip.add("flareShader");
+		skip.add("textures/skies/blacksky");
+		skip.add("textures/sfx/beam");
+		skip.add("models/mapobjects/spotlamp/beam");
+		skip.add("models/mapobjects/lamps/flare03");
+		skip.add("models/mapobjects/teleporter/energy"); // TODO readd and make blue ?
+		skip.add("models/mapobjects/spotlamp/spotlamp");
+		skip.add("models/mapobjects/spotlamp/spotlamp_l");
+		skip.add("models/mapobjects/lamps/bot_lamp"); // head on the railgun pad
+		skip.add("models/mapobjects/lamps/bot_lamp2");
+		skip.add("models/mapobjects/lamps/bot_flare");
+		skip.add("models/mapobjects/lamps/bot_flare2");
+		skip.add("models/mapobjects/lamps/bot_wing");
+		//skip.add("models/mapobjects/kmlamp1"); // stand lights
+		//skip.add("models/mapobjects/kmlamp_white");
 
-		bspWriter.writeIndexes( faces, indexes, textures, "q3dm17.indices");
+		bspWriter.writeIndexes( skip, faces, indexes, textures, "q3dm17.indices");
 		bspWriter.writeNormals( vertexes, "q3dm17.normals");
 		bspWriter.writeTexCoords( vertexes, "q3dm17.texCoords");
 		bspWriter.writeLmCoords( vertexes, "q3dm17.lmCoords");
+		
+		changeColors(faces, indexes, textures, vertexes);
+		
 		bspWriter.writeColors( vertexes, "q3dm17.colors");
 
 	}
+	
+	static void changeColors(Surface[] surfaces, List<Integer> indexes, Shader[] shaders, List<Vertex> vertexes) throws IOException {
+		List<String> blue = new ArrayList<String>();
+		blue.add("textures/base_wall/c_met5_2");
+		blue.add("textures/base_trim/border11b");
+		blue.add("textures/base_trim/border11light");
+		blue.add("textures/base_light/lt2_2000");
+		blue.add("textures/base_light/lt2_8000");
+		blue.add("textures/base_light/baslt4_1_4k");
+		blue.add("textures/base_wall/metaltech12final");
+		blue.add("textures/base_light/light5_5k");
+		blue.add("textures/base_wall/main_q3abanner");
+		blue.add("textures/base_support/cable");
+		blue.add("models/mapobjects/kmlamp1");
+		blue.add("models/mapobjects/kmlamp_white");
+		blue.add("models/mapobjects/teleporter/teleporter");
+		blue.add("textures/base_trim/pewter_shiney");
+		
+		List<String> red = new ArrayList<String>();
+		//red.add("textures/base_wall/atech1_e");
+		//red.add("textures/base_light/light5_5k");
 
+		for (Surface face : surfaces) {
+			if( blue.contains( shaders[face.shaderNum].shader) ) {
+				for(int k = 0; k < face.numIndexes; ++k) {
+					int i = face.firstVert + indexes.get(face.firstIndex + k);
+					vertexes.get(i).color=new Point(vertexes.get(i).color.x,vertexes.get(i).color.y,1);
+                }
+			}
+			if( red.contains( shaders[face.shaderNum].shader) ) {
+				for(int k = 0; k < face.numIndexes; ++k) {
+					int i = face.firstVert + indexes.get(face.firstIndex + k);
+					vertexes.get(i).color=new Point(1, vertexes.get(i).color.y,vertexes.get(i).color.z);
+                }
+			}
+			
+			if( shaders[face.shaderNum].shader.equals("textures/base_floor/diamond2c") ) { // special middle jump pad handling
+				for(int k = 0; k < face.numIndexes; ++k) {
+					int i = face.firstVert + indexes.get(face.firstIndex + k);
+					double z = vertexes.get(i).xyz.z;
+					if( z >= 95 && z <= 108 ) {
+						vertexes.get(i).color=new Point( 0.25, 0.25, 1);
+					}
+					
+                }
+			}
+		}
+	}
 
 	public static void writeFile( String fn, byte[] bytes) {
 		try ( FileOutputStream fos = new FileOutputStream( fn)) {

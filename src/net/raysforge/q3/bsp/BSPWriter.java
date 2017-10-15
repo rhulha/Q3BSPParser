@@ -5,7 +5,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -131,19 +130,7 @@ public class BSPWriter {
 		System.out.println("verts written");
 	}
 	
-	public void writeIndexes(Surface[] surfaces, List<Integer> indexes, Shader[] shaders, String filename) throws IOException {
-		
-		List<String> skip = new ArrayList<String>();
-		skip.add("flareShader");
-		skip.add("textures/skies/blacksky");
-		skip.add("textures/sfx/beam");
-		skip.add("models/mapobjects/spotlamp/beam");
-		skip.add("models/mapobjects/lamps/flare03");
-		skip.add("models/mapobjects/teleporter/energy");
-		skip.add("models/mapobjects/lamps/bot_flare");
-		skip.add("models/mapobjects/lamps/bot_flare2");
-
-		
+	public void writeIndexes(List<String> skip, Surface[] surfaces, List<Integer> indexes, Shader[] shaders, String filename) throws IOException {
 		
 		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
 			
