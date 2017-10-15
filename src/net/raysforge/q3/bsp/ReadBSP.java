@@ -2,6 +2,7 @@ package net.raysforge.q3.bsp;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -120,19 +121,24 @@ public class ReadBSP {
 		return brushsides;
 	}
 		
-	public Vertex[] getVertexes() throws IOException {
+	public List<Vertex> getVertexes() throws IOException {
 		BinaryReader br = getLumpReader(LumpTypes.Vertexes);
-		Vertex[] vertexes = new Vertex[br.length() / Vertex.size];
-		for (int i = 0; i < vertexes.length; i++) {
-			vertexes[i] = new Vertex(br);
+		int length = br.length() / Vertex.size;
+		List<Vertex> vertexes = new ArrayList<Vertex>(length);
+		for (int i = 0; i < length; i++) {
+			vertexes.add( new Vertex(br));
 		}
 		return vertexes;
 	}
 
-	public int[] getMeshverts() throws IOException {
+	public List<Integer> getMeshVerts() throws IOException {
 		BinaryReader br = getLumpReader(LumpTypes.Meshverts);
-		int[] meshverts = br.readInt(br.length() / 4);
-		return meshverts;
+		List<Integer> meshVerts = new ArrayList<Integer>();
+		int length = br.length() / 4;
+		for (int i = 0; i < length; i++) {
+			meshVerts.add( br.readInt());
+		}
+		return meshVerts;
 	}
 
 	public Effect[] getEffects() throws IOException {

@@ -1,6 +1,5 @@
 package net.raysforge.q3.bsp;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import net.raysforge.q3.map.Point;
@@ -22,21 +21,17 @@ public class Tessellate {
 	    return getCurvePoint3(c30, c31, c32, dist); //c30.scale( b*b).add( c31.scale(2*b*dist) ).add(  c32.scale(dist*dist) );
 	}
 	
-	public static void tessellate( Face face, Vertex[] verts, int[] meshVerts, int level) {
+	public static void tessellate( Face face, List<Vertex> verts, List<Integer> meshVerts, int level) {
 	    int off = face.vertex;
 	    //int count = face.n_vertexes;
 	    
 	    int L1 = level + 1;
 	    
-	    face.vertex = verts.length;
-	    face.meshvert = meshVerts.length;
+	    face.vertex = verts.size();
+	    face.meshvert = meshVerts.size();
 	    
 	    face.n_vertexes = 0;
 	    face.n_meshverts = 0;
-	    
-	    List<Vertex> newVerts = new ArrayList<Vertex>();
-	    List<Integer> newMeshVerts = new ArrayList<Integer>();
-	    
 	    
 	    for(int py = 0; py < face.patch_size[1]-2; py += 2) {
 	        for(int px = 0; px < face.patch_size[0]-2; px += 2) {
@@ -44,11 +39,11 @@ public class Tessellate {
 	            int rowOff = py*face.patch_size[0];
 	            
 	            // Store control points
-	            Vertex c0 = verts[off+rowOff+px], c1 = verts[off+rowOff+px+1], c2 = verts[off+rowOff+px+2];
+	            Vertex c0 = verts.get(off+rowOff+px), c1 = verts.get(off+rowOff+px+1), c2 = verts.get(off+rowOff+px+2);
 	            rowOff += face.patch_size[0];
-	            Vertex c3 = verts[off+rowOff+px], c4 = verts[off+rowOff+px+1], c5 = verts[off+rowOff+px+2];
+	            Vertex c3 = verts.get(off+rowOff+px), c4 = verts.get(off+rowOff+px+1), c5 = verts.get(off+rowOff+px+2);
 	            rowOff += face.patch_size[0];
-	            Vertex c6 = verts[off+rowOff+px], c7 = verts[off+rowOff+px+1], c8 = verts[off+rowOff+px+2];
+	            Vertex c6 = verts.get(off+rowOff+px), c7 = verts.get(off+rowOff+px+1), c8 = verts.get(off+rowOff+px+2);
 	            
 	            int indexOff = face.n_vertexes;
 	            face.n_vertexes += L1 * L1;
@@ -64,7 +59,7 @@ public class Tessellate {
 	                
 	                Vertex vert = new Vertex(pos, texCoord, lmCoord, new Point(0, 0, 1), color );
 	                
-	                newVerts.add(vert);
+	                verts.add(vert);
 	            }
 	            
 	            for(int i = 1; i < L1; i++) {
@@ -97,7 +92,7 @@ public class Tessellate {
 	                    
 	                    Vertex vert = new Vertex( pos, texCoord, lmCoord, new Point(0, 0, 1), color);
 	                
-	                    newVerts.add(vert);
+	                    verts.add(vert);
 	                }
 	            }
 	            
@@ -105,13 +100,13 @@ public class Tessellate {
 	            
 	            for(int row = 0; row < level; ++row) {
 	                for(int col = 0; col < level; ++col) {
-	                    newMeshVerts.add(indexOff + (row + 1) * L1 + col);
-	                    newMeshVerts.add(indexOff + row * L1 + col);
-	                    newMeshVerts.add(indexOff + row * L1 + (col+1));
+	                    meshVerts.add(indexOff + (row + 1) * L1 + col);
+	                    meshVerts.add(indexOff + row * L1 + col);
+	                    meshVerts.add(indexOff + row * L1 + (col+1));
 	                    
-	                    newMeshVerts.add(indexOff + (row + 1) * L1 + col);
-	                    newMeshVerts.add(indexOff + row * L1 + (col+1));
-	                    newMeshVerts.add(indexOff + (row + 1) * L1 + (col+1));
+	                    meshVerts.add(indexOff + (row + 1) * L1 + col);
+	                    meshVerts.add(indexOff + row * L1 + (col+1));
+	                    meshVerts.add(indexOff + (row + 1) * L1 + (col+1));
 	                }
 	            }
 	    

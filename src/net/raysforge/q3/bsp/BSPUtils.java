@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Locale;
 
 import net.raysforge.q3.map.Point;
@@ -25,32 +26,24 @@ public class BSPUtils {
 	}
 
 	
-	public static void writeVerts(ReadBSP bsp) throws IOException {
-		Vertex[] vertexes = bsp.getVertexes();
-		try ( FileOutputStream fos = new FileOutputStream("q3dm17.verts")) {
-			
+	public static void writeVerts(List<Vertex> vertexes, String filename) throws IOException {
+		try ( FileOutputStream fos = new FileOutputStream(filename)) {
 			for (Vertex vertex : vertexes) {
 				fos.write( BSPUtils.float2ByteArray( (float)vertex.position.x) );
 				fos.write( BSPUtils.float2ByteArray( (float)vertex.position.y) );
 				fos.write( BSPUtils.float2ByteArray( (float)vertex.position.z) );
 			}
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
-	public static void writeIndices(ReadBSP bsp) throws IOException {
-		Face[] faces = bsp.getFaces();
-		int[] meshverts = bsp.getMeshverts();
-		
-		try ( FileOutputStream fos = new FileOutputStream("q3dm17.indices")) {
+	public static void writeIndices(Face[] faces, List<Integer> meshVerts, String filename) throws IOException {
+		try ( FileOutputStream fos = new FileOutputStream(filename)) {
 			
 			for (Face face : faces) {
-				
 				for(int k = 0; k < face.n_meshverts; ++k) {
-					int i = face.vertex + meshverts[face.meshvert + k];
-					System.out.println(i);
+					int i = face.vertex + meshVerts.get(face.meshvert + k);
 					fos.write( BSPUtils.char2ByteArray( (char)i) );
                 }
 			}
@@ -106,7 +99,7 @@ public class BSPUtils {
 	public static void objWriter() throws IOException {
 
 		ReadBSP bsp = new ReadBSP("q3dm17.bsp");
-		Vertex[] vertexes = bsp.getVertexes();
+		List<Vertex> vertexes = bsp.getVertexes();
 		Face[] faces = bsp.getFaces();
 		
 		try ( FileWriter fw = new FileWriter("q3dm17new.obj")) {
@@ -116,7 +109,7 @@ public class BSPUtils {
 					//System.out.println(face.vertex + ": " + face.n_vertexes);
 					//System.out.println(face.meshvert + ": " + face.n_meshverts);
 					for( int i=0; i < face.n_vertexes; i++) {
-						Vertex v = vertexes[face.vertex+i];
+						Vertex v = vertexes.get(face.vertex+i);
 						Point p = v.position;
 						fw.write("v " + p.x +" "+p.y+" "+p.z+"\r\n");
 					}
