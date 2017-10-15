@@ -42,12 +42,12 @@ public class Main {
 	}
 
 	public static void writeBasics(BSPReader bsp, BSPWriter bspWriter) throws IOException {
-		Surface[] faces = bsp.getSurfaces();
+		Surface[] surfaces = bsp.getSurfaces();
 		List<Vertex> vertexes = bsp.getDrawVerts();
 		List<Integer> indexes = bsp.getDrawIndexes();
 
-		for (Surface face : faces) {
-			if( face.surfaceType == 2) {
+		for (Surface face : surfaces) {
+			if( face.surfaceType == Surface.patch) {
 				System.out.println("tessellate");
 				Tessellate.tessellate(face, vertexes, indexes, 10);
 			}
@@ -55,8 +55,8 @@ public class Main {
 
 		bspWriter.writeVerts( vertexes, "q3dm17.verts");
 
-		Shader[] textures = bsp.getShaders();
-		bspWriter.writeObjectAsJSON( textures, "q3dm17.textures");
+		Shader[] shaders = bsp.getShaders();
+		bspWriter.writeObjectAsJSON( shaders, "q3dm17.textures");
 		
 		List<String> skip = new ArrayList<String>();
 		skip.add("flareShader");
@@ -75,12 +75,12 @@ public class Main {
 		//skip.add("models/mapobjects/kmlamp1"); // stand lights
 		//skip.add("models/mapobjects/kmlamp_white");
 
-		bspWriter.writeIndexes( skip, faces, indexes, textures, "q3dm17.indices");
+		bspWriter.writeIndexes( skip, surfaces, indexes, shaders, "q3dm17.indices");
 		bspWriter.writeNormals( vertexes, "q3dm17.normals");
 		bspWriter.writeTexCoords( vertexes, "q3dm17.texCoords");
 		bspWriter.writeLmCoords( vertexes, "q3dm17.lmCoords");
 		
-		changeColors(faces, indexes, textures, vertexes);
+		changeColors(surfaces, indexes, shaders, vertexes);
 		
 		bspWriter.writeColors( vertexes, "q3dm17.colors");
 

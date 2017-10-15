@@ -134,12 +134,12 @@ public class BSPWriter {
 		
 		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
 			
-			for (Surface face : surfaces) {
+			for (Surface surface : surfaces) {
 				
-				if( skip.contains( shaders[face.shaderNum].shader))
+				if( skip.contains( shaders[surface.shaderNum].shader))
 					continue;
-				for(int k = 0; k < face.numIndexes; ++k) {
-					int i = face.firstVert + indexes.get(face.firstIndex + k);
+				for(int k = 0; k < surface.numIndexes; ++k) {
+					int i = surface.firstVert + indexes.get(surface.firstIndex + k);
 					fos.write( BSPWriter.char2ByteArray( (char)i) );
                 }
 			}

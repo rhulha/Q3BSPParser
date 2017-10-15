@@ -1,22 +1,9 @@
-
 next:
-
 respawnPlayer
-
-
--------------
-
-try out the vertex colors, they might look good enough
-try SSAO ambient occlusion shader
-
-try out setting the vertex colors based on the texture name, should give good edge visibility.
-
+------------
 try out enabling lightmaps ?!
 
 global illumination ?
-
-ambient occlusion ?
-
 globaly lighting ?
 
 rail gun lines
