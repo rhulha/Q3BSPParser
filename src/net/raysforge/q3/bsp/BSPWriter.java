@@ -1,11 +1,17 @@
 package net.raysforge.q3.bsp;
 
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import net.raysforge.q3.map.Plane;
+
+import com.google.gson.Gson;
 
 public class BSPWriter {
 
@@ -22,6 +28,78 @@ public class BSPWriter {
 		return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(value).array();
 	}
 	
+	public static void writeObjectAsJSON( Object obj, String filename) {
+		Gson gson = new Gson();
+		String json = gson.toJson(obj);
+		json = json.replace("},{", "},\n{");
+		try ( FileWriter fw = new FileWriter(filename)) {
+			fw.write(json);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println(filename + " written");
+	}
+
+	public static void writeArrayAsJSON( Object obj, String filename) {
+		Gson gson = new Gson();
+		String json = gson.toJson(obj);
+		json = json.replace("],[", "],\n[");
+		try ( FileWriter fw = new FileWriter(filename)) {
+			fw.write(json);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println(filename + " written");
+	}
+	
+	
+	public static void writeLeafsAsJSON(Leaf[] leafs, String filename) {
+		Gson gson = new Gson();
+		String json = gson.toJson(leafs);
+		json = json.replace("},{", "},\n{");
+		try ( FileWriter fw = new FileWriter(filename)) {
+			fw.write(json);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("leafs written");
+	}
+
+	public static void writePlanesAsJSON(Plane[] planes, String filename) {
+		Gson gson = new Gson();
+		String json = gson.toJson(planes);
+		json = json.replace("},{", "},\n{");
+		try ( FileWriter fw = new FileWriter(filename)) {
+			fw.write(json);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("planes written");
+	}
+
+	public static void writeEntitiesAsJSON(Map<String, List<Map<String, String>>> entitites, String filename) {
+		Gson gson = new Gson();
+		String json = gson.toJson(entitites);
+		json = json.replace("],\"", "],\n\"");
+		try ( FileWriter fw = new FileWriter(filename)) {
+			fw.write(json);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("entitites written");
+	}
+
+	public static void writeNodesAsJSON(Node[] nodes, String filename) {
+		Gson gson = new Gson();
+		String json = gson.toJson(nodes);
+		json = json.replace("},{", "},\n{");
+		try ( FileWriter fw = new FileWriter(filename)) {
+			fw.write(json);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("nodes written");
+	}
 
 	public static void writeVerts(List<Vertex> vertexes, String filename) throws IOException {
 		try ( FileOutputStream fos = new FileOutputStream(filename)) {
@@ -33,6 +111,7 @@ public class BSPWriter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		System.out.println("verts written");
 	}
 	
 	public static void writeIndices(Face[] faces, List<Integer> meshVerts, Texture[] textures, String filename) throws IOException {
@@ -64,6 +143,6 @@ public class BSPWriter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		System.out.println("indices written");
 	}
-
 }
