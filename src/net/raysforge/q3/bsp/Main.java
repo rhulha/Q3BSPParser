@@ -5,9 +5,18 @@ import java.util.List;
 
 public class Main {
 	
-	static String basePath = "C:\\Users\\Ray\\dart\\Web3GL17\\web\\";
+	static String basePath = "C:\\Users\\Ray\\dart\\WebGL_q3dm17\\web\\data\\";
 	
 	public static void main(String[] args) throws IOException {
+
+		BSPReader bsp = new BSPReader("q3dm17.bsp");
+		Texture[] textures = bsp.getTextures();
+		BSPWriter bspWriter = new BSPWriter( basePath);
+		bspWriter.writeObjectAsJSON( textures, "q3dm17.textures");
+		
+	}
+	
+	public static void main2(String[] args) throws IOException {
 
 		BSPReader bsp = new BSPReader("q3dm17.bsp");
 		
