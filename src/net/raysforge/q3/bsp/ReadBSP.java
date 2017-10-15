@@ -48,7 +48,6 @@ public class ReadBSP {
 	private void assert_(boolean b) {
 		if (!b)
 			throw new RuntimeException("assert failed");
-
 	}
 
 	public byte[] getLump(LumpTypes t) {
@@ -61,25 +60,27 @@ public class ReadBSP {
 
 	public Node[] getNodes() throws IOException {
 		BinaryReader br = getLumpReader(LumpTypes.Nodes);
-		Node[] nodes = new Node[br.length() / 16];
+		Node[] nodes = new Node[br.length() / Node.size];
 
 		for (int i = 0; i < nodes.length; i++) {
-
-			int plane = br.readInt();
-
-			int[] children = br.readInt(2);
-
-			int[] mins = br.readInt(3);
-			int[] maxs = br.readInt(3);
-
-			nodes[i] = new Node(plane, children, mins, maxs);
+			nodes[i] = new Node(br);
 		}
 		return nodes;
 	}
 
+	public Leaf[] getLeafs() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.Leafs);
+		Leaf[] leafs = new Leaf[br.length() / Leaf.size];
+
+		for (int i = 0; i < leafs.length; i++) {
+			leafs[i] = new Leaf(br);
+		}
+		return leafs;
+	}
+
 	public Plane[] getPlanes() throws IOException {
 		BinaryReader br = getLumpReader(LumpTypes.Planes);
-		Plane[] planes = new Plane[br.length() / 16];
+		Plane[] planes = new Plane[br.length() / Plane.size];
 		for (int i = 0; i < planes.length; i++) {
 			float x = br.readFloat();
 			float y = br.readFloat();
@@ -91,7 +92,7 @@ public class ReadBSP {
 	}
 
 	public Texture[] getTextures() throws IOException {
-		Texture[] textures = new Texture[lumps[LumpTypes.Textures.ordinal()].length / 72];
+		Texture[] textures = new Texture[lumps[LumpTypes.Textures.ordinal()].length / Texture.size];
 		BinaryReader br = new BinaryReader(lumps[LumpTypes.Textures.ordinal()]);
 		for (int i = 0; i < textures.length; i++) {
 			textures[i] = new Texture(br.readString(64), br.readInt(), br.readInt());

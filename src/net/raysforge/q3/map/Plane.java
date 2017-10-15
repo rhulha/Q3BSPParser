@@ -10,6 +10,8 @@ public class Plane {
 	public final Point normal;
 	public final double distance;
 
+	public final static int size = 16;
+
 	public Plane(Point normal, double distance) {
 		this.normal = normal;
 		this.distance = distance;
