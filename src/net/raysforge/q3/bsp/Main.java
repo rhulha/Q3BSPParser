@@ -6,7 +6,10 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 public class Main {
 	
@@ -146,14 +149,27 @@ public class Main {
 			e.printStackTrace();
 		}
 	}
-
+	
+	
 	public static void main(String[] args) throws IOException {
 
 		ReadBSP bsp = new ReadBSP("q3dm17.bsp");
 		
-		writeVerts(bsp);
-		writeIndices(bsp);
+		Map<String, List<Map<String, String>>> entities = bsp.getEntities();
+
+		Set<String> keySet = entities.keySet();
+		
+		System.out.println(entities.get("worldspawn"));
+		
+		for (String key : keySet) {
+			System.out.println(key);
+		}
+
+		
+		//writeVerts(bsp);
+		//writeIndices(bsp);
 		//Face[] faces = bsp.getFaces();
+		
 		
 			
 		

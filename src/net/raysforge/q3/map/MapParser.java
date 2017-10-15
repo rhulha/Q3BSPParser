@@ -8,24 +8,25 @@ import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MapParser implements AutoCloseable {
+import net.raysforge.q3.GenericParser;
+
+public class MapParser extends GenericParser implements AutoCloseable {
 
 	private BufferedReader br;
 	private StreamTokenizer st;
 
 	public MapParser(String file) throws FileNotFoundException {
-		br = new BufferedReader(new FileReader(file));
-		st = new StreamTokenizer(br);
+		super(initStreamTokenizer(file));
+	}
+	
+	private static StreamTokenizer initStreamTokenizer(String file) throws FileNotFoundException {
+		BufferedReader br = new BufferedReader(new FileReader(file));
+		StreamTokenizer st = new StreamTokenizer(br);
 		st.eolIsSignificant(true);
 		st.ordinaryChar('/');
 		st.wordChars('_', '_');
 		st.slashSlashComments(true);
-	}
-	
-	public void assertNextToken( int t) throws IOException {
-		int nt = st.nextToken();
-		if( nt != t)
-			throwErrorAtCurrentLine("token is: " + ((char)nt) + " " + nt + ", expected was: " + ((char)t) + " " + t);
+		return st;
 	}
 	
 	public double getNextDouble() throws IOException {
@@ -43,11 +44,6 @@ public class MapParser implements AutoCloseable {
 
 	public Point getNextPoint() throws IOException {
 		return Point.getPointSwapZY(getNextInt(),getNextInt(),getNextInt());
-	}
-
-	public String getNextString() throws IOException {
-		assertNextToken( StreamTokenizer.TT_WORD);
-		return st.sval;
 	}
 
 	public String getNextStringWithSlashes() throws IOException {
@@ -69,42 +65,6 @@ public class MapParser implements AutoCloseable {
 	@Override
 	public void close() throws IOException {
 		br.close();
-	}
-
-	public int peekNextToken() throws IOException {
-		int t = st.nextToken();
-		st.pushBack();
-		return t;
-	}
-
-	public void swallowEOLs() throws IOException {
-		while( peekNextToken() == StreamTokenizer.TT_EOL)
-			st.nextToken();
-		
-	}
-
-	public int getNextToken() throws IOException {
-		return st.nextToken();
-		
-	}
-
-	public int getCurrentLine() {
-		return st.lineno();
-	}
-
-	public void swallowUntil(char c) throws IOException {
-		while( true) {
-			int t = getNextToken();
-			if( t == StreamTokenizer.TT_EOF) {
-				throwErrorAtCurrentLine("premature EOF");
-			}
-			if( t == c)
-				break;
-		}
-	}
-	
-	public void throwErrorAtCurrentLine(String msg) throws IOException {
-		throw new IOException(msg+ ", line nr: " + st.lineno());
 	}
 
 	public Plane parsePlane() throws IOException {

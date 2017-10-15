@@ -2,6 +2,8 @@ package net.raysforge.q3.bsp;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.List;
+import java.util.Map;
 
 import net.raysforge.q3.map.Plane;
 import net.raysforge.q3.map.Point;
@@ -190,7 +192,9 @@ public class ReadBSP {
 		return textures;
 	}
 
-	public String getEntities() {
-		return new String(lumps[LumpTypes.Entities.ordinal()]);
+	public Map<String, List<Map<String, String>>> getEntities() throws IOException {
+		String str = new String(lumps[LumpTypes.Entities.ordinal()]);
+		EntitiesParser ep = new EntitiesParser(str);
+		return ep.parse();
 	}
 }
