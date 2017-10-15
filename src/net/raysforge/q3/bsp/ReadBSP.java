@@ -159,8 +159,16 @@ public class ReadBSP {
 		return faces;
 	}
 
-	public byte[] getLightmaps() throws IOException {
-		return getLumpReader(LumpTypes.Lightmaps).readBytes(128*128*3);
+	public List<byte[]> getLightmaps() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.Lightmaps);
+		int count = br.length() / (128*128*3);
+		List<byte[]> list = new ArrayList<byte[]>(count);
+		
+		for (int i = 0; i < count; i++) {
+			list.add(br.readBytes(128*128*3));
+			
+		}
+		return list;
 	}
 
 	public Lightvol[] getLightvols() throws IOException {
