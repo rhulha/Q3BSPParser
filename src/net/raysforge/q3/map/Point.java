@@ -1,15 +1,12 @@
 package net.raysforge.q3.map;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
+import static net.raysforge.q3.bsp.DecimalFormater.f1;
 
 public class Point {
 
 	public final double x;
 	public final double y;
 	public final double z;
-	DecimalFormat f;
 	
 	public static Point getPointSwapZY( double x, double z, double y) {
 		return new Point( x, y, z);
@@ -20,10 +17,6 @@ public class Point {
 		this.y = y;
 		this.z = z;
 
-		DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.US);
-		otherSymbols.setDecimalSeparator('.');
-		otherSymbols.setGroupingSeparator('y'); 
-		f = new DecimalFormat("#0.####", otherSymbols);
 	}
 	
 	// supports arrays with only 2 elements
@@ -36,13 +29,13 @@ public class Point {
 	}
 
 	public String getX() {
-		return f.format(x/128);
+		return f1.format(x/128);
 	}
 	public String getY() {
-		return f.format(y/128);
+		return f1.format(y/128);
 	}
 	public String getZ() {
-		return f.format(z/128);
+		return f1.format(z/128);
 	}
 
 	@Override

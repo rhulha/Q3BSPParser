@@ -3,7 +3,7 @@ package net.raysforge.q3.bsp;
 import java.io.IOException;
 
 import net.raysforge.q3.map.Point;
-import static net.raysforge.q3.bsp.BSPUtils.f; 
+import static net.raysforge.q3.bsp.DecimalFormater.f; 
 
 public class Vertex {
 	

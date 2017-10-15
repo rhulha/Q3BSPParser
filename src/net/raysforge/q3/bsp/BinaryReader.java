@@ -3,6 +3,7 @@ package net.raysforge.q3.bsp;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.ByteBuffer;
 
 public class BinaryReader {
 
@@ -21,6 +22,11 @@ public class BinaryReader {
 
 	public byte[] readBytes(int i) throws IOException {
 		return readFully(new byte[i]);
+	}
+
+	// not yet used, untested, may needs .order(ByteOrder.LITTLE_ENDIAN)
+	public static float byteArray2float( byte[] b) {
+		return ByteBuffer.wrap(b).getFloat();
 	}
 
 	public int readInt() throws IOException {
