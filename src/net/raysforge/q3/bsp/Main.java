@@ -4,6 +4,7 @@ import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.text.DecimalFormat;
 import java.util.Locale;
 
@@ -98,14 +99,21 @@ public class Main {
 		return ByteBuffer.wrap(b).getFloat();
 	}
 	
+	public static byte[] int2ByteArray (int value) {
+		return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(value).array();
+	}
+
+	public static byte[] char2ByteArray (char value) {
+		return ByteBuffer.allocate(2).order(ByteOrder.LITTLE_ENDIAN).putChar(value).array();
+	}
+
 	public static byte[] float2ByteArray (float value) {
 		// .order(ByteBuffer.LITTE_ENDIAN)
-		return ByteBuffer.allocate(4).putFloat(value).array();
+		return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(value).array();
 	}
 	
 	public static void writeVerts(ReadBSP bsp) throws IOException {
 		Vertex[] vertexes = bsp.getVertexes();
-		
 		try ( FileOutputStream fos = new FileOutputStream("q3dm17.verts")) {
 			
 			for (Vertex vertex : vertexes) {
@@ -121,13 +129,17 @@ public class Main {
 	
 	public static void writeIndices(ReadBSP bsp) throws IOException {
 		Face[] faces = bsp.getFaces();
+		int[] meshverts = bsp.getMeshverts();
 		
 		try ( FileOutputStream fos = new FileOutputStream("q3dm17.indices")) {
 			
 			for (Face face : faces) {
-				fos.write( float2ByteArray( vertex.position[0]) );
-				fos.write( float2ByteArray( vertex.position[1]) );
-				fos.write( float2ByteArray( vertex.position[2]) );
+				
+				for(int k = 0; k < face.n_meshverts; ++k) {
+					int i = face.vertex + meshverts[face.meshvert + k];
+					System.out.println(i);
+					fos.write( char2ByteArray( (char)i) );
+                }
 			}
 
 		} catch (IOException e) {
@@ -140,7 +152,7 @@ public class Main {
 		ReadBSP bsp = new ReadBSP("q3dm17.bsp");
 		
 		writeVerts(bsp);
-
+		writeIndices(bsp);
 		//Face[] faces = bsp.getFaces();
 		
 			
