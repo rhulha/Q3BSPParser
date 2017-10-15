@@ -193,7 +193,9 @@ public class ReadBSP {
 		BinaryReader br = getLumpReader(LumpTypes.Textures);
 		Texture[] textures = new Texture[br.length() / Texture.size];
 		for (int i = 0; i < textures.length; i++) {
-			textures[i] = new Texture(br.readString(64), br.readInt(), br.readInt());
+			String name = br.readString(64);
+			name = name.substring(0, name.indexOf(0));
+			textures[i] = new Texture( name, br.readInt(), br.readInt());
 		}
 		return textures;
 	}
