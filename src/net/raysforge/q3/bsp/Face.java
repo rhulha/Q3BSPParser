@@ -77,5 +77,10 @@ public class Face {
 		this.patch_size = br.readInt(2);
 
 	}
+	
+	@Override
+	public String toString() {
+		return type + " " + texture + " " + vertex + " # " + n_vertexes + " " + meshvert + " # " + n_meshverts + " " + lm_index + " " + patch_size[0] + " " + patch_size[1];
+	}
 
 }

@@ -1,6 +1,7 @@
 package net.raysforge.q3.bsp;
 
 import java.io.IOException;
+import static net.raysforge.q3.bsp.BSPUtils.f; 
 
 public class Vertex {
 	
@@ -31,6 +32,11 @@ public class Vertex {
 		this.texcoord = br.readFloat(4);
 		this.normal = br.readFloat(3);
 		this.color = br.readBytes(4);
+	}
+	
+	@Override
+	public String toString() {
+		return f(position[0]) + ' ' + f(position[1]) + ' ' + f(position[2]) + " # " + f(texcoord[0]) + ' ' + f(texcoord[1]) + " # " + f(normal[0]) + ' ' + f(normal[1]) + ' ' + f(normal[2]);
 	}
 
 }
