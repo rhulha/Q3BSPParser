@@ -119,6 +119,46 @@ public class ReadBSP {
 		return brushsides;
 	}
 		
+	public Vertex[] getVertexes() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.Vertexes);
+		Vertex[] vertexes = new Vertex[br.length() / Vertex.size];
+		for (int i = 0; i < vertexes.length; i++) {
+			vertexes[i] = new Vertex(br);
+		}
+		return vertexes;
+	}
+
+	public int[] getMeshverts() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.Meshverts);
+		int[] meshverts = br.readInt(br.length() / 4);
+		return meshverts;
+	}
+
+	public Effect[] getEffects() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.Effects);
+		Effect[] effects = new Effect[br.length() / Effect.size];
+		for (int i = 0; i < effects.length; i++) {
+			effects[i] = new Effect(br.readString(64), br.readInt(), br.readInt());
+		}
+		return effects;
+	}
+
+	public Face[] getFaces() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.Faces);
+		Face[] faces = new Face[br.length() / Face.size];
+		for (int i = 0; i < faces.length; i++) {
+			faces[i] = new Face(br);
+		}
+		return faces;
+	}
+
+	public byte[] getLightmaps() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.Lightmaps);
+		byte[] lm = new byte[128*128*3]; 
+		br.readFully(lm);
+		return lm;
+	}
+
 	public Plane[] getPlanes() throws IOException {
 		BinaryReader br = getLumpReader(LumpTypes.Planes);
 		Plane[] planes = new Plane[br.length() / Plane.size];
@@ -133,8 +173,8 @@ public class ReadBSP {
 	}
 
 	public Texture[] getTextures() throws IOException {
-		Texture[] textures = new Texture[lumps[LumpTypes.Textures.ordinal()].length / Texture.size];
-		BinaryReader br = new BinaryReader(lumps[LumpTypes.Textures.ordinal()]);
+		BinaryReader br = getLumpReader(LumpTypes.Textures);
+		Texture[] textures = new Texture[br.length() / Texture.size];
 		for (int i = 0; i < textures.length; i++) {
 			textures[i] = new Texture(br.readString(64), br.readInt(), br.readInt());
 		}
