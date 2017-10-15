@@ -33,9 +33,9 @@ public class Main {
 				Tessellate.tessellate(face, verts, meshVerts, 10);
 		}
 
-		BSPUtils.writeVerts( verts, "C:\\Users\\Ray\\dart\\Web3GL17\\web\\q3dm17.verts");
+		BSPWriter.writeVerts( verts, "C:\\Users\\Ray\\dart\\Web3GL17\\web\\q3dm17.verts");
 
-		BSPUtils.writeIndices( faces, meshVerts, textures, "C:\\Users\\Ray\\dart\\Web3GL17\\web\\q3dm17.indices");
+		BSPWriter.writeIndices( faces, meshVerts, textures, "C:\\Users\\Ray\\dart\\Web3GL17\\web\\q3dm17.indices");
 	}
 
 }

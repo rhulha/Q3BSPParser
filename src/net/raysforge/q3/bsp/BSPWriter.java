@@ -7,7 +7,7 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BSPUtils {
+public class BSPWriter {
 
 	public static byte[] int2ByteArray (int value) {
 		return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(value).array();
@@ -26,9 +26,9 @@ public class BSPUtils {
 	public static void writeVerts(List<Vertex> vertexes, String filename) throws IOException {
 		try ( FileOutputStream fos = new FileOutputStream(filename)) {
 			for (Vertex vertex : vertexes) {
-				fos.write( BSPUtils.float2ByteArray( (float)vertex.position.x) );
-				fos.write( BSPUtils.float2ByteArray( (float)vertex.position.y) );
-				fos.write( BSPUtils.float2ByteArray( (float)vertex.position.z) );
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.position.x) );
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.position.y) );
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.position.z) );
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -57,7 +57,7 @@ public class BSPUtils {
 					continue;
 				for(int k = 0; k < face.n_meshverts; ++k) {
 					int i = face.vertex + meshVerts.get(face.meshvert + k);
-					fos.write( BSPUtils.char2ByteArray( (char)i) );
+					fos.write( BSPWriter.char2ByteArray( (char)i) );
                 }
 			}
 
