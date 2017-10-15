@@ -1,6 +1,7 @@
 package net.raysforge.q3.bsp;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
@@ -19,8 +20,20 @@ public class Main {
 				Tessellate.tessellate(face, verts, meshVerts, 10);
 		}
 
-		BSPUtils.writeVerts( verts, "q3dm17.verts");
-		BSPUtils.writeIndices( faces, meshVerts, textures, "q3dm17.indices");
+		BSPUtils.writeVerts( verts, "C:\\Users\\Ray\\dart\\Web3GL17\\web\\q3dm17.verts");
+
+		List<String> skip = new ArrayList<String>();
+		skip.add("flareShader");
+		skip.add("textures/skies/blacksky");
+		skip.add("textures/sfx/beam");
+		skip.add("models/mapobjects/spotlamp/beam");
+		skip.add("models/mapobjects/lamps/flare03");
+		skip.add("models/mapobjects/teleporter/energy");
+		skip.add("models/mapobjects/lamps/bot_flare");
+		skip.add("models/mapobjects/lamps/bot_flare2");
+
+		
+		BSPUtils.writeIndices( faces, meshVerts, textures, "C:\\Users\\Ray\\dart\\Web3GL17\\web\\q3dm17.indices", skip);
 		
 	}
 

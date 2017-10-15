@@ -40,18 +40,13 @@ public class BSPUtils {
 		}
 	}
 	
-	public static void writeIndices(Face[] faces, List<Integer> meshVerts, Texture[] textures, String filename) throws IOException {
+	public static void writeIndices(Face[] faces, List<Integer> meshVerts, Texture[] textures, String filename, List<String> skip) throws IOException {
 		try ( FileOutputStream fos = new FileOutputStream(filename)) {
 			
 			for (Face face : faces) {
 				
-				if( textures[face.texture].name.equals("flareShader"))
+				if( skip.contains( textures[face.texture].name))
 					continue;
-				if( textures[face.texture].name.equals("textures/skies/blacksky"))
-					continue;
-				
-				
-				
 				for(int k = 0; k < face.n_meshverts; ++k) {
 					int i = face.vertex + meshVerts.get(face.meshvert + k);
 					fos.write( BSPUtils.char2ByteArray( (char)i) );
