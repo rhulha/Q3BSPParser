@@ -88,9 +88,11 @@ public class BinaryReader {
 	}
 
 	public byte[] readFully(byte[] b) throws IOException {
-		if (bais != null)
-			bais.read(b);
-		else
+		if (bais != null)  {
+			int read = bais.read(b);
+			if( read != b.length)
+				throw new IOException("read != b.length");
+		} else
 			raf.readFully(b);
 		return b;
 	}
