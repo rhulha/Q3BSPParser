@@ -21,6 +21,18 @@ public class BSPWriter {
 		this.basePath = basePath;
 	}
 
+	/*
+	public void example( BSPReader bsp, BSPWriter bspWriter) throws IOException {
+		bspWriter.writeArrayAsJSON( bsp.getLeafBrushes(), "q3dm17.leafbrushes");
+		bspWriter.writeArrayAsJSON( bsp.getBrushSides(), "q3dm17.brushsides");
+		bspWriter.writeArrayAsJSON( bsp.getBrushes(), "q3dm17.brushes");
+		bspWriter.writeObjectAsJSON( bsp.getLeafs(), "q3dm17.leafs");
+		bspWriter.writePlanesAsJSON( bsp.getPlanes(), "q3dm17.planes");
+		bspWriter.writeEntitiesAsJSON( bsp.getEntities(), "q3dm17.ents");
+		bspWriter.writeNodesAsJSON( bsp.getNodes(), "q3dm17.nodes");
+	}
+	*/
+
 	public static byte[] int2ByteArray (int value) {
 		return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(value).array();
 	}
@@ -119,7 +131,7 @@ public class BSPWriter {
 		System.out.println("verts written");
 	}
 	
-	public void writeIndices(Surface[] surfaces, List<Integer> indexes, Shader[] shaders, String filename) throws IOException {
+	public void writeIndexes(Surface[] surfaces, List<Integer> indexes, Shader[] shaders, String filename) throws IOException {
 		
 		List<String> skip = new ArrayList<String>();
 		skip.add("flareShader");
