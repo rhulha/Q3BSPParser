@@ -26,7 +26,15 @@ public class Point {
 		f = new DecimalFormat("#0.####", otherSymbols);
 	}
 	
-	 
+	// supports arrays with only 2 elements
+	public Point( float[] f) {
+		this( f[0], f[1], f.length == 3 ? f[2] : 0);
+	}
+
+	public Point(byte[] b) {
+		this( (b[0]&0xFF)/255.0, (b[1]&0xFF)/255.0, (b[2]&0xFF)/255.0);
+	}
+
 	public String getX() {
 		return f.format(x/128);
 	}
@@ -89,5 +97,13 @@ public class Point {
 
 	public Point plus(Point p) {
 		return new Point(x + p.x, y + p.y, z + p.z);
+	}
+
+	public Point scale(double d) {
+		return new Point(this.x*d, this.y*d, this.z*d);
+	}
+
+	public Point add(Point p) {
+		return new Point(this.x+p.x, this.y+p.y, this.z+p.z);
 	}
 }

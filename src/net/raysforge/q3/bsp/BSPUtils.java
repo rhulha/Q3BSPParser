@@ -8,6 +8,8 @@ import java.nio.ByteOrder;
 import java.text.DecimalFormat;
 import java.util.Locale;
 
+import net.raysforge.q3.map.Point;
+
 public class BSPUtils {
 
 	static {
@@ -28,9 +30,9 @@ public class BSPUtils {
 		try ( FileOutputStream fos = new FileOutputStream("q3dm17.verts")) {
 			
 			for (Vertex vertex : vertexes) {
-				fos.write( BSPUtils.float2ByteArray( vertex.position[0]) );
-				fos.write( BSPUtils.float2ByteArray( vertex.position[1]) );
-				fos.write( BSPUtils.float2ByteArray( vertex.position[2]) );
+				fos.write( BSPUtils.float2ByteArray( (float)vertex.position.x) );
+				fos.write( BSPUtils.float2ByteArray( (float)vertex.position.y) );
+				fos.write( BSPUtils.float2ByteArray( (float)vertex.position.z) );
 			}
 
 		} catch (IOException e) {
@@ -99,6 +101,8 @@ public class BSPUtils {
 		*/
 	}
 
+	
+	// this method is broken and using the wrong vertex indexes. writeIndices is better
 	public static void objWriter() throws IOException {
 
 		ReadBSP bsp = new ReadBSP("q3dm17.bsp");
@@ -113,8 +117,8 @@ public class BSPUtils {
 					//System.out.println(face.meshvert + ": " + face.n_meshverts);
 					for( int i=0; i < face.n_vertexes; i++) {
 						Vertex v = vertexes[face.vertex+i];
-						float[] p = v.position;
-						fw.write("v " + p[0] +" "+p[1]+" "+p[2]+"\r\n");
+						Point p = v.position;
+						fw.write("v " + p.x +" "+p.y+" "+p.z+"\r\n");
 					}
 				}
 			}

@@ -22,9 +22,9 @@ public class Face {
 	public int effect;//		Index into lump 12 (Effects), or -1.
 	public int type;//			Face type. 1=polygon, 2=patch, 3=mesh, 4=billboard
 	public int vertex;//		Index of first vertex.
-	public int n_vertexes;//	Number of vertices.
+	public int n_vertexes;//	Number of vertices that form a polygon ( not yet triangulated )
 	public int meshvert;//		Index of first meshvert.
-	public int n_meshverts;//	Number of meshverts.
+	public int n_meshverts;//	Number of meshverts that form a triangulated polygon (mesh?)
 	public int lm_index;//		Lightmap index.
 	public int[] lm_start;//	Corner of this face's lightmap image in lightmap.
 	public int[] lm_size;//		Size of this face's lightmap image in lightmap.
@@ -80,6 +80,10 @@ public class Face {
 	
 	@Override
 	public String toString() {
+		return "type:" + type + " tex:" + texture + " verts:" + vertex + ", " + n_vertexes + " mesh:" + meshvert + ", " + n_meshverts + " lm:" + lm_index + " patch:" + patch_size[0] + " " + patch_size[1];
+	}
+
+	public String toString2() {
 		return type + " " + texture + " " + vertex + " # " + n_vertexes + " " + meshvert + " # " + n_meshverts + " " + lm_index + " " + patch_size[0] + " " + patch_size[1];
 	}
 

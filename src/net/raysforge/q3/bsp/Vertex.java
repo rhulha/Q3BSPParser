@@ -1,6 +1,8 @@
 package net.raysforge.q3.bsp;
 
 import java.io.IOException;
+
+import net.raysforge.q3.map.Point;
 import static net.raysforge.q3.bsp.BSPUtils.f; 
 
 public class Vertex {
@@ -12,31 +14,34 @@ public class Vertex {
 		ubyte[4] color
 	*/
 
-	public float[] position; // Vertex position.
-	public float[] texcoord; // Vertex texture coordinates. 0=surface, 1=lightmap.
-	public float[] normal; // Vertex normal.
+	public Point position; // Vertex position.
+	public Point texCoord; // Vertex texture coordinates.
+	public Point lmCoord; // Vertex lightmap coordinates.
+	public Point normal; // Vertex normal.
 
-	public byte[] color; // Vertex color. RGBA.
+	public Point color; // Vertex color. RGBA.
 
 	public final static int size = 44;
 
-	public Vertex(float[] position, float[] texcoord, float[] normal, byte[] color) {
+	public Vertex( Point position, Point texCoord, Point lmCoord, Point normal, Point color) {
 		this.position = position;
-		this.texcoord = texcoord;
+		this.texCoord = texCoord;
+		this.lmCoord = lmCoord;
 		this.normal = normal;
 		this.color = color;
 	}
 
 	public Vertex(BinaryReader br) throws IOException {
-		this.position = br.readFloat(3);
-		this.texcoord = br.readFloat(4);
-		this.normal = br.readFloat(3);
-		this.color = br.readBytes(4);
+		this.position = new Point( br.readFloat(3));
+		this.texCoord = new Point( br.readFloat(2));
+		this.lmCoord = new Point(  br.readFloat(2));
+		this.normal = new Point(   br.readFloat(3));
+		this.color = new Point(    br.readBytes(4)); // alpha channel is ignored
 	}
 	
 	@Override
 	public String toString() {
-		return f(position[0]) + ' ' + f(position[1]) + ' ' + f(position[2]) + " # " + f(texcoord[0]) + ' ' + f(texcoord[1]) + " # " + f(normal[0]) + ' ' + f(normal[1]) + ' ' + f(normal[2]);
+		return f(position.x) + ' ' + f(position.y) + ' ' + f(position.z) + " # " + f(texCoord.x) + ' ' + f(texCoord.y) + " # " + f(normal.x) + ' ' + f(normal.y) + ' ' + f(normal.z);
 	}
 
 }
