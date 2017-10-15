@@ -35,8 +35,8 @@ public class ReadBSP {
 			count += length;
 			br.seek(offset);
 			lumps[i] = br.readBytes(length);
-			System.out.println(offset);
-			System.out.println(length);
+			//System.out.println(offset);
+			//System.out.println(length);
 		}
 
 		assert_(count + 145 == br.length());

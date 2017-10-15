@@ -13,6 +13,10 @@ public class Face {
 	int[2] size	Patch dimensions.
 	*/
 	
+	public static int polygon=1;
+	public static int patch=2;
+	public static int mesh=3;
+	public static int billboard=4;
 	
 	public int texture;//		Texture index.
 	public int effect;//		Index into lump 12 (Effects), or -1.
