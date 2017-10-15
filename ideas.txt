@@ -1,3 +1,11 @@
+
+next:
+
+respawnPlayer
+
+
+-------------
+
 try out the vertex colors, they might look good enough
 try SSAO ambient occlusion shader
 

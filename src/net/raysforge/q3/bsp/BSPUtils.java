@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -40,7 +41,20 @@ public class BSPUtils {
 		}
 	}
 	
-	public static void writeIndices(Face[] faces, List<Integer> meshVerts, Texture[] textures, String filename, List<String> skip) throws IOException {
+	public static void writeIndices(Face[] faces, List<Integer> meshVerts, Texture[] textures, String filename) throws IOException {
+		
+		List<String> skip = new ArrayList<String>();
+		skip.add("flareShader");
+		skip.add("textures/skies/blacksky");
+		skip.add("textures/sfx/beam");
+		skip.add("models/mapobjects/spotlamp/beam");
+		skip.add("models/mapobjects/lamps/flare03");
+		skip.add("models/mapobjects/teleporter/energy");
+		skip.add("models/mapobjects/lamps/bot_flare");
+		skip.add("models/mapobjects/lamps/bot_flare2");
+
+		
+		
 		try ( FileOutputStream fos = new FileOutputStream(filename)) {
 			
 			for (Face face : faces) {
