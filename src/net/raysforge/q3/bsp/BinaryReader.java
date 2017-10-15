@@ -53,8 +53,8 @@ public class BinaryReader {
 
 	}
 
-	public long length() throws IOException {
-		return bais != null ? buffer.length : raf.length();
+	public int length() throws IOException {
+		return (int)(bais != null ? buffer.length : raf.length());
 	}
 
 	public void readFully(byte[] b) throws IOException {
@@ -66,6 +66,14 @@ public class BinaryReader {
 
 	public float readFloat() throws IOException {
 		return Float.intBitsToFloat(readInt());
+	}
+
+	public int[] readInt(int i) throws IOException {
+		int[] buf = new int[i];
+		for (int j = 0; j < buf.length; j++) {
+			buf[j] = readInt();
+		}
+		return buf;
 	}
 
 }
