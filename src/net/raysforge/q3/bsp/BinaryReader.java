@@ -64,4 +64,8 @@ public class BinaryReader {
 			raf.readFully(b);
 	}
 
+	public float readFloat() throws IOException {
+		return Float.intBitsToFloat(readInt());
+	}
+
 }

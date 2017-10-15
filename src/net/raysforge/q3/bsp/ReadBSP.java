@@ -3,6 +3,30 @@ package net.raysforge.q3.bsp;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
+import net.raysforge.q3.map.Plane;
+import net.raysforge.q3.map.Point;
+
+enum LumpTypes {
+	Entities,
+	Textures,
+	Planes,
+	Nodes,
+	Leafs,
+	Leaffaces,
+	Leafbrushes,
+	Models,
+	Brushes,
+	Brushsides,
+	Vertexes,
+	Meshverts,
+	Effects,
+	Faces,
+	Lightmaps,
+	Lightvols,
+	Visdata;
+	public static final int size = LumpTypes.values().length;
+}
+
 public class ReadBSP {
 
 	private byte[][] lumps;
@@ -19,16 +43,16 @@ public class ReadBSP {
 
 		int count = 0;
 		
-		int[] lumpsOffset = new int[17];
-		int[] lumpsLength = new int[17];
+		int[] lumpsOffset = new int[LumpTypes.size];
+		int[] lumpsLength = new int[LumpTypes.size];
 		for (int i = 0; i < lumpsOffset.length; i++) {
 			lumpsOffset[i] = br.readInt();
 			lumpsLength[i] = br.readInt();
 		}
 
 		
-		lumps = new byte[17][];
-		for (int i = 0; i < 17; i++) {
+		lumps = new byte[LumpTypes.size][];
+		for (int i = 0; i < LumpTypes.size; i++) {
 			int offset = lumpsOffset[i];
 			int length = lumpsLength[i];
 			count+=length;
@@ -52,40 +76,41 @@ public class ReadBSP {
 
 		ReadBSP bsp = new ReadBSP("q3dm17.bsp");
 
-		String entities = bsp.getEntities();
-		System.out.println(entities);
-
-		Texture textures[] = bsp.getTextures();
+		Plane[] planes = bsp.getPlanes();
 		
-
-		for (int i = 0; i < textures.length; i++) {
-			Texture texture = textures[i];
-			System.out.println(texture.name);
-		}
-
 		bsp.close();
 
 	}
 
-	private void close() throws IOException {
-		br.close();
-		
+	public Plane[] getPlanes() throws IOException {
+		Plane[] planes = new Plane[lumps[LumpTypes.Planes.ordinal()].length / 16];
+		BinaryReader br = new BinaryReader(lumps[LumpTypes.Planes.ordinal()]);
+		for (int i = 0; i < planes.length; i++) {
+			float x = br.readFloat();
+			float y = br.readFloat();
+			float z = br.readFloat();
+			float d = br.readFloat();
+			planes[i] = new Plane( new Point( x,y,z), d);
+		}
+		return planes;
 	}
 
-	private Texture[] getTextures() throws IOException {
-		Texture[] textures = new Texture[lumps[1].length / 72];
-		BinaryReader br = new BinaryReader(lumps[1]);
+	public Texture[] getTextures() throws IOException {
+		Texture[] textures = new Texture[lumps[LumpTypes.Textures.ordinal()].length / 72];
+		BinaryReader br = new BinaryReader(lumps[LumpTypes.Textures.ordinal()]);
 		for (int i = 0; i < textures.length; i++) {
 			textures[i] = new Texture( br.readString(64), br.readInt(), br.readInt());
 		}
 		return textures;
 	}
 
-	private String getEntities() {
-
-		return new String( lumps[0]);
+	public String getEntities() {
+		return new String( lumps[LumpTypes.Entities.ordinal()]);
 	}
 
+	public void close() throws IOException {
+		br.close();
+	}
 
 }
 

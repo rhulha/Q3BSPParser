@@ -2,14 +2,18 @@ package net.raysforge.q3.map;
 
 public class Plane {
 	
-	public final Point p1;
-	public final Point p2;
-	public final Point p3;
-	public final String texture;
+	public Point p1;
+	public Point p2;
+	public Point p3;
+	public String texture;
 	
 	public final Point normal;
 	public final double distance;
 
+	public Plane(Point normal, double distance) {
+		this.normal = normal;
+		this.distance = distance;
+	}
 
 	public Plane(Point p1, Point p2, Point p3, String texture ) {
 		this.p1 = p1;
