@@ -15,17 +15,17 @@ public class BSPVerifier {
 			String format = f(plane.normal.x);
 			System.out.println("XXX: " + format + " q3bsp.js:133");
 		}
-		List<Vertex> vertexes = bsp.getVertexes();
+		List<Vertex> vertexes = bsp.getDrawVerts();
 		for (Vertex v : vertexes) {
 			String s = v.toString();
 			System.out.println("XXX: " + s + " q3bsp.js:133");
 		}
-		List<Integer> meshverts = bsp.getMeshVerts();
+		List<Integer> meshverts = bsp.getDrawIndexes();
 		for (int i : meshverts) {
 			System.out.print(i + ",");
 		}
-		Face[] faces = bsp.getFaces();
-		for (Face fc : faces) {
+		Surface[] faces = bsp.getSurfaces();
+		for (Surface fc : faces) {
 			String s = fc.toString();
 			System.out.println("XXX: " + s + " q3bsp.js:133");
 		}

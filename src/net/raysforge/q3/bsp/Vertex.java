@@ -14,34 +14,34 @@ public class Vertex {
 		ubyte[4] color
 	*/
 
-	public Point position; // Vertex position.
-	public Point texCoord; // Vertex texture coordinates.
-	public Point lmCoord; // Vertex lightmap coordinates.
+	public Point xyz; // Vertex position.
+	public Point st; // Vertex texture coordinates.
+	public Point lightmap; // Vertex lightmap coordinates.
 	public Point normal; // Vertex normal.
 
 	public Point color; // Vertex color. RGBA.
 
 	public final static int size = 44;
 
-	public Vertex( Point position, Point texCoord, Point lmCoord, Point normal, Point color) {
-		this.position = position;
-		this.texCoord = texCoord;
-		this.lmCoord = lmCoord;
+	public Vertex( Point xyz, Point st, Point lightmap, Point normal, Point color) {
+		this.xyz = xyz;
+		this.st = st;
+		this.lightmap = lightmap;
 		this.normal = normal;
 		this.color = color;
 	}
 
 	public Vertex(BinaryReader br) throws IOException {
-		this.position = new Point( br.readFloat(3));
-		this.texCoord = new Point( br.readFloat(2));
-		this.lmCoord = new Point(  br.readFloat(2));
+		this.xyz = new Point( br.readFloat(3));
+		this.st = new Point( br.readFloat(2));
+		this.lightmap = new Point(  br.readFloat(2));
 		this.normal = new Point(   br.readFloat(3));
 		this.color = new Point(    br.readBytes(4)); // alpha channel is ignored
 	}
 	
 	@Override
 	public String toString() {
-		return f(position.x) + ' ' + f(position.y) + ' ' + f(position.z) + " # " + f(texCoord.x) + ' ' + f(texCoord.y) + " # " + f(normal.x) + ' ' + f(normal.y) + ' ' + f(normal.z);
+		return f(xyz.x) + ' ' + f(xyz.y) + ' ' + f(xyz.z) + " # " + f(st.x) + ' ' + f(st.y) + " # " + f(normal.x) + ' ' + f(normal.y) + ' ' + f(normal.z);
 	}
 
 }

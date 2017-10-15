@@ -2,21 +2,21 @@ package net.raysforge.q3.bsp;
 
 public enum LumpTypes {
 	Entities,
-	Textures,
+	Shaders,
 	Planes,
 	Nodes,
 	Leafs,
-	Leaffaces,
-	Leafbrushes,
+	LeafSurfaces,
+	LeafBrushes,
 	Models,
 	Brushes,
-	Brushsides,
-	Vertexes,
-	Meshverts,
-	Effects,
-	Faces,
+	BrushSides,
+	DrawVerts,
+	DrawIndexes,
+	Fogs,
+	Surfaces,
 	Lightmaps,
-	Lightvols,
-	Visdata;
+	LightGrid,
+	Visibility;
 	public static final int size = LumpTypes.values().length;
 }

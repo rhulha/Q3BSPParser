@@ -1,6 +1,6 @@
 package net.raysforge.q3.bsp;
 
-public class Effect  {
+public class Fog  {
 	
 	/*
 	string[64] name	Effect shader.
@@ -8,15 +8,15 @@ public class Effect  {
 	int unknown	Always 5, except in q3dm8, which has one effect with -1.
 	*/
 	
-	public String name;
-	public int brush;
-	public int unknown;
+	public String shader;
+	public int brushNum;
+	public int visibleSide;
 	
 	public final static int size = 72;
 
-	public Effect(String name, int brush, int unknown) {
-		this.name = name;
-		this.brush = brush;
-		this.unknown = unknown;
+	public Fog(String name, int brush, int visibleSide) {
+		this.shader = name;
+		this.brushNum = brush;
+		this.visibleSide = visibleSide;
 	}
 }

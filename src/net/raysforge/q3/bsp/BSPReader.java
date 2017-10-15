@@ -82,16 +82,14 @@ public class BSPReader {
 		return leafs;
 	}
 
-	public int[] getLeaffaces() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.Leaffaces);
-		int[] leaffaces = br.readInt(br.length() / 4);
-		return leaffaces;
+	public int[] getLeafSurfaces() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.LeafSurfaces);
+		return br.readInt(br.length() / 4);
 	}
 
-	public int[] getLeafbrushes() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.Leafbrushes);
-		int[] leafbrushes = br.readInt(br.length() / 4);
-		return leafbrushes;
+	public int[] getLeafBrushes() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.LeafBrushes);
+		return br.readInt(br.length() / 4);
 	}
 
 	public Model[] getModels() throws IOException {
@@ -103,7 +101,7 @@ public class BSPReader {
 		return models;
 	}
 
-	// int[n][3] => brushside, n_brushsides, texture
+	// int[n][3] => brushside, n_brushsides, shader
 	public int[][] getBrushes() throws IOException {
 		BinaryReader br = getLumpReader(LumpTypes.Brushes);
 		int[][] brushes = new int[br.length() / 12][];
@@ -113,9 +111,9 @@ public class BSPReader {
 		return brushes;
 	}
 
-	// int[n][2] => plane, texture
+	// int[n][2] => plane, shader
 	public int[][] getBrushSides() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.Brushsides);
+		BinaryReader br = getLumpReader(LumpTypes.BrushSides);
 		int[][] brushsides = new int[br.length() / 8][];
 		for (int i = 0; i < brushsides.length; i++) {
 			brushsides[i] = br.readInt( 2);
@@ -123,8 +121,8 @@ public class BSPReader {
 		return brushsides;
 	}
 		
-	public List<Vertex> getVertexes() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.Vertexes);
+	public List<Vertex> getDrawVerts() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.DrawVerts);
 		int length = br.length() / Vertex.size;
 		List<Vertex> vertexes = new ArrayList<Vertex>(length);
 		for (int i = 0; i < length; i++) {
@@ -133,32 +131,32 @@ public class BSPReader {
 		return vertexes;
 	}
 
-	public List<Integer> getMeshVerts() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.Meshverts);
-		List<Integer> meshVerts = new ArrayList<Integer>();
+	public List<Integer> getDrawIndexes() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.DrawIndexes);
+		List<Integer> drawIndexes = new ArrayList<Integer>();
 		int length = br.length() / 4;
 		for (int i = 0; i < length; i++) {
-			meshVerts.add( br.readInt());
+			drawIndexes.add( br.readInt());
 		}
-		return meshVerts;
+		return drawIndexes;
 	}
 
-	public Effect[] getEffects() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.Effects);
-		Effect[] effects = new Effect[br.length() / Effect.size];
-		for (int i = 0; i < effects.length; i++) {
-			effects[i] = new Effect(br.readString(64), br.readInt(), br.readInt());
+	public Fog[] getFogs() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.Fogs);
+		Fog[] fogs = new Fog[br.length() / Fog.size];
+		for (int i = 0; i < fogs.length; i++) {
+			fogs[i] = new Fog(br.readString(64), br.readInt(), br.readInt());
 		}
-		return effects;
+		return fogs;
 	}
 
-	public Face[] getFaces() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.Faces);
-		Face[] faces = new Face[br.length() / Face.size];
-		for (int i = 0; i < faces.length; i++) {
-			faces[i] = new Face(br);
+	public Surface[] getSurfaces() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.Surfaces);
+		Surface[] surfaces = new Surface[br.length() / Surface.size];
+		for (int i = 0; i < surfaces.length; i++) {
+			surfaces[i] = new Surface(br);
 		}
-		return faces;
+		return surfaces;
 	}
 
 	public List<byte[]> getLightmaps() throws IOException {
@@ -173,17 +171,17 @@ public class BSPReader {
 		return list;
 	}
 
-	public Lightvol[] getLightvols() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.Lightvols);
-		Lightvol[] lightvols = new Lightvol[br.length() / Lightvol.size];
-		for (int i = 0; i < lightvols.length; i++) {
-			lightvols[i] = new Lightvol(br);
+	public LightGrid[] getLightGrid() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.LightGrid);
+		LightGrid[] lightgrid = new LightGrid[br.length() / LightGrid.size];
+		for (int i = 0; i < lightgrid.length; i++) {
+			lightgrid[i] = new LightGrid(br);
 		}
-		return lightvols;
+		return lightgrid;
 	}
 
-	public Visdata getVisdata() throws IOException {
-		return new Visdata(getLumpReader(LumpTypes.Visdata));
+	public Visibility getVisibility() throws IOException {
+		return new Visibility(getLumpReader(LumpTypes.Visibility));
 	}
 
 	public Plane[] getPlanes() throws IOException {
@@ -199,15 +197,15 @@ public class BSPReader {
 		return planes;
 	}
 
-	public Texture[] getTextures() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.Textures);
-		Texture[] textures = new Texture[br.length() / Texture.size];
-		for (int i = 0; i < textures.length; i++) {
+	public Shader[] getShaders() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.Shaders);
+		Shader[] shaders = new Shader[br.length() / Shader.size];
+		for (int i = 0; i < shaders.length; i++) {
 			String name = br.readString(64);
 			name = name.substring(0, name.indexOf(0));
-			textures[i] = new Texture( name, br.readInt(), br.readInt());
+			shaders[i] = new Shader( name, br.readInt(), br.readInt());
 		}
-		return textures;
+		return shaders;
 	}
 
 	public Map<String, List<Map<String, String>>> getEntities() throws IOException {

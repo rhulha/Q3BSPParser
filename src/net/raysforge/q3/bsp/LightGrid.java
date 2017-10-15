@@ -2,7 +2,7 @@ package net.raysforge.q3.bsp;
 
 import java.io.IOException;
 
-public class Lightvol  {
+public class LightGrid  {
 	
 	/*
 	  ubyte[3] ambient	Ambient color component. RGB.
@@ -16,14 +16,14 @@ public class Lightvol  {
 	
 	public final static int size = 8;
 
-	public Lightvol(byte[] ambient, byte[] directional, byte[] dir) {
+	public LightGrid(byte[] ambient, byte[] directional, byte[] dir) {
 		super();
 		this.ambient = ambient;
 		this.directional = directional;
 		this.dir = dir;
 	}
 
-	public Lightvol(BinaryReader br) throws IOException {
+	public LightGrid(BinaryReader br) throws IOException {
 		this.ambient = br.readBytes(3);
 		this.directional = br.readBytes(3);
 		this.dir = br.readBytes(2);

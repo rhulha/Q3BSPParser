@@ -11,7 +11,7 @@ public class Main {
 	static String basePath = "C:\\Users\\Ray\\dart\\Instagib\\web\\data\\";
 	
 	public void obsolete( BSPReader bsp, BSPWriter bspWriter) throws IOException {
-		bspWriter.writeArrayAsJSON( bsp.getLeafbrushes(), "q3dm17.leafbrushes");
+		bspWriter.writeArrayAsJSON( bsp.getLeafBrushes(), "q3dm17.leafbrushes");
 		bspWriter.writeArrayAsJSON( bsp.getBrushSides(), "q3dm17.brushsides");
 		bspWriter.writeArrayAsJSON( bsp.getBrushes(), "q3dm17.brushes");
 		bspWriter.writeObjectAsJSON( bsp.getLeafs(), "q3dm17.leafs");
@@ -28,14 +28,14 @@ public class Main {
 		}
 	}
 	
-	public static void main(String[] args) throws IOException {
+	public static void main1(String[] args) throws IOException {
 		BSPReader bsp = new BSPReader("q3dm17.bsp");
 		
-		Texture[] textures = bsp.getTextures();
+		Shader[] textures = bsp.getShaders();
 
-		Face[] faces = bsp.getFaces();
-		List<Vertex> verts = bsp.getVertexes();
-		List<Integer> meshVerts = bsp.getMeshVerts();
+		Surface[] faces = bsp.getSurfaces();
+		List<Vertex> verts = bsp.getDrawVerts();
+		List<Integer> meshVerts = bsp.getDrawIndexes();
 
 		List<String> skip = new ArrayList<String>();
 		skip.add("flareShader");
@@ -47,8 +47,8 @@ public class Main {
 		skip.add("models/mapobjects/lamps/bot_flare");
 		skip.add("models/mapobjects/lamps/bot_flare2");
 
-		for (Face face : faces) {
-			if( face.type == 2) {
+		for (Surface face : faces) {
+			if( face.surfaceType == 2) {
 				System.out.println("tessellate");
 				Tessellate.tessellate(face, verts, meshVerts, 10);
 			}
@@ -59,15 +59,15 @@ public class Main {
 			fw.write("o q3dm17\n");
 			
 			for (Vertex vertex : verts) {
-				fw.write( "v "+vertex.position.x+" "+vertex.position.y+" "+vertex.position.z +"\n");
+				fw.write( "v "+vertex.xyz.x+" "+vertex.xyz.y+" "+vertex.xyz.z +"\n");
 			}
-			for (Face face : faces) {
-				if( skip.contains( textures[face.texture].name))
+			for (Surface face : faces) {
+				if( skip.contains( textures[face.shaderNum].shader))
 					continue;
-				for(int k = 0; k < face.n_meshverts; k+=3) {
-					int i1 = face.vertex + meshVerts.get(face.meshvert + k)+1;
-					int i2 = face.vertex + meshVerts.get(face.meshvert + k+1)+1;
-					int i3 = face.vertex + meshVerts.get(face.meshvert + k+2)+1;
+				for(int k = 0; k < face.numIndexes; k+=3) {
+					int i1 = face.firstVert + meshVerts.get(face.firstIndex + k)+1;
+					int i2 = face.firstVert + meshVerts.get(face.firstIndex + k+1)+1;
+					int i3 = face.firstVert + meshVerts.get(face.firstIndex + k+2)+1;
 					fw.write( "f "+i1+" "+i2+" "+i3 +"\n");
 	            }
 			}
@@ -76,7 +76,20 @@ public class Main {
 		}
 	}
 
-	public static void main2(String[] args) throws IOException {
+	public static void main4(String[] args) throws IOException {
+		BSPReader bsp = new BSPReader("q3dm17.bsp");
+		
+		byte[] lump = bsp.getLump(LumpTypes.Lightmaps);
+		
+		System.out.println(lump.length / (128*128*3));
+		
+		Shader[] textures = bsp.getShaders();
+		for (Shader texture : textures) {
+			System.out.println(texture.shader);
+		}
+	}
+	
+	public static void main22(String[] args) throws IOException {
 
 		BSPReader bsp = new BSPReader("q3dm17.bsp");
 		BSPWriter bspWriter = new BSPWriter( basePath);
@@ -84,8 +97,8 @@ public class Main {
 		writeBasics(bsp, bspWriter);
 
 		writeFile( basePath + "q3dm17.brushes", bsp.getLump(LumpTypes.Brushes));
-		writeFile( basePath + "q3dm17.brushsides", bsp.getLump(LumpTypes.Brushsides));
-		writeFile( basePath + "q3dm17.leafbrushes", bsp.getLump(LumpTypes.Leafbrushes));
+		writeFile( basePath + "q3dm17.brushsides", bsp.getLump(LumpTypes.BrushSides));
+		writeFile( basePath + "q3dm17.leafbrushes", bsp.getLump(LumpTypes.LeafBrushes));
 		writeFile( basePath + "q3dm17.leafs", bsp.getLump(LumpTypes.Leafs));
 		writeFile( basePath + "q3dm17.nodes", bsp.getLump(LumpTypes.Nodes));
 		writeFile( basePath + "q3dm17.planes", bsp.getLump(LumpTypes.Planes));
@@ -94,12 +107,12 @@ public class Main {
 	}
 
 	public static void writeBasics(BSPReader bsp, BSPWriter bspWriter) throws IOException {
-		Face[] faces = bsp.getFaces();
-		List<Vertex> verts = bsp.getVertexes();
-		List<Integer> meshVerts = bsp.getMeshVerts();
+		Surface[] faces = bsp.getSurfaces();
+		List<Vertex> verts = bsp.getDrawVerts();
+		List<Integer> meshVerts = bsp.getDrawIndexes();
 
-		for (Face face : faces) {
-			if( face.type == 2) {
+		for (Surface face : faces) {
+			if( face.surfaceType == 2) {
 				System.out.println("tessellate");
 				Tessellate.tessellate(face, verts, meshVerts, 10);
 			}
@@ -107,11 +120,14 @@ public class Main {
 
 		bspWriter.writeVerts( verts, "q3dm17.verts");
 
-		Texture[] textures = bsp.getTextures();
+		Shader[] textures = bsp.getShaders();
 		bspWriter.writeObjectAsJSON( textures, "q3dm17.textures");
 
 		bspWriter.writeIndices( faces, meshVerts, textures, "q3dm17.indices");
 		bspWriter.writeNormals( verts, "q3dm17.normals");
+		bspWriter.writeTexCoords( verts, "q3dm17.texCoords");
+		bspWriter.writeLmCoords( verts, "q3dm17.lmCoords");
+		bspWriter.writeColors( verts, "q3dm17.colors");
 
 	}
 

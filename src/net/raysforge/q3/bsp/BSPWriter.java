@@ -30,7 +30,6 @@ public class BSPWriter {
 	}
 
 	public static byte[] float2ByteArray (float value) {
-		// .order(ByteBuffer.LITTE_ENDIAN)
 		return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(value).array();
 	}
 	
@@ -110,9 +109,9 @@ public class BSPWriter {
 	public void writeVerts(List<Vertex> vertexes, String filename) throws IOException {
 		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
 			for (Vertex vertex : vertexes) {
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.position.x) );
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.position.y) );
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.position.z) );
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.xyz.x) );
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.xyz.y) );
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.xyz.z) );
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -120,7 +119,7 @@ public class BSPWriter {
 		System.out.println("verts written");
 	}
 	
-	public void writeIndices(Face[] faces, List<Integer> meshVerts, Texture[] textures, String filename) throws IOException {
+	public void writeIndices(Surface[] surfaces, List<Integer> indexes, Shader[] shaders, String filename) throws IOException {
 		
 		List<String> skip = new ArrayList<String>();
 		skip.add("flareShader");
@@ -136,12 +135,12 @@ public class BSPWriter {
 		
 		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
 			
-			for (Face face : faces) {
+			for (Surface face : surfaces) {
 				
-				if( skip.contains( textures[face.texture].name))
+				if( skip.contains( shaders[face.shaderNum].shader))
 					continue;
-				for(int k = 0; k < face.n_meshverts; ++k) {
-					int i = face.vertex + meshVerts.get(face.meshvert + k);
+				for(int k = 0; k < face.numIndexes; ++k) {
+					int i = face.firstVert + indexes.get(face.firstIndex + k);
 					fos.write( BSPWriter.char2ByteArray( (char)i) );
                 }
 			}
@@ -168,8 +167,8 @@ public class BSPWriter {
 	public void writeTexCoords(List<Vertex> vertexes, String filename) {
 		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
 			for (Vertex vertex : vertexes) {
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.texCoord.x) );
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.texCoord.y) );
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.st.x) );
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.st.y) );
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -180,8 +179,8 @@ public class BSPWriter {
 	public void writeLmCoords(List<Vertex> vertexes, String filename) {
 		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
 			for (Vertex vertex : vertexes) {
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.lmCoord.x) );
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.lmCoord.y) );
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.lightmap.x) );
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.lightmap.y) );
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
