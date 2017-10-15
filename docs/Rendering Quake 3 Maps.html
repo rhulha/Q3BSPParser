@@ -1,0 +1,794 @@
+<HTML>
+<HEAD>
+  <TITLE>
+    Rendering Quake 3 Maps
+  </TITLE>
+</HEAD>
+
+<BODY BGCOLOR=#FFFFFF>
+
+<A NAME="#top">
+<b><font size=6>
+Rendering Quake 3 Maps
+</font></b>
+
+<br>
+<br>
+Morgan McGuire
+<BR>July 11, 2003
+<br>
+<br>
+
+<!---------------------------------------------------------------------------->
+<a name="Intro">
+<p>
+<table border=1 cellpadding=0 cellspacing=0 width=100% bgcolor="#ffffd0">
+<td width=100%>
+<table border=0 cellpadding=0 cellspacing=0 width=100%>
+<td>
+<b><font size=4>Introduction</font></b>
+</td>
+<td align=right>
+<a href="#top">[top]</a>
+</td>
+</table>
+</table>
+<P>
+This document describes how to render the basic geometry of a Quake 3
+map using OpenGL.  It describes how to texture and lightmap this
+geometry, but does not describe how to render shaders, effects,
+characters, or movers (elevators and doors).
+<P>
+
+This is intended as a sequel to Kekoa Proudfoot's <A
+HREF="http://graphics.stanford.edu/~kekoa/q3/">Unofficial Quake 3 Map
+Specs</A> document, which describes how to parse BSP files.  It
+therefore uses the same notation. 
+
+<P>This is an unofficial document.  Quake 3 is a registered trademark
+of <a href="http://www.idsoftware.com/">id Software</a>, which does
+not sponsor, authorize, or endorse this document.
+
+<p>
+This document describes the Quake 3 BSP file format as the author
+understands it.  While every effort has been made to ensure that the
+contents of this document are accurate, the author does not guarantee that
+any portion of this document is actually correct.  In addition, the author
+cannot be held responsible the consequences of the any use or misuse of the
+information contained in this document.
+
+<!---------------------------------------------------------------------------->
+<a name="Overview">
+<p>
+<table border=1 cellpadding=0 cellspacing=0 width=100% bgcolor="#ffffd0">
+<td width=100%>
+<table border=0 cellpadding=0 cellspacing=0 width=100%>
+<td>
+<b><font size=4>Overview</font></b>
+</td>
+<td align=right>
+<a href="#top">[top]</a>
+</td>
+</table>
+</table>
+
+<P>
+The rendering process has five steps:
+
+<BLOCKQUOTE>
+<BR>1. Determine the set of visible faces.
+<BR>2. Partition the visible faces into <I>transparent</I> and <I>opaque</I> lists.
+<BR>3. Clear the frame buffer and render the sky box
+<BR>4. Render the opaque list in front-to-back order.
+<BR>5. Render the transparent list in back-to-front order.
+</BLOCKQUOTE>
+
+The first two steps do not involve any OpenGL calls.  Step 3 renders a
+cube centered at the viewer with a pre-warped texture to create the
+illusion of a detailed 3D environment.  The practice of creating and
+rendering sky boxes is discussed elsewhere and is not detailed further
+in this document.  Steps 4 and 5 render the actual visible surfaces of
+the map.  The opaque list contains triangles that will be rendered
+without alpha blending.  It is sorted from front to back to take
+advantage of early-out depth tests on newer graphics hardware.  The
+transparent list contains alpha blended surfaces which must be
+rendered from back to front to generate a correct image.  A
+straightforward quicksort on the camera-space depth of first vertex of
+each surface is sufficient for these purposes.  For the kinds of maps
+involved, splitting overlapping polygons for truly correct render
+order or using a radix sort for faster sorting will only increase the
+complexity of a renderer with improving the resulting image quality or
+frame rate.
+
+<P>
+The <A HREF="#VisibleSurface">Visible Surface Determination</A>
+section explains how to use the BSP tree and
+precomputed visibility data to find visible faces.
+
+<P>
+The remaining steps are straightforward and not discussed in detail,
+except for the actual face rendering.  The vertex indexing scheme of
+Quake 3 files can be confusing because there are two levels of
+indirection.  The <A HREF="#RenderingFaces">Rendering Faces</A>
+section explains how to generate triangle sets from
+the indices stored in a face.
+
+<!---------------------------------------------------------------------------->
+<a name="Data">
+<p>
+<table border=1 cellpadding=0 cellspacing=0 width=100% bgcolor="#ffffd0">
+<td width=100%>
+<table border=0 cellpadding=0 cellspacing=0 width=100%>
+<td>
+<b><font size=4>Data Structures</font></b>
+</td>
+<td align=right>
+<a href="#top">[top]</a>
+</td>
+</table>
+</table>
+
+<P>
+A Quake 3 map contains multiple models.  The first of these is always
+a static mesh that is the map itself and the remainders are "movers"
+like doors and elevators.  This document is restricted to model[0]; it
+does not address the movers.
+
+<P>
+Assume the in-memory data structures mimic those in the file
+structure, and that the overarching class is named Q3Map.  There are a
+few cases where I used a Vector3 in this document instead of float[3]
+to make the code easier to read.  Not all data from the file is used
+for rendering.  For example, the brushs are used for collision
+detection but ignored during rendering.  The subset of data used
+during rendering is (links are to Proudfoot's structure definitions):
+
+<p>
+<table border=0 cellspacing=0 cellpadding=0 width=100%>
+<th align=left>Lump Index
+<th align=left>Lump Name
+<th align=left>Description
+<tr>
+
+<tr><td valign=top>1<td valign=top><a href="http://graphics.stanford.edu/~kekoa/q3/#Textures">Textures</a>
+<td>Surface descriptions (assume these have been converted to OpenGL textures).
+
+<tr><td valign=top>2<td valign=top><a href="http://graphics.stanford.edu/~kekoa/q3/#Planes">Planes</a>
+<td>Planes used by map geometry.
+
+<tr><td valign=top>3<td valign=top><a href="http://graphics.stanford.edu/~kekoa/q3/#Nodes">Nodes</a>
+<td>BSP tree nodes.
+
+<tr><td valign=top>4<td valign=top><a href="http://graphics.stanford.edu/~kekoa/q3/#Leaves">Leaves</a>
+<td>BSP tree leaves.
+
+<tr><td valign=top>5<td valign=top><a href="http://graphics.stanford.edu/~kekoa/q3/#Leaffaces">Leaffaces</a>
+<td>Lists of face indices, one list per leaf.
+
+<tr><td valign=top>7<td valign=top><a href="http://graphics.stanford.edu/~kekoa/q3/#Models">Models</a>
+<td>Descriptions of rigid world geometry in map (we only use model[0]).
+
+<tr><td valign=top>10<td valign=top><a href="http://graphics.stanford.edu/~kekoa/q3/#Vertexes">Vertexes</a>
+<td>Vertices used to describe faces.
+
+<tr><td valign=top>11<td valign=top><a href="http://graphics.stanford.edu/~kekoa/q3/#Meshverts">Meshverts</a>
+<td>Lists of offsets, one list per mesh.
+
+<tr><td valign=top>13<td valign=top><a href="http://graphics.stanford.edu/~kekoa/q3/#Faces">Faces</a>
+<td>Surface geometry.
+
+<tr><td valign=top>14<td valign=top><a href="http://graphics.stanford.edu/~kekoa/q3/#Lightmaps">Lightmaps</a>
+<td>Packed lightmap data (assume these have been converted to an OpenGL texture)
+
+<tr><td valign=top>16<td valign=top><a href="http://graphics.stanford.edu/~kekoa/q3/#Visdata">Visdata</a>
+<td>Cluster-cluster visibility data.
+</table>
+
+<P>
+
+There are additional data used during rendering that do not appear in
+the file.  These are:
+
+<P>
+<a name="Camera">
+<b><font size=4>
+Camera camera
+</font></b>
+<P>
+A camera description that contains viewer position and frustum
+parameters.  The Camera class must have accessors for these parameters
+and a method, isVisible(float min[3], float max[3]).  This method
+returns true if the world space bounding box with the specified
+corners has non-zero intersection with the camera's view frustum.
+<P>
+
+<a name="AlreadyVisible">
+<b><font size=4>
+Set&lt;int&gt; alreadyVisible
+</font></b>
+
+<P>Set of indices of faces that are already visible.  This is used to
+prevent the same face from being rendered multiple times.  A general
+set implementation is not necessary.  Because the face indices are
+consecutive integers, a bit-set can provide an efficient
+implementation.
+</td></tr>
+<P>
+
+<a name="VisibleFace">
+<b><font size=4>
+Array&lt;int&gt; visibleFace
+</font></b>
+<P>
+Set of indices of faces that are visible; that is, the members of the
+alreadyVisible set.  For efficiency this is maintained as a separate
+array instead of iterating through the set.
+<P>
+
+<a name="Patch">
+<b><font size=4>
+Array&lt;Patch&gt; patch
+</font></b>
+<P>
+Patches are <A
+HREF="http://graphics.stanford.edu/~kekoa/q3/#Faces">Faces</A> that
+describe sets of biquadratic Bezier surfaces.  Each Patch contains an
+array of <A HREF="Bezier">Bezier</A> instances, which are described later
+in this document.
+<P>
+These Beziers are tessellated into triangles during loading so they
+can be rendered as triangle strips.  Your implementation must create
+this tessellation and add an index into the patch array for patch
+faces.
+<P>
+
+<!---------------------------------------------------------------------------->
+<a name="Coordinates">
+<p>
+<table border=1 cellpadding=0 cellspacing=0 width=100% bgcolor="#ffffd0">
+<td width=100%>
+<table border=0 cellpadding=0 cellspacing=0 width=100%>
+<td>
+<b><font size=4>Coordinate System</font></b>
+</td>
+<td align=right>
+<a href="#top">[top]</a>
+</td>
+</table>
+</table>
+
+<P>
+Quake 3 uses a coordinate system where the x-axis points East, the
+y-axis points South, and the z-axis points vertically downward.  If
+you prefer a coordinate system where the y-axis points vertically
+upward and the z-axis points South, you can use the following function
+to convert from Quake 3 coordinates to your coordinate system.
+
+<P>
+<TABLE BGCOLOR=#E5EEEE WIDTH=75% ALIGN=CENTER><TR><TD>
+<BLOCKQUOTE><PRE>
+
+void swizzle(Vector3& v) {
+    float temp = v.y;
+    v.y = v.z;
+    v.z = -temp;
+}</PRE></BLOCKQUOTE></TD></TR></TABLE>
+
+<P>
+
+When swizzling data, you must convert the vertex positions, vertex
+normals, plane normals, and all bounding box min and max vectors.  The
+Quake coordinate system is also scaled so that one meter is about 0.03
+units.  You may wish to change this scale factor.  If you scale vertex
+positions remember to also scale plane distances, and min and max
+vectors appropriately.
+<P>
+
+Depending on the conventions of your rendering system, you may also
+want to invert Quake's lightmap texture coordinates to (1 - s, 1 - t)
+or (s, 1 - t).  It is usually easy to tell when light map texture
+coordinates need to be inverted by looking at a rendering.
+
+<P>
+
+<!---------------------------------------------------------------------------->
+<a name="VisibleSurface">
+<p>
+<table border=1 cellpadding=0 cellspacing=0 width=100% bgcolor="#ffffd0">
+<td width=100%>
+<table border=0 cellpadding=0 cellspacing=0 width=100%>
+<td>
+<b><font size=4>Visible Face Determination</font></b>
+</td>
+<td align=right>
+<a href="#top">[top]</a>
+</td>
+</table>
+</table>
+
+<P>
+The input to the visible face determination step is the camera (and
+the map).  The output is the visibleFace array, which contains the
+indices of all faces that are potentially visible to that camera.
+During the step, the alreadyVisible set is used to prevent a face
+index from being added to the visibleFace array more than once.
+
+<P>
+Two notes before we look at this process in more detail.  First, the
+output is an array of <I>potentially</I> visible faces.  A z-buffer
+test and frustum clipping (both typically provided by hardware) are
+still needed to generate the exactly visible set.  Second, 
+as Max McGuire says in his <A HREF="http://www.flipcode.com/tutorials/tut_q2levels.shtml">Quake 2 BSP File Format</A>,
+
+<BLOCKQUOTE><BLOCKQUOTE>Many people incorrectly associate the BSP tree with the visibility
+algorithm used by Quake and similar engines. As described above, the
+visible surface determination is done using a precomputed PVS. The BSP
+tree is primarily used to divide the map into regions and to quickly
+determine which region the camera is in. As a result, it isn't that
+fundamental to any of the rendering algorithms used in Quake and any
+data structure giving a spatial subdivision (like an octree or a k-D
+tree) could be used instead. BSP trees are very simple however, and
+they are useful for some of the other non-rendering tasks in the Quake
+engine.
+</BLOCKQUOTE></BLOCKQUOTE>
+
+<P>
+
+
+To determine the set of visible faces:
+
+<BLOCKQUOTE>
+1. <A HREF="#VisFindCluster">Find <I>visCluster</I></A>, the index of the cluster containing the camera position.
+<BR>2. <A HREF="#SelectVisibleLeaves">Select all leaves visible from that cluster</A>.
+<BR>3. <A HREF="#FaceIterate">Iterate through all faces in those clusters</A>.
+</BLOCKQUOTE>
+
+<P>
+<a name="VisFindCluster">
+<p>
+<b><font size=4>
+Find the camera cluster (visCluster)
+</font></b>
+<P>
+Recall that a Quake 3 map is divided into convex spaces called
+<I>leaves</I>.  Adjacent leaves are joined into <I>clusters</I>.  The
+map file contains precomputed visibility information at the cluster
+level, which is stored in the <A
+HREF="http://graphics.stanford.edu/~kekoa/q3/#Visdata">visData</A> bit
+array.  
+
+<P>
+
+The index of the cluster containing the camera is
+<CODE>leaf[index].cluster</CODE>, where <I>index</I> is the index of
+the leaf containing the camera.  To find the index of the leaf
+containing the camera, walk the BSP tree.
+<P>
+The root node is index 0 in the nodeArray.  Each node has a splitting
+plane associated with it.  This plane divides space into two child
+subnodes.  If the camera lies in front of the splitting plane, recurse
+into the front node.  Otherwise recurse into the back node.  We repeat
+this process until a BSP leaf is reached.
+<P>
+In the Node data structure, a leaf is denoted by a negative child node
+index.  To convert the negative index into a legal leaf index, negate
+and subtract one.
+<P>
+
+The following function takes a camera position as input.  It walks the
+BSP tree until a leaf is found and then returns the index of that
+leaf.  Remember that this is return value is a leaf index, not a
+cluster index.  The cluster index is stored in the leaf.
+
+<P>
+<TABLE BGCOLOR=#E5EEEE WIDTH=75% ALIGN=CENTER><TR><TD>
+<BLOCKQUOTE><PRE>
+
+int Q3Map::findLeaf(const Vector3& camPos) const {
+    
+    int index = 0;
+
+    while (index >= 0) {
+        const Node&  node  = nodeArray[index];
+        const Plane& plane = planeArray[node.plane];
+
+        // Distance from point to a plane
+        const double distance =
+	   plane.normal.dot(camPos) - plane.distance;
+
+        if (distance >= 0) {
+            index = node.front;
+        } else {
+            index = node.back;
+        }
+    }
+
+    return -index - 1;
+}
+</PRE></BLOCKQUOTE></TD></TR></TABLE>
+
+<P>
+<a name="SelectVisibleLeaves">
+<p>
+<b><font size=4>
+Select visible leaves
+</font></b>
+<P>
+
+To find all visible leaves, iterate through the entire leaf array and
+cull all leaves that are not in visible clusters or are outside the
+view frustum.  The visible cluster test should be performed first
+because it is very efficient and more likely to fail.
+
+<P>
+
+The visData bit array contains precomputed visibility data between
+clusters.  If the cluster with index <I>a</I> can potentially be seen
+by a viewer in the cluster with index <i>b</I>, then bit (a + b *
+visData.sz_vecs * 8) of visData.vecs has value 1.  Otherwise, that bit
+has value 0.
+
+<P>
+
+The following function uses bitwise operators to efficiently extract
+the relevant bit.  The inputs are the index of the cluster containing
+the camera and the index of the cluster to be tested.  The function
+returns true if the test cluster is potentially visible, otherwise it
+returns false.  A call to the function typically looks like
+<CODE>isClusterVisible(visCluster, leaf[L].cluster)</CODE>.
+
+<P>
+<TABLE BGCOLOR=#E5EEEE WIDTH=75% ALIGN=CENTER><TR><TD>
+<BLOCKQUOTE><PRE>
+
+bool Q3Map::isClusterVisible(int visCluster, int testCluster) const {
+
+    if ((visData.bitsets == NULL) || (visCluster < 0)) {
+        return true;
+    }
+
+    int i = (visCluster * visData.bytesPerCluster) + (testCluster >> 3);
+    uint8 visSet = visData.bitsets[i];
+
+    return (visSet & (1 << (testCluster & 7))) != 0;
+}
+</PRE></BLOCKQUOTE></TD></TR></TABLE>
+<P>
+
+In the function, the expression (testCluster >> 3) computes
+(testCluster / 8), i.e. the byte within visData that contains
+information about the given cluster.  The expression (1 <<
+(testCluster & 7)) creates a bit mask that selects bit (testCluster
+mod 8) within that byte.
+<P>
+
+The visData information only considers the position of the viewer and
+not the orientation.  Orientation is handled by the frustum culling
+step.  The leaf contains two corners of its bounding box, min and max.
+If <CODE>camera.isVisible(leaf[L].min, leaf[L].max)</CODE> returns
+false, the leaf should be dropped from consideration because it is
+outside the view frustum.  Note that some of the faces in the leaf are
+also in adjacent leaves and may therefore still be visible-- the other
+leaves will take care of that when we iterate through them.
+
+<P>
+
+<P>
+<a name="FaceIterate">
+<p>
+<b><font size=4>
+Iterate through faces
+</font></b>
+<P>
+A leaf contains all faces that have non-zero intersection with the
+leaf volume.  The faces in leaf with index L have indices
+<CODE>leaf[L].firstFace</CODE> through <CODE>(leaf[L].firstFace +
+leaf[L].facesCount - 1)</CODE>.
+
+<P>
+
+Because a face may protrude out of the leaf, the same face may be in
+multiple leaves.  Use the <A HREF="#AlreadyVisible">alreadyVisible</A>
+set to avoid touching the same face twice.  A simple code snippet for
+this is:
+
+<P>
+<TABLE BGCOLOR=#E5EEEE WIDTH=75% ALIGN=CENTER><TR><TD>
+<BLOCKQUOTE><PRE>
+
+for (int i = 0; i < leaf[L].facesCount; ++i) {
+    const int f = i + leaf[L].firstFace;
+    if (! alreadyVisible.contains(f)) {
+        alreadyVisible.insert(f);
+        visibleFaces.append(f);
+    }
+}
+</PRE></BLOCKQUOTE></TD></TR></TABLE>
+<P>
+
+<P>
+
+<!---------------------------------------------------------------------------->
+<a name="#RenderingFaces">
+<p>
+<table border=1 cellpadding=0 cellspacing=0 width=100% bgcolor="#ffffd0">
+<td width=100%>
+<table border=0 cellpadding=0 cellspacing=0 width=100%>
+<td>
+<b><font size=4>Rendering Faces</font></b>
+</td>
+<td align=right>
+<a href="#top">[top]</a>
+</td>
+</table>
+</table>
+
+<P>
+
+There are four kinds of <A
+HREF="http://graphics.stanford.edu/~kekoa/q3/#Faces">Faces</A> in a
+Quake 3 map: polygons, patches, meshes, and billboards.  Polygons and
+meshes are collections of triangles.  A patch is a bezier-spline patch that
+must be tessellated into triangles for rendering.  Billboards are polygons
+whose orientation changes to always face the viewer.
+ 
+<P>
+
+<A HREF="#RenderMesh">Polygons and meshes</A> are rendered in the same
+manner.  The position, texture coordinate, and lightmap coordinate are
+stored in the vertex array.  Using OpenGL vertex arrays, these can be
+referenced with a single index by setting the active vertex pointer
+and tex coord pointers into the same array, offset by the memory
+location within a Vertex for each type of coordinate.
+
+<P>
+<A HREF="#RenderPatch">Patches</A> are tessellated into triangles,
+either during loading or per-frame, and rendered as triangle strips.
+The tessellation process creates vertices that did not exist in the
+original mesh, so each patch contains its own vertex array instead
+of using the global one stored in the map file.
+
+<P>
+
+Although handling the shaders and effects that can be stored in Quake
+3 maps is more complicated, simple alpha blending can be supported to
+render translucent surfaces correctly.  When a texture contains an
+alpha channel, enable blending and select the
+<CODE>glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)</CODE>
+blending mode.  Alpha blended faces should not be backfaced culled;
+they appear to have only one polygon for both sides (there is probably
+a two-sided polygon flag somewhere that is the correct place to obtain
+such information).
+
+<P>
+<a name="RenderMesh">
+<p>
+<b><font size=4>
+Render a mesh
+</font></b>
+<P>
+
+Each face mesh, <I>curFace</I> of type Face describes a mesh
+containing (curFace.meshVertexesCount / 3) triangles.  The indices
+into the vertex array for the vertices of these triangles are
+themselves indirected.  The <A
+HREF="http://graphics.stanford.edu/~kekoa/q3/#Meshverts>">meshVertex</A>
+array stores the indices of the vertices, in the correct order to
+create triangle lists.  For a given face, these are
+<CODE>meshVertex[curFace.firstMeshVertex]</CODE> through
+<CODE>meshVertex[curFace.firstMeshVertex + curFace.mushVertexesCount -
+1]</CODE>.  The meshVertex values are also offet by
+<CODE>curFace.firstVertex</CODE>.
+<P>
+
+This indexing scheme, although confusing, is arranged conveniently for
+using glDrawElements to render the triangle lists.  The following code
+renders a mesh using this function.  
+
+<P>
+
+<TABLE BGCOLOR=#E5EEEE WIDTH=75% ALIGN=CENTER><TR><TD>
+<BLOCKQUOTE><PRE>
+
+const Face& curFace = face[visibleFace[f]];
+static const stride = sizeof(Vertex); // BSP Vertex, not float[3]
+const int offset    = face.firstVertex;
+
+glVertexPointer(3, GL_FLOAT, stride, &(vertex[offset].position));
+
+glClientActiveTextureARB(GL_TEXTURE0_ARB);
+glTexCoordPointer(2, GL_FLOAT, stride, &(vertex[offset].textureCoord));
+
+glClientActiveTextureARB(GL_TEXTURE1_ARB);
+glTexCoordPointer(2, GL_FLOAT, stride, &(vertex[offset].lightmapCoord));
+
+glDrawElements(GL_TRIANGLES, curFace.meshVertexesCount,
+   GL_UNSIGNED_INT, &meshVertex[curFace.firstMeshVertex]);
+</PRE></BLOCKQUOTE></TD></TR></TABLE>
+<P>
+
+In the above code, the firstMeshVertex offset is applied directly to
+the vertex pointer since there is no other provision for offsetting
+the indices with glDrawElements.
+
+<a name="RenderPatch">
+<p>
+<b><font size=4>
+Render a patch
+</font></b>
+<P>
+
+Patches are surfaces defined by an array of Bezier curves.  These
+curves are represented by the following data structure.
+<P>
+<A NAME="Bezier">
+<TABLE BGCOLOR=#E5EEEE WIDTH=75% ALIGN=CENTER><TR><TD>
+<BLOCKQUOTE><PRE>
+class Bezier {
+private:
+    int                 level;
+    Array&lt;Vertex&gt;       vertex;
+    Array&lt;uint32&gt;       indexes;
+    Array&lt;int32&gt;        trianglesPerRow;
+    Array&lt;uint32*&gt;      rowIndexes;
+
+public:
+    Vertex              controls[9];
+
+    void tessellate(int level);
+    void render();
+};
+</PRE></BLOCKQUOTE></TD></TR></TABLE>
+<P>
+
+The controls array contains the 9 control points for this curve.  The
+Beziers form a grid within a patch, so adjacent Beziers will share
+three of these.  The Bezier curves must be tessellated prior to
+rendering.  The <I>level</I> of the tessellation is the number of
+edges into which each side of a 2D curve is subdivided.  The total
+number of triangles in the tessellation is <CODE>(2 * pow(level,
+2))</CODE>.  The remainder of the private data is the tessellation,
+stored in a form we can pass directly to glMultiDrawElements.  The
+pointers in the rowIndexes array point into the indexes array; they
+are not referring to separately allocated memory.
+
+<P>
+The tessellate method computes the private data for rendering from the
+control points (which must themselves be set up during loading of the
+containing patch).  Any number between five and 10 is a reasonable
+subdivision level for most maps.  The intent of subdivision is to
+provide smoother curves on faster machines by increasing the level at
+runtime.  Another use for subdivision is to allocate more polygons to
+larger curves-- implementors are free to provide their own metric for
+choosing a good subdivision level.
+<P>
+
+The following is an implementation of the tessellate method with
+structure based on the tessellator in the Paul Baker's <A
+HREF="http://users.ox.ac.uk/~univ1234/opengl/octagon/octagon.htm">Octagon</A> project.</I>
+
+<P>
+<TABLE BGCOLOR=#E5EEEE WIDTH=75% ALIGN=CENTER><TR><TD>
+<BLOCKQUOTE><PRE>
+
+void Bezier::tessellate(int L) {
+    level = L;
+
+    // The number of vertices along a side is 1 + num edges
+    const int L1 = L + 1;
+
+    vertex.resize(L1 * L1);
+
+    // Compute the vertices
+    int i;
+
+    for (i = 0; i <= L; ++i) {
+        double a = (double)i / L;
+        double b = 1 - a;
+
+        vertex[i] =
+            controls[0] * (b * b) + 
+            controls[3] * (2 * b * a) +
+            controls[6] * (a * a);
+    }
+
+    for (i = 1; i <= L; ++i) {
+        double a = (double)i / L;
+        double b = 1.0 - a;
+
+        BSPVertex temp[3];
+
+        int j;
+        for (j = 0; j < 3; ++j) {
+            int k = 3 * j;
+            temp[j] =
+                controls[k + 0] * (b * b) + 
+                controls[k + 1] * (2 * b * a) +
+                controls[k + 2] * (a * a);
+        }
+
+        for(j = 0; j <= L; ++j) {
+            double a = (double)j / L;
+            double b = 1.0 - a;
+
+            vertex[i * L1 + j]=
+                temp[0] * (b * b) + 
+                temp[1] * (2 * b * a) +
+                temp[2] * (a * a);
+        }
+    }
+
+
+    // Compute the indices
+    int row;
+    indexes.resize(L * (L + 1) * 2);
+
+    for (row = 0; row < L; ++row) {
+        for(int col = 0; col <= L; ++col)	{
+            indexes[(row * (L + 1) + col) * 2 + 1] = row       * L1 + col;
+            indexes[(row * (L + 1) + col) * 2]     = (row + 1) * L1 + col;
+        }
+    }
+
+    trianglesPerRow.resize(L);
+    rowIndexes.resize(L);
+    for (row = 0; row < L; ++row) {
+        trianglesPerRow[row] = 2 * L1;
+        rowIndexes[row]      = &indexes[row * 2 * L1];
+    }
+    
+}</PRE></BLOCKQUOTE></TD></TR></TABLE>
+<P>
+
+Once constructed, this data can be rendered directly with vertex arrays:
+<P>
+
+<TABLE BGCOLOR=#E5EEEE WIDTH=75% ALIGN=CENTER><TR><TD>
+<BLOCKQUOTE><PRE>
+
+void Bezier::render() {
+    glVertexPointer(3, GL_FLOAT,sizeof(BSPVertex), &vertex[0].position);
+
+    glClientActiveTextureARB(GL_TEXTURE0_ARB);
+    glTexCoordPointer(2, GL_FLOAT,sizeof(BSPVertex), &vertex[0].textureCoord);
+
+    glClientActiveTextureARB(GL_TEXTURE1_ARB);
+    glTexCoordPointer(2, GL_FLOAT, sizeof(BSPVertex), &vertex[0].lightmapCoord);
+
+    glMultiDrawElementsEXT(GL_TRIANGLE_STRIP, trianglesPerRow.getCArray(),
+        GL_UNSIGNED_INT, (const void **)(rowIndexes.getCArray()), patch.level);
+}</PRE></BLOCKQUOTE></TD></TR></TABLE>
+
+<p>
+<hr>
+<table border=0 width=100% cellspacing=0 cellpadding=0>
+<td align=left valign=top>
+<em><font size=3>Copyright &copy; 2003 Morgan McGuire.  All rights
+reserved.</font></em>
+<td align=right valign=top>
+<em><font size=3>morgan@cs.brown.edu</font></em>
+</table>
+
+<P>
+<B>Acknowledgements</B>
+<BR>Kris Taeleman answered a question while I was working on this document, and I used the following resources:
+<BR>Max McGuire's <A HREF="http://www.flipcode.com/tutorials/tut_q2levels.shtml">Quake 2 BSP File Format</A>,
+<BR>Kekoa Proudfoot's
+<A HREF="http://graphics.stanford.edu/~kekoa/q3/">Unofficial Quake 3 Map Specs</A>,
+<BR>Ben "Digiben" Humphrey's <A HREF="http://www.misofruit.co.kr/seojewoo/programming/opengl/Quake3Format.htm">Unofficial Quake 3 BSP Format</A>,
+<BR>Nathan Ostgard's <A HREF="http://www.nathanostgard.com/tutorials/quake3/collision/">Quake 3 BSP Collision Detection</A>,
+<BR>Leonardo Boselli's <A HREF="http://sourceforge.net/projects/apocalyx/">Apocalyx</A> source code,
+<BR>Paul Baker's <A HREF="http://users.ox.ac.uk/~univ1234/opengl/octagon/octagon.htm">Octagon</A> source code, 
+<BR>The Aside Software <A HREF="http://talika.eii.us.es/~titan/titan/rnews.html">Titan</A> source code,
+<BR>The <A HREF="http://etud.epita.fr:8000/~bilalt_j/q3tools/q3radiant_man/q3rmanhtml.htm">Q3Radient Manual</A>
+
+
+<p>
+<font size=2>
+Keywords: quake 3 quake3 q3 arena quake3arena q3arena map bsp file render opengl spec specs format vertex order
+</font>
+
+</BODY>
+</HTML>
+
+
