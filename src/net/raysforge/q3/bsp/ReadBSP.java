@@ -90,6 +90,35 @@ public class ReadBSP {
 		return leafbrushes;
 	}
 
+	public Model[] getModels() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.Models);
+		Model[] models = new Model[br.length() / Model.size];
+		for (int i = 0; i < models.length; i++) {
+			models[i] = new Model(br);
+		}
+		return models;
+	}
+
+	// int[n][3] => brushside, n_brushsides, texture
+	public int[][] getBrushes() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.Brushes);
+		int[][] brushes = new int[br.length() / 12][];
+		for (int i = 0; i < brushes.length; i++) {
+			brushes[i] = br.readInt( 3);
+		}
+		return brushes;
+	}
+
+	// int[n][2] => plane, texture
+	public int[][] getBrushSides() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.Brushsides);
+		int[][] brushsides = new int[br.length() / 8][];
+		for (int i = 0; i < brushsides.length; i++) {
+			brushsides[i] = br.readInt( 2);
+		}
+		return brushsides;
+	}
+		
 	public Plane[] getPlanes() throws IOException {
 		BinaryReader br = getLumpReader(LumpTypes.Planes);
 		Plane[] planes = new Plane[br.length() / Plane.size];
