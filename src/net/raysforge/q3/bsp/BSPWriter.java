@@ -151,4 +151,17 @@ public class BSPWriter {
 		}
 		System.out.println("indices written");
 	}
+
+	public void writeNormals(List<Vertex> vertexes, String filename) {
+		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
+			for (Vertex vertex : vertexes) {
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.normal.x) );
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.normal.y) );
+				fos.write( BSPWriter.float2ByteArray( (float)vertex.normal.z) );
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("normals written");
+	}
 }
