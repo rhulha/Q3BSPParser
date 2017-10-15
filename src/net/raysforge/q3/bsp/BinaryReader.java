@@ -36,6 +36,18 @@ public class BinaryReader {
 		return buf;
 	}
 
+	public float readFloat() throws IOException {
+		return Float.intBitsToFloat(readInt());
+	}
+
+	public float[] readFloat(int i) throws IOException {
+		float[] buf = new float[i];
+		for (int j = 0; j < buf.length; j++) {
+			buf[j] = readFloat();
+		}
+		return buf;
+	}
+
 	public void close() throws IOException {
 		if (bais != null)
 			bais.close();
@@ -70,10 +82,6 @@ public class BinaryReader {
 			bais.read(b);
 		else
 			raf.readFully(b);
-	}
-
-	public float readFloat() throws IOException {
-		return Float.intBitsToFloat(readInt());
 	}
 
 }

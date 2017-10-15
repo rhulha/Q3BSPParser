@@ -78,6 +78,18 @@ public class ReadBSP {
 		return leafs;
 	}
 
+	public int[] getLeaffaces() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.Leaffaces);
+		int[] leaffaces = br.readInt(br.length() / 4);
+		return leaffaces;
+	}
+
+	public int[] getLeafbrushes() throws IOException {
+		BinaryReader br = getLumpReader(LumpTypes.Leafbrushes);
+		int[] leafbrushes = br.readInt(br.length() / 4);
+		return leafbrushes;
+	}
+
 	public Plane[] getPlanes() throws IOException {
 		BinaryReader br = getLumpReader(LumpTypes.Planes);
 		Plane[] planes = new Plane[br.length() / Plane.size];
