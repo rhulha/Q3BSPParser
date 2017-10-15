@@ -11,24 +11,28 @@ public class Main {
 
 		BSPReader bsp = new BSPReader("q3dm17.bsp");
 		
-		BSPWriter.writeArrayAsJSON( bsp.getBrushSides(), "q3dm17.brushsides");
+		BSPWriter bspWriter = new BSPWriter( basePath);
+		
+		bspWriter.writeArrayAsJSON( bsp.getLeafbrushes(), "q3dm17.leafbrushes");
+		
+		bspWriter.writeArrayAsJSON( bsp.getBrushSides(), "q3dm17.brushsides");
 
-		BSPWriter.writeArrayAsJSON( bsp.getBrushes(), "q3dm17.brushes");
+		bspWriter.writeArrayAsJSON( bsp.getBrushes(), "q3dm17.brushes");
 
-		//BSPWriter.writeObjectAsJSON( bsp.getLeafs(), "q3dm17.leafs");
+		bspWriter.writeObjectAsJSON( bsp.getLeafs(), "q3dm17.leafs");
 		
-		//BSPWriter.writePlanesAsJSON( bsp.getPlanes(), "q3dm17.planes");
+		bspWriter.writePlanesAsJSON( bsp.getPlanes(), "q3dm17.planes");
 		
-		//BSPWriter.writeEntitiesAsJSON( bsp.getEntities(), "q3dm17.ents");
+		bspWriter.writeEntitiesAsJSON( bsp.getEntities(), "q3dm17.ents");
 		
-		//BSPWriter.writeNodesAsJSON( bsp.getNodes(), basePath +"q3dm17.nodes");
+		bspWriter.writeNodesAsJSON( bsp.getNodes(), "q3dm17.nodes");
 		
 		
-		//writeBasics(bsp);
+		writeBasics(bsp, bspWriter);
 		
 	}
 
-	public static void writeBasics(BSPReader bsp) throws IOException {
+	public static void writeBasics(BSPReader bsp, BSPWriter bspWriter) throws IOException {
 		Face[] faces = bsp.getFaces();
 		Texture[] textures = bsp.getTextures();
 		List<Vertex> verts = bsp.getVertexes();
@@ -39,9 +43,9 @@ public class Main {
 				Tessellate.tessellate(face, verts, meshVerts, 10);
 		}
 
-		BSPWriter.writeVerts( verts, basePath +"q3dm17.verts");
+		bspWriter.writeVerts( verts, "q3dm17.verts");
 
-		BSPWriter.writeIndices( faces, meshVerts, textures, basePath +"q3dm17.indices");
+		bspWriter.writeIndices( faces, meshVerts, textures, "q3dm17.indices");
 	}
 
 }

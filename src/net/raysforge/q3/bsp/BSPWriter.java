@@ -15,6 +15,12 @@ import com.google.gson.Gson;
 
 public class BSPWriter {
 
+	private String basePath;
+
+	public BSPWriter(String basePath) {
+		this.basePath = basePath;
+	}
+
 	public static byte[] int2ByteArray (int value) {
 		return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(value).array();
 	}
@@ -28,11 +34,11 @@ public class BSPWriter {
 		return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(value).array();
 	}
 	
-	public static void writeObjectAsJSON( Object obj, String filename) {
+	public void writeObjectAsJSON( Object obj, String filename) {
 		Gson gson = new Gson();
 		String json = gson.toJson(obj);
 		json = json.replace("},{", "},\n{");
-		try ( FileWriter fw = new FileWriter(filename)) {
+		try ( FileWriter fw = new FileWriter(basePath + filename)) {
 			fw.write(json);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -40,11 +46,11 @@ public class BSPWriter {
 		System.out.println(filename + " written");
 	}
 
-	public static void writeArrayAsJSON( Object obj, String filename) {
+	public void writeArrayAsJSON( Object obj, String filename) {
 		Gson gson = new Gson();
 		String json = gson.toJson(obj);
 		json = json.replace("],[", "],\n[");
-		try ( FileWriter fw = new FileWriter(filename)) {
+		try ( FileWriter fw = new FileWriter(basePath + filename)) {
 			fw.write(json);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -53,11 +59,11 @@ public class BSPWriter {
 	}
 	
 	
-	public static void writeLeafsAsJSON(Leaf[] leafs, String filename) {
+	public void writeLeafsAsJSON(Leaf[] leafs, String filename) {
 		Gson gson = new Gson();
 		String json = gson.toJson(leafs);
 		json = json.replace("},{", "},\n{");
-		try ( FileWriter fw = new FileWriter(filename)) {
+		try ( FileWriter fw = new FileWriter(basePath + filename)) {
 			fw.write(json);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -65,11 +71,11 @@ public class BSPWriter {
 		System.out.println("leafs written");
 	}
 
-	public static void writePlanesAsJSON(Plane[] planes, String filename) {
+	public void writePlanesAsJSON(Plane[] planes, String filename) {
 		Gson gson = new Gson();
 		String json = gson.toJson(planes);
 		json = json.replace("},{", "},\n{");
-		try ( FileWriter fw = new FileWriter(filename)) {
+		try ( FileWriter fw = new FileWriter(basePath + filename)) {
 			fw.write(json);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -77,11 +83,11 @@ public class BSPWriter {
 		System.out.println("planes written");
 	}
 
-	public static void writeEntitiesAsJSON(Map<String, List<Map<String, String>>> entitites, String filename) {
+	public void writeEntitiesAsJSON(Map<String, List<Map<String, String>>> entitites, String filename) {
 		Gson gson = new Gson();
 		String json = gson.toJson(entitites);
 		json = json.replace("],\"", "],\n\"");
-		try ( FileWriter fw = new FileWriter(filename)) {
+		try ( FileWriter fw = new FileWriter(basePath + filename)) {
 			fw.write(json);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -89,11 +95,11 @@ public class BSPWriter {
 		System.out.println("entitites written");
 	}
 
-	public static void writeNodesAsJSON(Node[] nodes, String filename) {
+	public void writeNodesAsJSON(Node[] nodes, String filename) {
 		Gson gson = new Gson();
 		String json = gson.toJson(nodes);
 		json = json.replace("},{", "},\n{");
-		try ( FileWriter fw = new FileWriter(filename)) {
+		try ( FileWriter fw = new FileWriter(basePath + filename)) {
 			fw.write(json);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -101,8 +107,8 @@ public class BSPWriter {
 		System.out.println("nodes written");
 	}
 
-	public static void writeVerts(List<Vertex> vertexes, String filename) throws IOException {
-		try ( FileOutputStream fos = new FileOutputStream(filename)) {
+	public void writeVerts(List<Vertex> vertexes, String filename) throws IOException {
+		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
 			for (Vertex vertex : vertexes) {
 				fos.write( BSPWriter.float2ByteArray( (float)vertex.position.x) );
 				fos.write( BSPWriter.float2ByteArray( (float)vertex.position.y) );
@@ -114,7 +120,7 @@ public class BSPWriter {
 		System.out.println("verts written");
 	}
 	
-	public static void writeIndices(Face[] faces, List<Integer> meshVerts, Texture[] textures, String filename) throws IOException {
+	public void writeIndices(Face[] faces, List<Integer> meshVerts, Texture[] textures, String filename) throws IOException {
 		
 		List<String> skip = new ArrayList<String>();
 		skip.add("flareShader");
@@ -128,7 +134,7 @@ public class BSPWriter {
 
 		
 		
-		try ( FileOutputStream fos = new FileOutputStream(filename)) {
+		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
 			
 			for (Face face : faces) {
 				
