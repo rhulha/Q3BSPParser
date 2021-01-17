@@ -4,7 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-public class Q3MapConverter2 {
+public class Q3Map2Obj {
 	
 
 	public static void main(String[] args) throws IOException {

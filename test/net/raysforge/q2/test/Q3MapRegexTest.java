@@ -1,4 +1,4 @@
-package net.raysforge.q3.map;
+package net.raysforge.q2.test;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Q3MapConverter {
+public class Q3MapRegexTest {
 
 	@SuppressWarnings("unused")
 	public static void main(String[] args) throws IOException {
