@@ -8,7 +8,7 @@ import java.io.StreamTokenizer;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.raysforge.q3.GenericParser;
+import net.raysforge.generic.GenericParser;
 
 public class MapParser extends GenericParser implements AutoCloseable {
 

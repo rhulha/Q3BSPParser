@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import net.raysforge.q3.GenericParser;
+import net.raysforge.generic.GenericParser;
 
 /*
 ammo_bullets

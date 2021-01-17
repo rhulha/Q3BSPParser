@@ -1,4 +1,4 @@
-package net.raysforge.q3;
+package net.raysforge.generic;
 
 import java.io.IOException;
 import java.io.StreamTokenizer;
