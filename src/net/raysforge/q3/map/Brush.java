@@ -8,6 +8,8 @@ public class Brush {
 	public final List<Plane> planes;
 
 	public List<List<Point>> polys = new ArrayList<List<Point>>();
+	
+	private boolean polysInitialized=false;
 
 	public Brush(List<Plane> planes) {
 		this.planes = planes;
@@ -17,9 +19,11 @@ public class Brush {
 		}
 	}
 
-	public List<List<Point>> calculatePolygons() {
+	public List<List<Point>> getPolygons() {
+		if( polysInitialized ) {
+			return polys;
+		}
 		int count = planes.size();
-
 		for (int i = 0; i <= count - 3; i++) {
 			for (int j = i; j <= count - 2; j++) {
 				for (int k = j; k <= count - 1; k++) {
@@ -51,8 +55,8 @@ public class Brush {
 		}
 
 		sortVerticesCW();
+		polysInitialized=true;
 		return polys;
-
 	}
 
 	double epsilon = 1e-5;

@@ -1,0 +1,33 @@
+Version_1
+MapProperties{
+mapID=
+mapTitle=Editor Tutorial
+mapDescription=This map was built to showcase some fun use cases for functions and lighting. 
+mapTags=Tutorial
+isCampaign=False
+mapRunes=
+mapWeapons=
+mapEnemyCount=0
+music=Hotspot
+lavaColor=0.15,0.1,0.05,1
+lavaEmissiveColor=1,0.35,0.15,1
+waterColor=0,0.05,0.15,1
+waterEmissiveColor=0,0,0,1
+wasteColor=0.05,0.1,0.03,1
+wasteEmissiveColor=0.1628999,0.905,0.1925837,1
+}
+Layers{
+Lights_Tutorial=False
+}
+Colors{
+Default=1,1,1,1
+Grey=0.31,0.31,0.31,1
+Black=0,0,0,1
+Red=1,0,0,1
+Green=0,1,0.04000002,1
+Blue=0.08000004,0,1,1
+Yellow=1,0.87,0,1
+}
+Materials{
+Blockout
+}

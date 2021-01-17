@@ -83,7 +83,7 @@ public class MapParser extends GenericParser {
 		//String texture = getNextStringWithSlashes();
 		String texture = getNextString();
 		st.parseNumbers();
-		System.out.println(texture);
+		//System.out.println(texture);
 		
 		while( true) {
 			if( peekNextToken() == StreamTokenizer.TT_EOL)
