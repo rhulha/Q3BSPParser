@@ -10,10 +10,7 @@ import java.util.List;
 
 import net.raysforge.generic.GenericParser;
 
-public class MapParser extends GenericParser implements AutoCloseable {
-
-	private BufferedReader br;
-	private StreamTokenizer st;
+public class MapParser extends GenericParser {
 
 	public MapParser(String file) throws FileNotFoundException {
 		super(initStreamTokenizer(file));
@@ -49,10 +46,15 @@ public class MapParser extends GenericParser implements AutoCloseable {
 	public String getNextStringWithSlashes() throws IOException {
 		StringBuffer sb = new StringBuffer();
 		while( true) {
-			int p = peekNextToken();
-			if( p == '/')
+			int type = peekNextToken();
+			if( type == '/') {
 				sb.append((char) st.nextToken());
-			else if( p == StreamTokenizer.TT_WORD) {
+			} else if( type == '+') { // some textures start with a +
+				sb.append((char) st.nextToken());
+			//} else if( type == StreamTokenizer.TT_NUMBER) { // some textures start with a number
+				//st.nextToken();
+				//sb.append(st.nval);
+			} else if( type == StreamTokenizer.TT_WORD) {
 				st.nextToken();
 				sb.append(st.sval);
 			} else {
@@ -60,11 +62,6 @@ public class MapParser extends GenericParser implements AutoCloseable {
 			}
 		}
 		return sb.toString();
-	}
-
-	@Override
-	public void close() throws IOException {
-		br.close();
 	}
 
 	public Plane parsePlane() throws IOException {
@@ -80,7 +77,13 @@ public class MapParser extends GenericParser implements AutoCloseable {
 		Point p3 = getNextPoint();
 		assertNextToken(')');
 		
-		String texture = getNextStringWithSlashes();
+		st.wordChars('0', '9');
+		st.wordChars('/', '/');
+		st.wordChars('+', '+');
+		//String texture = getNextStringWithSlashes();
+		String texture = getNextString();
+		st.parseNumbers();
+		System.out.println(texture);
 		
 		while( true) {
 			if( peekNextToken() == StreamTokenizer.TT_EOL)

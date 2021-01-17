@@ -8,6 +8,8 @@ public class GenericParser {
 	protected StreamTokenizer st;
 	
 	public GenericParser(StreamTokenizer st) {
+		if( st == null)
+			throw new NullPointerException("StreamTokenizer is null.");
 		this.st = st;
 	}
 	
@@ -47,9 +49,9 @@ public class GenericParser {
 	}
 	
 	public int peekNextToken() throws IOException {
-		int t = st.nextToken();
+		int type = st.nextToken();
 		st.pushBack();
-		return t;
+		return type;
 	}
 
 	public void swallowEOLs() throws IOException {

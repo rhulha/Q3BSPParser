@@ -7,7 +7,7 @@ public class Brush {
 
 	public final List<Plane> planes;
 
-	List<List<Point>> polys = new ArrayList<List<Point>>();
+	public List<List<Point>> polys = new ArrayList<List<Point>>();
 
 	public Brush(List<Plane> planes) {
 		this.planes = planes;

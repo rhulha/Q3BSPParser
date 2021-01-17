@@ -6,11 +6,11 @@ import java.util.List;
 
 public class Q3Map2Obj {
 	
+	public static void map2obj(String mapFile, String objFile) {
+		try ( FileWriter fw = new FileWriter(objFile)) {
 
-	public static void main(String[] args) throws IOException {
-
-		try ( MapParser mapParser = new MapParser("q3dm17sample.map"); FileWriter fw = new FileWriter("q3dm17sample.obj")) {
-
+			MapParser mapParser = new MapParser(mapFile);
+					
 			List<Brush> brushList = mapParser.getAllBrushes();
 			
 			for (Brush brush : brushList) {
@@ -44,7 +44,6 @@ public class Q3Map2Obj {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 	
 
