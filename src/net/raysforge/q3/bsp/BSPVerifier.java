@@ -7,20 +7,20 @@ import java.util.Set;
 public class BSPVerifier {
 
 	public static void main(String[] args) throws IOException {
-		BSPReader bsp = new BSPReader("q3dm17.bsp");
+		Q3BSPReader bsp = new Q3BSPReader("q3dm17.bsp", Q3LumpTypes.size);
 
 		printAllBrushSidesShader(bsp);
 		// verifyValues(bsp);
 	}
 
-	static void printAllShader(BSPReader bsp) throws IOException {
+	static void printAllShader(Q3BSPReader bsp) throws IOException {
 		Shader[] shaders = bsp.getShaders();
 		for (Shader shader : shaders) {
 			System.out.println(shader.shader);
 		}
 	}
 
-	static void printAllBrushSidesShader(BSPReader bsp) throws IOException {
+	static void printAllBrushSidesShader(Q3BSPReader bsp) throws IOException {
 		Shader[] shaders = bsp.getShaders();
 
 		Set<String> uniqueShader = new HashSet<String>();
@@ -36,7 +36,7 @@ public class BSPVerifier {
 		}
 	}
 
-	static void printAllBrushesShader(BSPReader bsp) throws IOException {
+	static void printAllBrushesShader(Q3BSPReader bsp) throws IOException {
 		Shader[] shaders = bsp.getShaders();
 
 		Set<String> uniqueShader = new HashSet<String>();
@@ -52,7 +52,7 @@ public class BSPVerifier {
 		}
 	}
 
-	static void printAllSurfacesShader(BSPReader bsp) throws IOException {
+	static void printAllSurfacesShader(Q3BSPReader bsp) throws IOException {
 		Shader[] shaders = bsp.getShaders();
 
 		Set<String> uniqueShader = new HashSet<String>();

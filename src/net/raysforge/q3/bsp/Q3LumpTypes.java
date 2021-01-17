@@ -1,6 +1,6 @@
 package net.raysforge.q3.bsp;
 
-public enum LumpTypes {
+public enum Q3LumpTypes {
 	Entities,
 	Shaders,
 	Planes,
@@ -18,5 +18,5 @@ public enum LumpTypes {
 	Lightmaps,
 	LightGrid,
 	Visibility;
-	public static final int size = LumpTypes.values().length;
+	public static final int size = Q3LumpTypes.values().length;
 }

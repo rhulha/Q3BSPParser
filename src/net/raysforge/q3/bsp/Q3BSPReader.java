@@ -1,69 +1,23 @@
 package net.raysforge.q3.bsp;
 
 import java.io.IOException;
-import java.io.RandomAccessFile;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import net.raysforge.generic.BSPReader;
+import net.raysforge.generic.BinaryReader;
 import net.raysforge.q3.map.Plane;
 import net.raysforge.q3.map.Point;
 
-public class BSPReader {
+public class Q3BSPReader extends BSPReader {
 
-	private byte[][] lumps;
-
-	public BSPReader(String name) throws IOException {
-
-		BinaryReader br = new BinaryReader(new RandomAccessFile(name, "r"));
-
-		String magic = br.readString(4);
-		int version = br.readInt();
-		assert_(magic.equals("IBSP"));
-		assert_(version == 46);
-
-		int count = 0;
-
-		int[] lumpsOffset = new int[LumpTypes.size];
-		int[] lumpsLength = new int[LumpTypes.size];
-		for (int i = 0; i < lumpsOffset.length; i++) {
-			lumpsOffset[i] = br.readInt();
-			lumpsLength[i] = br.readInt();
-		}
-
-		lumps = new byte[LumpTypes.size][];
-		for (int i = 0; i < LumpTypes.size; i++) {
-			int offset = lumpsOffset[i];
-			int length = lumpsLength[i];
-			count += length;
-			br.seek(offset);
-			lumps[i] = br.readBytes(length);
-			System.out.println( LumpTypes.values()[i].toString() + " " +  offset + " " + length);
-		}
-		
-		System.out.println(br.length());
-		System.out.println(count+145);
-
-		//assert_(count + 145 == br.length());
-
-		br.close();
-	}
-
-	private void assert_(boolean b) {
-		if (!b)
-			throw new RuntimeException("assert failed");
-	}
-
-	public byte[] getLump(LumpTypes t) {
-		return lumps[t.ordinal()];
-	}
-
-	public BinaryReader getLumpReader(LumpTypes t) {
-		return new BinaryReader(getLump(t));
+	public Q3BSPReader(String name, int lumpSize) throws IOException {
+		super( name, lumpSize, 46);
 	}
 
 	public Node[] getNodes() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.Nodes);
+		BinaryReader br = getLumpReader(Q3LumpTypes.Nodes.ordinal());
 		Node[] nodes = new Node[br.length() / Node.size];
 
 		for (int i = 0; i < nodes.length; i++) {
@@ -73,7 +27,7 @@ public class BSPReader {
 	}
 
 	public Leaf[] getLeafs() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.Leafs);
+		BinaryReader br = getLumpReader(Q3LumpTypes.Leafs.ordinal());
 		Leaf[] leafs = new Leaf[br.length() / Leaf.size];
 
 		for (int i = 0; i < leafs.length; i++) {
@@ -83,17 +37,17 @@ public class BSPReader {
 	}
 
 	public int[] getLeafSurfaces() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.LeafSurfaces);
+		BinaryReader br = getLumpReader(Q3LumpTypes.LeafSurfaces.ordinal());
 		return br.readInt(br.length() / 4);
 	}
 
 	public int[] getLeafBrushes() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.LeafBrushes);
+		BinaryReader br = getLumpReader(Q3LumpTypes.LeafBrushes.ordinal());
 		return br.readInt(br.length() / 4);
 	}
 
 	public Model[] getModels() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.Models);
+		BinaryReader br = getLumpReader(Q3LumpTypes.Models.ordinal());
 		Model[] models = new Model[br.length() / Model.size];
 		for (int i = 0; i < models.length; i++) {
 			models[i] = new Model(br);
@@ -103,7 +57,7 @@ public class BSPReader {
 
 	// int[n][3] => brushside, n_brushsides, shader
 	public int[][] getBrushes() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.Brushes);
+		BinaryReader br = getLumpReader(Q3LumpTypes.Brushes.ordinal());
 		int[][] brushes = new int[br.length() / 12][];
 		for (int i = 0; i < brushes.length; i++) {
 			brushes[i] = br.readInt( 3);
@@ -113,7 +67,7 @@ public class BSPReader {
 
 	// int[n][2] => plane, shader
 	public int[][] getBrushSides() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.BrushSides);
+		BinaryReader br = getLumpReader(Q3LumpTypes.BrushSides.ordinal());
 		int[][] brushsides = new int[br.length() / 8][];
 		for (int i = 0; i < brushsides.length; i++) {
 			brushsides[i] = br.readInt( 2);
@@ -122,7 +76,7 @@ public class BSPReader {
 	}
 		
 	public List<Vertex> getDrawVerts() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.DrawVerts);
+		BinaryReader br = getLumpReader(Q3LumpTypes.DrawVerts.ordinal());
 		int length = br.length() / Vertex.size;
 		List<Vertex> vertexes = new ArrayList<Vertex>(length);
 		for (int i = 0; i < length; i++) {
@@ -132,7 +86,7 @@ public class BSPReader {
 	}
 
 	public List<Integer> getDrawIndexes() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.DrawIndexes);
+		BinaryReader br = getLumpReader(Q3LumpTypes.DrawIndexes.ordinal());
 		List<Integer> drawIndexes = new ArrayList<Integer>();
 		int length = br.length() / 4;
 		for (int i = 0; i < length; i++) {
@@ -142,7 +96,7 @@ public class BSPReader {
 	}
 
 	public Fog[] getFogs() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.Fogs);
+		BinaryReader br = getLumpReader(Q3LumpTypes.Fogs.ordinal());
 		Fog[] fogs = new Fog[br.length() / Fog.size];
 		for (int i = 0; i < fogs.length; i++) {
 			fogs[i] = new Fog(br.readString(64), br.readInt(), br.readInt());
@@ -151,7 +105,7 @@ public class BSPReader {
 	}
 
 	public Surface[] getSurfaces() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.Surfaces);
+		BinaryReader br = getLumpReader(Q3LumpTypes.Surfaces.ordinal());
 		Surface[] surfaces = new Surface[br.length() / Surface.size];
 		for (int i = 0; i < surfaces.length; i++) {
 			surfaces[i] = new Surface(br);
@@ -160,7 +114,7 @@ public class BSPReader {
 	}
 
 	public List<byte[]> getLightmaps() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.Lightmaps);
+		BinaryReader br = getLumpReader(Q3LumpTypes.Lightmaps.ordinal());
 		int count = br.length() / (128*128*3);
 		List<byte[]> list = new ArrayList<byte[]>(count);
 		
@@ -172,7 +126,7 @@ public class BSPReader {
 	}
 
 	public LightGrid[] getLightGrid() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.LightGrid);
+		BinaryReader br = getLumpReader(Q3LumpTypes.LightGrid.ordinal());
 		LightGrid[] lightgrid = new LightGrid[br.length() / LightGrid.size];
 		for (int i = 0; i < lightgrid.length; i++) {
 			lightgrid[i] = new LightGrid(br);
@@ -181,11 +135,11 @@ public class BSPReader {
 	}
 
 	public Visibility getVisibility() throws IOException {
-		return new Visibility(getLumpReader(LumpTypes.Visibility));
+		return new Visibility(getLumpReader(Q3LumpTypes.Visibility.ordinal()));
 	}
 
 	public Plane[] getPlanes() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.Planes);
+		BinaryReader br = getLumpReader(Q3LumpTypes.Planes.ordinal());
 		Plane[] planes = new Plane[br.length() / Plane.size];
 		for (int i = 0; i < planes.length; i++) {
 			float x = br.readFloat();
@@ -198,7 +152,7 @@ public class BSPReader {
 	}
 
 	public Shader[] getShaders() throws IOException {
-		BinaryReader br = getLumpReader(LumpTypes.Shaders);
+		BinaryReader br = getLumpReader(Q3LumpTypes.Shaders.ordinal());
 		Shader[] shaders = new Shader[br.length() / Shader.size];
 		for (int i = 0; i < shaders.length; i++) {
 			String name = br.readString(64);
@@ -209,7 +163,7 @@ public class BSPReader {
 	}
 
 	public Map<String, List<Map<String, String>>> getEntities() throws IOException {
-		String str = new String(lumps[LumpTypes.Entities.ordinal()]);
+		String str = new String(lumps[Q3LumpTypes.Entities.ordinal()]);
 		EntitiesParser ep = new EntitiesParser(str);
 		return ep.parse();
 	}

@@ -12,9 +12,9 @@ public class Main {
 	static String basePath = "C:\\Users\\Ray\\dart\\Instagib\\web\\data\\";
 	
 	public static void test() throws IOException {
-		BSPReader bsp = new BSPReader("q3dm17.bsp");
+		Q3BSPReader bsp = new Q3BSPReader("q3dm17.bsp", Q3LumpTypes.size);
 		
-		byte[] lump = bsp.getLump(LumpTypes.Lightmaps);
+		byte[] lump = bsp.getLump(Q3LumpTypes.Lightmaps.ordinal());
 		
 		System.out.println(lump.length / (128*128*3));
 		
@@ -26,22 +26,22 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 
-		BSPReader bsp = new BSPReader("q3dm17.bsp");
+		Q3BSPReader bsp = new Q3BSPReader("q3dm17.bsp", Q3LumpTypes.size);
 		BSPWriter bspWriter = new BSPWriter( basePath);
 		
 		writeBasics(bsp, bspWriter);
 
-		writeFile( basePath + "q3dm17.brushes", bsp.getLump(LumpTypes.Brushes));
-		writeFile( basePath + "q3dm17.brushsides", bsp.getLump(LumpTypes.BrushSides));
-		writeFile( basePath + "q3dm17.leafbrushes", bsp.getLump(LumpTypes.LeafBrushes));
-		writeFile( basePath + "q3dm17.leafs", bsp.getLump(LumpTypes.Leafs));
-		writeFile( basePath + "q3dm17.nodes", bsp.getLump(LumpTypes.Nodes));
-		writeFile( basePath + "q3dm17.planes", bsp.getLump(LumpTypes.Planes));
+		writeFile( basePath + "q3dm17.brushes", bsp.getLump(Q3LumpTypes.Brushes.ordinal()));
+		writeFile( basePath + "q3dm17.brushsides", bsp.getLump(Q3LumpTypes.BrushSides.ordinal()));
+		writeFile( basePath + "q3dm17.leafbrushes", bsp.getLump(Q3LumpTypes.LeafBrushes.ordinal()));
+		writeFile( basePath + "q3dm17.leafs", bsp.getLump(Q3LumpTypes.Leafs.ordinal()));
+		writeFile( basePath + "q3dm17.nodes", bsp.getLump(Q3LumpTypes.Nodes.ordinal()));
+		writeFile( basePath + "q3dm17.planes", bsp.getLump(Q3LumpTypes.Planes.ordinal()));
 		
 		bspWriter.writeEntitiesAsJSON( bsp.getEntities(), "q3dm17.ents");
 	}
 
-	public static void writeBasics(BSPReader bsp, BSPWriter bspWriter) throws IOException {
+	public static void writeBasics(Q3BSPReader bsp, BSPWriter bspWriter) throws IOException {
 		Surface[] surfaces = bsp.getSurfaces();
 		List<Vertex> vertexes = bsp.getDrawVerts();
 		List<Integer> indexes = bsp.getDrawIndexes();

@@ -2,6 +2,8 @@ package net.raysforge.q3.bsp;
 
 import java.io.IOException;
 
+import net.raysforge.generic.BinaryReader;
+
 public class Surface {
 
 	/*

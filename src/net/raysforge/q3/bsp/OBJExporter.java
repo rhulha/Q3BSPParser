@@ -8,7 +8,7 @@ import java.util.List;
 public class OBJExporter {
 	
 	// "q3dm17.obj"
-	public static void export(BSPReader bsp, String exportFileName) throws IOException {
+	public static void export(Q3BSPReader bsp, String exportFileName) throws IOException {
 		Shader[] textures = bsp.getShaders();
 
 		Surface[] faces = bsp.getSurfaces();

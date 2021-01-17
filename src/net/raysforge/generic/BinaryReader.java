@@ -1,4 +1,4 @@
-package net.raysforge.q3.bsp;
+package net.raysforge.generic;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
