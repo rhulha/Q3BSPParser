@@ -3,8 +3,11 @@ package net.raysforge.q3.map;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StreamTokenizer;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +20,20 @@ public class MapParser extends GenericParser {
 	}
 	
 	private static StreamTokenizer initStreamTokenizer(String file) throws FileNotFoundException {
+		
+		try {
+			List<String> lines = Files.readAllLines(Path.of(file));
+			FileWriter fw = new FileWriter(file);
+			for (String line : lines) {
+				if( line.startsWith("//"))
+					continue;
+				fw.write(line+"\r\n");
+			}
+			fw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		StreamTokenizer st = new StreamTokenizer(br);
 		st.eolIsSignificant(true);

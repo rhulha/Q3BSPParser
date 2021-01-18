@@ -7,7 +7,7 @@ public class Brush {
 
 	public final List<Plane> planes;
 
-	public List<List<Point>> polys = new ArrayList<List<Point>>();
+	private List<List<Point>> polys = new ArrayList<List<Point>>();
 	
 	private boolean polysInitialized=false;
 

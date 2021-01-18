@@ -32,7 +32,7 @@ public class Q3Map2Obj {
 
 			int vertices=1;
 			for (Brush brush : brushList) {
-				List<List<Point>> polys = brush.polys;
+				List<List<Point>> polys = brush.getPolygons();
 				for (List<Point> polygon : polys) {
 					for (int i = 1; i < polygon.size()-1; i++) {
 						fw.write( "f " + (vertices) + " " + (i+vertices) + " " + (i+vertices+1) + "\n") ;

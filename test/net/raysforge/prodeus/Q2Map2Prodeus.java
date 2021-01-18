@@ -2,7 +2,6 @@ package net.raysforge.prodeus;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -19,14 +18,14 @@ public class Q2Map2Prodeus {
 	public static void main(String[] args) throws URISyntaxException {
 		
 		//Q2Map2Prodeus.map2prodeus("D:\\GameDev\\Tests\\base1.map", "D:\\GameDev\\Tests\\base1.emap");
-		Q2Map2Prodeus.map2prodeus("D:\\GameDev\\Tests\\test_q2.map", "D:\\GameDev\\Tests\\test_q2.emap");
+		Q2Map2Prodeus.map2prodeus("D:\\GameDev\\Tests\\cube.map", ProdeusMapFolder.IS+"cube.emap");
 	}
 
 	public static void map2prodeus(String mapFile, String prodeusFile) throws URISyntaxException {
 		try ( FileWriter fw = new FileWriter(prodeusFile)) {
 			
-			URL res = Q2Map2Prodeus.class.getResource("emap_start.txt");
-			URL res2 = Q2Map2Prodeus.class.getResource("emap_end.txt");
+			URL res = Emap.class.getResource("emap_start.txt");
+			URL res2 = Emap.class.getResource("emap_end.txt");
 			
 			String emap_start = Files.readString( Path.of(res.toURI()), StandardCharsets.UTF_8);
 			String emap_end = Files.readString(Path.of(res2.toURI()), StandardCharsets.UTF_8);
@@ -54,19 +53,8 @@ public class Q2Map2Prodeus {
 					}
 				}
 				fw.write( "\r\n");
-				fw.write( "edges=");
-				//		1,0;3,2;0,2;1,3;4,5;1,4;3,5;6,7;4,6;5,7;8,9;6,8;7,9;10,11;8,10;9,11;12,13;10,12;11,13;14,15;12,14;13,15\r\n");
-				int idx=0;
-				for (List<Point> face : faces) {
-					for (int i = 0; i < face.size()-1; i++) {
-						if( (idx+i)>0)
-							fw.write(";") ;
-						fw.write( (idx+i) + "," + (idx+i+1));
-					}
-					fw.write( ";" + (idx+face.size()-1) + "," + idx);
-					idx+=face.size();
-				}
-				fw.write( "\r\n");
+				int idx;
+				//writeEdges(fw, faces);
 				idx=0;
 				for (List<Point> face : faces) {
 					fw.write( "Face{\r\n");
@@ -94,8 +82,11 @@ public class Q2Map2Prodeus {
 					
 					fw.write( "\r\n");
 					fw.write( "uvs=-0.4375,0;-0.4375,0.125;-0.3125,0.125;-0.3125,0\r\n");
+					fw.write( "}\r\n");
 				}
+				fw.write( "}\r\n");
 			}
+			fw.write( "}\r\n");
 			fw.write(emap_end);
 			fw.close();
 
@@ -103,5 +94,21 @@ public class Q2Map2Prodeus {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	protected static void writeEdges(FileWriter fw, List<List<Point>> faces) throws IOException {
+		fw.write( "edges=");
+		//		1,0;3,2;0,2;1,3;4,5;1,4;3,5;6,7;4,6;5,7;8,9;6,8;7,9;10,11;8,10;9,11;12,13;10,12;11,13;14,15;12,14;13,15\r\n");
+		int idx=0;
+		for (List<Point> face : faces) {
+			for (int i = 0; i < face.size()-1; i++) {
+				if( (idx+i)>0)
+					fw.write(";") ;
+				fw.write( (idx+i) + "," + (idx+i+1));
+			}
+			fw.write( ";" + (idx+face.size()-1) + "," + idx);
+			idx+=face.size();
+		}
+		fw.write( "\r\n");
 	}
 }
