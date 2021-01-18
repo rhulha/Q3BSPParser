@@ -1,4 +1,4 @@
-package net.raysforge.prodeus;
+package net.raysforge.notviable;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -9,6 +9,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import net.raysforge.prodeus.Emap;
+import net.raysforge.prodeus.ProdeusMapFolder;
 import net.raysforge.q3.map.Brush;
 import net.raysforge.q3.map.MapParser;
 import net.raysforge.q3.map.Point;

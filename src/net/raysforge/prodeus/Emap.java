@@ -1,6 +1,7 @@
 package net.raysforge.prodeus;
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -16,6 +17,7 @@ public class Emap {
 	private String emap_start_text;
 	private String emap_end_text;
 	public List<EmapBrush> brushList = new ArrayList<EmapBrush>();
+	private List<EmapNode> nodes = new ArrayList<EmapNode>();
 
 	public Emap()  {
 		try {
@@ -87,7 +89,7 @@ public class Emap {
 						fw.write( "uvs="+face.uvs5+";"+face.uvs6+"\r\n");
 					else if( face.getPoints().size() == 14 )
 						fw.write( "uvs="+face.uvs9+";"+face.uvs5+"\r\n");
-					else if( face.getPoints().size() == 15 )
+					else if( face.getPoints().size() == 15 ) // Prodeus can't handle any of this shit...
 						fw.write( "uvs="+face.uvs9+";"+face.uvs6+"\r\n");
 					else 
 						throw new RuntimeException("points != 3 or 4: " + face.getPoints().size());
@@ -96,13 +98,15 @@ public class Emap {
 				fw.write( "}\r\n");
 			}
 			fw.write( "}\r\n");
-			fw.write(emap_end_text);
+			//fw.write(emap_end_text);
+			
+			writeNodes(fw);
+			
 			fw.close();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-
 
 /*
 	private void writeEdges(FileWriter fw) throws IOException {
@@ -122,8 +126,21 @@ public class Emap {
 	}
 */
 
+	private void writeNodes(FileWriter fw) throws IOException {
+		fw.write( "Nodes{\r\n");
+		for (EmapNode emapNode : nodes) {
+			fw.write(emapNode.getNodeText());
+		}
+		fw.write( "}\r\n");
+	}
+
+
 
 	public void addBrush(EmapBrush brush) {
 		this.brushList.add(brush);
+	}
+
+	public void addNode(EmapNode emapNode) {
+		nodes.add(emapNode);
 	}
 }

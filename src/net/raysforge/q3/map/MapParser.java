@@ -9,27 +9,42 @@ import java.io.StreamTokenizer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.raysforge.generic.GenericParser;
+import net.raysforge.q2.bsp.Vertex;
 
 public class MapParser extends GenericParser {
 
-	public MapParser(String file) throws FileNotFoundException {
+	public MapParser(String file) throws IOException {
 		super(initStreamTokenizer(file));
+		parseMap();
 	}
 	
 	private static StreamTokenizer initStreamTokenizer(String file) throws FileNotFoundException {
 		
 		try {
 			List<String> lines = Files.readAllLines(Path.of(file));
-			FileWriter fw = new FileWriter(file);
+			boolean foundComments=false;
 			for (String line : lines) {
 				if( line.startsWith("//"))
-					continue;
-				fw.write(line+"\r\n");
+				{
+					foundComments=true;
+					break;
+				}
+			
 			}
-			fw.close();
+			if( foundComments ) {
+				FileWriter fw = new FileWriter(file);
+				for (String line : lines) {
+					if( line.startsWith("//"))
+						continue;
+					fw.write(line+"\r\n");
+				}
+				fw.close();
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -125,9 +140,10 @@ public class MapParser extends GenericParser {
 		return new Brush(planes);
 	}
 	
-	public List<Brush> getAllBrushes() throws IOException {
-		List<Brush> brushList = new ArrayList<Brush>();
-		
+	List<Brush> brushList = new ArrayList<Brush>();
+	Map<String, List<Map<String, String>>> entities = new HashMap<>();
+	
+	public void parseMap() throws IOException {
 		assertNextToken('{');
 		swallowUntil('{');
 		st.pushBack();
@@ -155,10 +171,80 @@ public class MapParser extends GenericParser {
 		
 		assertNextToken('}'); // done reading world spawn block
 		
+		// Parse Entities
+		st.quoteChar('"');
 		
+		if( peekNextToken() == StreamTokenizer.TT_EOL)
+			st.nextToken();
+		
+		while (peekNextToken() == '{') {
+			assertNextToken('{');
+			swallowEOLs();
 
+			HashMap<String, String> ent = new HashMap<>();
+
+			while( peekNextToken() != '}')
+			{
+				if( peekNextToken() == '{' ) {
+					// skip brushes inside entities, like in trigger_once
+					swallowUntil('}');
+					swallowEOLs();
+					continue;
+				}
+					
+				String key = getNextQuotetString();
+				String value = getNextQuotetString();
+				ent.put(key, value);
+				assertNextToken(10);
+			}
+
+			String cn = ent.get("classname");
+			if( ! entities.containsKey(cn)) {
+				entities.put(cn, new ArrayList<Map<String, String>>());
+			}
+			
+			entities.get(cn).add(ent);
+
+			swallowEOLs();
+			assertNextToken('}');
+			swallowEOLs();
+		}
+	}
+	
+	public String getNextQuotetString() throws IOException {
+		assertNextToken('"');
+		return st.sval;
+	}
+
+	public Map<String, List<Map<String, String>>> getEntities()	{
+		return entities;
+	}
+	
+	public List<Brush> getAllBrushes()  {
 		return brushList;
-		
+	}
+
+	public List<Map<String, String>> getEntities(String classname) {
+		return entities.get(classname);
+	}
+
+	public String getEntityValue(String classname, int item, String key) {
+		return entities.get(classname).get(item).get(key);
+	}
+
+	public Vertex getEntityOrigin(String classname, int item, boolean swapYZ) {
+		return originString2Vertex(entities.get(classname).get(item).get("origin"), swapYZ);
+	}
+
+	public static Vertex originString2Vertex(String origin, boolean swapYZ) {
+		String[] split = origin.split(" ");
+		float x = Float.parseFloat(split[0]);
+		float y = Float.parseFloat(split[1]);
+		float z = Float.parseFloat(split[2]);
+		if(swapYZ)
+			return new Vertex(x,z,y);
+		else
+			return new Vertex(x,y,z);
 	}
 
 }

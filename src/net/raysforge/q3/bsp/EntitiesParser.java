@@ -55,7 +55,7 @@ public class EntitiesParser extends GenericParser {
 	}
 
 	public String getNextString() throws IOException {
-		assertNextToken( '"');
+		assertNextToken('"');
 		return st.sval;
 	}
 

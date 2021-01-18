@@ -18,6 +18,15 @@ public class Brush {
 			polys.add(new ArrayList<Point>());
 		}
 	}
+	
+	public boolean brushHasMoreFacesThan(int number) {
+		for (List<Point> points : getPolygons()) {
+			if(points.size()>number)
+				return true;
+		}
+		return false;
+	}
+
 
 	public List<List<Point>> getPolygons() {
 		if( polysInitialized ) {
