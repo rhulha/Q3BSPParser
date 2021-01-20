@@ -114,8 +114,14 @@ public class MapParser extends GenericParser {
 		st.wordChars('+', '+');
 		//String texture = getNextStringWithSlashes();
 		String texture = getNextString();
+		
 		st.parseNumbers();
-		//System.out.println(texture);
+		
+		int xoff = (int) getNextDouble();
+		int yoff = (int) getNextDouble();
+		double angle = getNextDouble();
+		double xscale = getNextDouble();
+		double yscale = getNextDouble();
 		
 		while( true) {
 			if( peekNextToken() == StreamTokenizer.TT_EOL)
@@ -124,7 +130,7 @@ public class MapParser extends GenericParser {
 		}
 		swallowEOLs();
 		
-		return new Plane( p1, p2, p3, texture);
+		return new Plane( p1, p2, p3, texture, xoff, yoff, angle, xscale, yscale);
 		
 	}
 
@@ -245,6 +251,22 @@ public class MapParser extends GenericParser {
 			return new Vertex(x,z,y);
 		else
 			return new Vertex(x,y,z);
+	}
+
+	public List<String> getAllUsedTextures() {
+		
+		List<String> texts = new ArrayList<String>();
+		
+		for (Brush brush : brushList) {
+			List<Plane> planes = brush.getPlanes();
+			for (Plane plane : planes) {
+				if(!texts.contains(plane.getTexture()))
+					texts.add(plane.getTexture());
+			}
+		}
+		
+		return texts;
+		
 	}
 
 }

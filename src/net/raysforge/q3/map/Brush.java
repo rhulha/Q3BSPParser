@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Brush {
 
-	public final List<Plane> planes;
+	private final List<Plane> planes;
 
 	private List<List<Point>> polys = new ArrayList<List<Point>>();
 	
@@ -134,5 +134,9 @@ public class Brush {
 			}
 
 		}
+	}
+
+	public List<Plane> getPlanes() {
+		return planes;
 	}
 }

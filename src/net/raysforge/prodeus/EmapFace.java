@@ -5,10 +5,18 @@ import java.util.List;
 
 public class EmapFace {
 	
-	String surf = "surf={\r\n"
+	private int material_id;
+	public String uvs;
+
+	public EmapFace(int material_id, String uvs) {
+		this.material_id = material_id;
+		this.uvs = uvs;
+	}
+	
+	private String surf = "surf={\r\n"
 			+ "localMapping=False\r\n"
 			+ "mappingType=0\r\n"
-			+ "material=0\r\n"
+			+ "material=%MATERIAL_ID%\r\n"
 			+ "color=0\r\n"
 			+ "colorEmissive=0\r\n"
 			+ "seed=858\r\n"
@@ -18,6 +26,11 @@ public class EmapFace {
 			+ "localOffset=0,0,0\r\n"
 			+ "worldOffset=0,0,0\r\n"
 			+ "}\r\n";
+	
+	public String getSurfaceText()
+	{
+		return surf.replace("%MATERIAL_ID%", ""+material_id);
+	}
 	
 	
 	public List<Integer> points = new ArrayList<Integer>(); // 0;1;2;3

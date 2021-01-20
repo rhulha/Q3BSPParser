@@ -14,7 +14,7 @@ public class Q3Map2Obj {
 			List<Brush> brushList = mapParser.getAllBrushes();
 			
 			for (Brush brush : brushList) {
-				List<Plane> planes = brush.planes;
+				List<Plane> planes = brush.getPlanes();
 				for (Plane plane : planes) {
 					plane.hashCode();
 				}

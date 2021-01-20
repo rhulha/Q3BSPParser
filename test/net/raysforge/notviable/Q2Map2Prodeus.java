@@ -10,7 +10,7 @@ import java.nio.file.Path;
 import java.util.List;
 
 import net.raysforge.prodeus.Emap;
-import net.raysforge.prodeus.ProdeusMapFolder;
+import net.raysforge.prodeus.ProdeusFolders;
 import net.raysforge.q3.map.Brush;
 import net.raysforge.q3.map.MapParser;
 import net.raysforge.q3.map.Point;
@@ -20,7 +20,7 @@ public class Q2Map2Prodeus {
 	public static void main(String[] args) throws URISyntaxException {
 		
 		//Q2Map2Prodeus.map2prodeus("D:\\GameDev\\Tests\\base1.map", "D:\\GameDev\\Tests\\base1.emap");
-		Q2Map2Prodeus.map2prodeus("D:\\GameDev\\Tests\\cube.map", ProdeusMapFolder.IS+"cube.emap");
+		Q2Map2Prodeus.map2prodeus("D:\\GameDev\\Tests\\cube.map", ProdeusFolders.Maps+"cube.emap");
 	}
 
 	public static void map2prodeus(String mapFile, String prodeusFile) throws URISyntaxException {

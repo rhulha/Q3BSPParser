@@ -1,4 +1,9 @@
-package net.raysforge.prodeus;
+package net.raysforge.notviable;
+
+import net.raysforge.prodeus.Emap;
+import net.raysforge.prodeus.EmapBrush;
+import net.raysforge.prodeus.EmapFace;
+import net.raysforge.prodeus.ProdeusFolders;
 
 public class TestEmap {
 
@@ -15,7 +20,7 @@ public class TestEmap {
 		brush.addPoint(100,0,-100);
 		brush.addPoint(-100,0,-100);
 		
-		EmapFace face = new EmapFace();
+		EmapFace face = new EmapFace(0, "");
 		face.points.add(0);
 		//face.points.add(1);
 		face.points.add(2);
@@ -25,7 +30,7 @@ public class TestEmap {
 		
 		emap.addBrush(brush);
 		
-		emap.writeMap(ProdeusMapFolder.IS+"gore.emap");
+		emap.writeEMap(ProdeusFolders.Maps+"gore.emap");
 	}
 
 }

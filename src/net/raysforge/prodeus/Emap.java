@@ -33,7 +33,7 @@ public class Emap {
 	
 	
 	
-	public void writeMap( String prodeusFile) {
+	public void writeEMap( String prodeusFile) {
 		try ( FileWriter fw = new FileWriter(prodeusFile)) {
 			fw.write(emap_start_text);
 			fw.write( "Brushes{\r\n");
@@ -55,7 +55,7 @@ public class Emap {
 				//writeEdges(fw);
 				for (EmapFace face : brush.getFaces()) {
 					fw.write( "Face{\r\n");
-					fw.write( face.surf);
+					fw.write( face.getSurfaceText());
 					fw.write( "points=");
 					List<Integer> point_idxs = face.getPoints();
 					sc=false;
