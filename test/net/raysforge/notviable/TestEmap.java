@@ -20,7 +20,7 @@ public class TestEmap {
 		brush.addPoint(100,0,-100);
 		brush.addPoint(-100,0,-100);
 		
-		EmapFace face = new EmapFace(0, "");
+		EmapFace face = new EmapFace(0);
 		face.points.add(0);
 		//face.points.add(1);
 		face.points.add(2);

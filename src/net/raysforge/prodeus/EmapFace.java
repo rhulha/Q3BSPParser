@@ -3,14 +3,16 @@ package net.raysforge.prodeus;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.raysforge.q3.map.Point;
+
 public class EmapFace {
 	
 	private int material_id;
-	public String uvs;
-
-	public EmapFace(int material_id, String uvs) {
+	public List<Integer> points = new ArrayList<Integer>(); // 0;1;2;3
+	public List<Point> uvs = new ArrayList<Point>(); // uv texture coordinates in the range of 0..1
+	
+	public EmapFace(int material_id) {
 		this.material_id = material_id;
-		this.uvs = uvs;
 	}
 	
 	private String surf = "surf={\r\n"
@@ -31,18 +33,18 @@ public class EmapFace {
 	{
 		return surf.replace("%MATERIAL_ID%", ""+material_id);
 	}
-	
-	
-	public List<Integer> points = new ArrayList<Integer>(); // 0;1;2;3
-	//String uvs14= "-0.75,-0.75;-0.75,0.75;1,0.9;1,1;0.75,0.75;0.75,-0.75;0.5,-0.5;0.75,-0.75;0.5,-0.5";
-	String uvs9= "-0.75,-0.75;-0.75,0.75;1,0.9;1,1;0.75,0.75;0.75,-0.75;0.5,-0.5;0.75,-0.75;0.5,-0.5";
-	String uvs8= "-0.75,-0.75;-0.75,0.75;1,0.9;1,1;0.75,0.75;0.75,-0.75;0.5,-0.5;0.75,-0.75";
-	String uvs7= "-0.75,-0.75;-0.75,0.75;1,0.9;1,1;0.75,0.75;0.75,-0.75;0.5,-0.5";
-	String uvs6= "-0.75,-0.75;-0.75,0.75;1,0.9;1,1;0.75,0.75;0.75,-0.75";
-	String uvs5= "-0.75,-0.75;-0.75,0.75;1,0.9;1,1;0.75,0.75";
-	String uvs4= "-0.75,-0.75;-0.75,0.75;0.75,0.75;0.75,-0.75";
-	String uvs3= "-0.75,-0.75;-0.75,0.75;0.75,0.75";
-	
+
+	public String getUVs() {
+		String s = "";
+		boolean semi=false;
+		for (Point uv : uvs) {
+			if(semi)
+				s += ";";
+			s += uv.x + "," + uv.y;
+			semi=true;
+		}
+		return s;
+	}
 	
 	public List<Integer> getPoints() {
 		return points;

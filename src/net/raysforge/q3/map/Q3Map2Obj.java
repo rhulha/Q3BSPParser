@@ -25,7 +25,7 @@ public class Q3Map2Obj {
 				List<List<Point>> polys = brush.getPolygons();
 				for (List<Point> polygon : polys) {
 					for (Point p : polygon) {
-						fw.write( "v " + p.getX() + " " + p.getY() + " " + p.getZ() + "\n");
+						fw.write( "v " + p.getXDividedBy128() + " " + p.getYDividedBy128() + " " + p.getZDividedBy128() + "\n");
 					}
 				}
 			}

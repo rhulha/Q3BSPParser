@@ -28,13 +28,13 @@ public class Point {
 		this( (b[0]&0xFF)/255.0, (b[1]&0xFF)/255.0, (b[2]&0xFF)/255.0);
 	}
 
-	public String getX() {
+	public String getXDividedBy128() {
 		return f1.format(x/128);
 	}
-	public String getY() {
+	public String getYDividedBy128() {
 		return f1.format(y/128);
 	}
-	public String getZ() {
+	public String getZDividedBy128() {
 		return f1.format(z/128);
 	}
 

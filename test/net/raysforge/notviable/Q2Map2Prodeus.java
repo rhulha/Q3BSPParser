@@ -51,7 +51,7 @@ public class Q2Map2Prodeus {
 						Point p = face.get(i);
 						if( i>0)
 							fw.write( ";") ;
-						fw.write( p.getX() + "," + p.getY() + "," + p.getZ()) ;
+						fw.write( p.getXDividedBy128() + "," + p.getYDividedBy128() + "," + p.getZDividedBy128()) ;
 					}
 				}
 				fw.write( "\r\n");
