@@ -82,7 +82,7 @@ public class Emap {
 				}
 				
 				fw.write( "\r\n");
-				fw.write( "uvs="+face.getUVs()+"\r\n");
+				fw.write( "uvs="+face.getUVsAsString()+"\r\n");
 				fw.write( "}\r\n");
 			}
 			fw.write( "}\r\n");
@@ -100,6 +100,14 @@ public class Emap {
 
 	public void setMaterials(List<String> allUsedTextures) {
 		this.materials = allUsedTextures;
+	}
+
+	public int addMaterial(String material) {
+		if(materials==null)
+			materials = new ArrayList<String>();
+		materials.add(material);
+		return materials.size();
+				
 	}
 
 	// Edges are optional but are useful in the level editor to edit brushes using their edges.

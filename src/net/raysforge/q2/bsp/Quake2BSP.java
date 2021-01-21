@@ -18,6 +18,7 @@ public class Quake2BSP {
 	public int face_edges[]; // sign is order
 	public Edge edges[];
 	public Vertex vertices[];
+	public TextureInfo tis[];
 
 	public Quake2BSP(String path) throws IOException {
 		FileInputStream fis = new FileInputStream(path);
@@ -58,8 +59,18 @@ public class Quake2BSP {
 		parseBrushSides();
 		parseFaceEdges();
 		parseEdges();
-		
 		parseVertices();
+		
+		parseTextureInfos();
+	}
+
+	private void parseTextureInfos() throws IOException {
+		int n_texture_infos = this.lumps.texture_infos.length / 76;
+		tis = new TextureInfo[n_texture_infos];
+		LittleEndianDataInputStream ledis = this.lumps.texture_infos.getLittleEndianDataInputStream();
+		for (int i = 0; i < n_texture_infos; i++) {
+			tis[i] = new TextureInfo(ledis);
+		}
 	}
 
 	private void parseVertices() throws IOException {

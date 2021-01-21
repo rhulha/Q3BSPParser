@@ -23,7 +23,8 @@ public class EmapFace {
 			+ "colorEmissive=0\r\n"
 			+ "seed=858\r\n"
 			+ "halfRes=False\r\n"
-			+ "uvScaleBias=1,1,0,0\r\n"
+			// + "uvScaleBias=1,1,0,0\r\n"
+			+ "uvScaleBias=4.4375,4.03125,-4.75,0\r\n" // trying out these values with Quake 2 Base 1 // Yippee it Works!!!!!!!!
 			+ "uvScroll=0,0\r\n"
 			+ "localOffset=0,0,0\r\n"
 			+ "worldOffset=0,0,0\r\n"
@@ -34,7 +35,7 @@ public class EmapFace {
 		return surf.replace("%MATERIAL_ID%", ""+material_id);
 	}
 
-	public String getUVs() {
+	public String getUVsAsString() {
 		String s = "";
 		boolean semi=false;
 		for (Point uv : uvs) {
@@ -48,6 +49,11 @@ public class EmapFace {
 	
 	public List<Integer> getPoints() {
 		return points;
+	}
+
+	public void addUV(int u, int v) {
+		uvs.add(new Point(u,v,0));
+		
 	}
 
 }

@@ -63,6 +63,11 @@ public class Plane {
 	public String toString2() {
 		return normal.x+"x + " + normal.y+"y + " + normal.z+"z = " + -distance;
 	}
+	
+	public String toString3() {
+		return "Plane [texture=" + texture + ", normal=" + normal + ", distance=" + distance + ", xoff=" + xoff + ", yoff=" + yoff + ", rotation_angle_in_deg=" + rotation_angle_in_deg + ", xscale=" + xscale + ", yscale="
+				+ yscale + "]";
+	}
 
 	public String getTexture() {
 		return texture;

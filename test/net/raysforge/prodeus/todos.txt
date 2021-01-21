@@ -16,3 +16,10 @@ layer=-1
 parent=-1
 }
 
+
+Look at Map2Emap.cleanUpBrushes()
+// remove faces with more than 6 points.
+// I think Prodeus crashes with too many faces.
+// TODO: Look at this again sometime
+
+	

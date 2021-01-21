@@ -42,9 +42,9 @@ public class EmapNode {
 	String Light ="Node{\r\n"
 			+ "Light\r\n"
 			+ "isOn=True\r\n"
-			+ "range=5\r\n" // TODO: use real numbers from Quake map
+			+ "range=10\r\n" // TODO: use real numbers from Quake map
 			+ "color=0.87,0.9571,1,1\r\n" // TODO: use real numbers from Quake map
-			+ "intensity=2\r\n" // TODO: use real numbers from Quake map
+			+ "intensity=1.5\r\n" // TODO: use real numbers from Quake map
 			+ "type=2\r\n"
 			+ "spotAngle=30\r\n"
 			+ "shadows=False\r\n"

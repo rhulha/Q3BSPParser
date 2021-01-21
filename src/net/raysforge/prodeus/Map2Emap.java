@@ -14,6 +14,8 @@ import net.raysforge.q3.map.Point;
 
 public class Map2Emap {
 
+	private static final String SKYBOX_ASTEROID_SURFACE = "Skybox/Asteroid_Surface";
+
 	public static void convert(String mapFile, String emapFile) throws IOException {
 
 		Emap emap = new Emap();
@@ -23,6 +25,8 @@ public class Map2Emap {
 		List<String> allUsedTextures = mapParser.getAllUsedTextures();
 		
 		emap.setMaterials(allUsedTextures);
+		int skybox_nr = emap.addMaterial(SKYBOX_ASTEROID_SURFACE);
+		System.out.println("skybox_nr: " + skybox_nr);
 
 		List<Brush> brushList = mapParser.getAllBrushes();
 		cleanUpBrushes(brushList);
@@ -36,10 +40,14 @@ public class Map2Emap {
 				if( plane.texture.endsWith("clip") || plane.texture.endsWith("clip_mon") || plane.texture.endsWith("hint") )
 					continue;
 				
+				if( plane.texture.equals("e1u1/sky1")) {
+					plane.texture = SKYBOX_ASTEROID_SURFACE;
+					System.out.println(plane.texture);
+				}
 				EmapFace face = new EmapFace(allUsedTextures.indexOf(plane.texture));
 				for (Point p : points) {
-					brush.addPoint(p.x / 30, p.y / 30, p.z / 30);
-					face.points.add(brush.points.size() - 1);
+					int pointNr = brush.addPoint(p.x / 30, p.y / 30, p.z / 30);
+					face.points.add(pointNr);
 					face.uvs.add(BaseAxis.getUV(plane, new Point(p.x, p.y, p.z)));
 				}
 				brush.faces.add(face);
@@ -63,58 +71,34 @@ public class Map2Emap {
 			System.out.println("no weapons found.");
 		}
 
-		List<Map<String, String>> light_soldiers = mapParser.getEntities("monster_soldier_light");
-		if( light_soldiers != null)
-		for (Map<String, String> light_soldier : light_soldiers) {
-			Vertex v = MapParser.originString2Vertex(light_soldier.get("origin"), true);
-			emap.addNode(new EmapNode(NodeType.Zombie, v.mult(0.03)));
-		}
-
-		List<Map<String, String>> soldiers = mapParser.getEntities("monster_soldier");
-		if( soldiers != null)
-		for (Map<String, String> soldier : soldiers) {
-			Vertex v = MapParser.originString2Vertex(soldier.get("origin"), true);
-			emap.addNode(new EmapNode(NodeType.Soldier_Shotgun, v.mult(0.03)));
-		}
-
-		List<Map<String, String>> infantries = mapParser.getEntities("monster_infantry");
-		if( infantries != null)
-		for (Map<String, String> infantry : infantries) {
-			Vertex v = MapParser.originString2Vertex(infantry.get("origin"), true);
-			emap.addNode(new EmapNode(NodeType.ZombieHeavy_Minigun, v.mult(0.03)));
-		}
-
-		List<Map<String, String>> ammo_bullets_list = mapParser.getEntities("ammo_bullets");
-		if( ammo_bullets_list != null)
-		for (Map<String, String> ammo_bullets : ammo_bullets_list) {
-			Vertex v = MapParser.originString2Vertex(ammo_bullets.get("origin"), true);
-			emap.addNode(new EmapNode(NodeType.Ammo_Bullets_Large, v.mult(0.03)));
-		}
-
-		List<Map<String, String>> item_health_list = mapParser.getEntities("item_health");
-		if( item_health_list != null)
-		for (Map<String, String> item_health : item_health_list) {
-			Vertex v = MapParser.originString2Vertex(item_health.get("origin"), true);
-			emap.addNode(new EmapNode(NodeType.Health_Small, v.mult(0.03)));
-		}
-
-		List<Map<String, String>> lights = mapParser.getEntities("light");
-		if( lights != null)
-		for (Map<String, String> light : lights) {
-			Vertex v = MapParser.originString2Vertex(light.get("origin"), true);
-			emap.addNode(new EmapNode(NodeType.Light, v.mult(0.03)));
-		}
+		covertEntities(emap, mapParser, "monster_soldier_light", NodeType.Zombie);
+		covertEntities(emap, mapParser, "monster_soldier", NodeType.Soldier_Shotgun);
+		covertEntities(emap, mapParser, "monster_infantry", NodeType.ZombieHeavy_Minigun);
+		covertEntities(emap, mapParser, "ammo_bullets", NodeType.Ammo_Bullets_Large);
+		covertEntities(emap, mapParser, "item_health", NodeType.Health_Small);
+		covertEntities(emap, mapParser, "light", NodeType.Light);
 
 		emap.writeEMap(emapFile);
 	}
 
+	private static void covertEntities(Emap emap, MapParser mapParser, String classname, NodeType nodeType) {
+		List<Map<String, String>> entities = mapParser.getEntities(classname);
+		if( entities != null)
+			for (Map<String, String> entity : entities) {
+				Vertex v = MapParser.originString2Vertex(entity.get("origin"), true);
+				emap.addNode(new EmapNode(nodeType, v.mult(0.03)));
+			}
+	}
+
+	// remove faces with more than 6 points.
+	// I think Prodeus crashes with too many faces.
+	// TODO: Look at this again sometime
 	private static void cleanUpBrushes(List<Brush> brushList) {
 		List<Brush> brushList2Delete = new ArrayList<Brush>();
 		for (Brush q2_brush : brushList) {
 			if (q2_brush.brushHasMoreFacesThan(6))
 				brushList2Delete.add(q2_brush);
 		}
-		// remove faces with more than 6 points to help prodeus maybe
 		for (Brush q2_brush : brushList2Delete) {
 			brushList.remove(q2_brush);
 		}

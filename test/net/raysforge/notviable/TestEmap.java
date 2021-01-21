@@ -12,6 +12,8 @@ public class TestEmap {
 		
 		Emap emap = new Emap();
 		
+		emap.addMaterial("Blockout");
+		
 		EmapBrush brush = new EmapBrush();
 		
 		brush.addPoint(-100,0,100);
@@ -28,9 +30,14 @@ public class TestEmap {
 		face.points.add(4);
 		brush.faces.add(face);
 		
+		face.addUV(0,0);
+		face.addUV(0,1);
+		face.addUV(1,1);
+		face.addUV(1,0);
+		
 		emap.addBrush(brush);
 		
-		emap.writeEMap(ProdeusFolders.Maps+"gore.emap");
+		emap.writeEMap(ProdeusFolders.Maps+"small.emap");
 	}
 
 }

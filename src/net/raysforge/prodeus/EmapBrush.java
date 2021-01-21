@@ -31,7 +31,8 @@ public class EmapBrush {
 		points.add(new Vertex(x,y,z));
 	}
 
-	public void addPoint(double x, double y, double z) {
+	public int addPoint(double x, double y, double z) {
 		points.add(new Vertex((float)x,(float)y,(float)z));
+		return points.size()-1; // return Nr of last inserted point.
 	}
 }

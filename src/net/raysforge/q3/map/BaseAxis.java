@@ -1,11 +1,12 @@
 package net.raysforge.q3.map;
 
+import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.AbstractMap;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.imageio.ImageIO;
 
@@ -30,28 +31,30 @@ public class BaseAxis {
 
 		for (int i = 0; i < 6; i++) {
 			double dot = plane.normal.dot(new Point(baseaxis[i * 3][0], baseaxis[i * 3][1], baseaxis[i * 3][2]));
-			if (dot > best)
+			if (dot > best) {
 				best = dot;
-			bestaxis = i;
+				bestaxis = i;
+			}
 		}
 
 		int[] u = baseaxis[bestaxis * 3 + 1];
-		int[] v = baseaxis[bestaxis * 3 + 1];
+		int[] v = baseaxis[bestaxis * 3 + 2];
 
 		return new AbstractMap.SimpleEntry<Point, Point>(new Point(u[0], u[1], u[2]), new Point(v[0], v[1], v[2]));
 
 	}
 	
-	public Point v2p(Vertex v) {
-		return new Point(v.x, v.y, v.z);
-	}
-
 	public static Point getUV(Plane plane, Point vertex) {
 		
 		Point v = vertex;
 		
 		Point u_axis = texture_axis_from_plane(plane).getKey();
 		Point v_axis = texture_axis_from_plane(plane).getValue();
+		
+		if( plane.texture.equals("e1u1/box1_5") ) {
+			//System.out.println(v);
+			//System.out.println(plane.toString3());
+		}
 		
 		double ang = plane.rotation_angle_in_deg / 180.0 * Math.PI;
 		double sinv = Math.sin(ang);
@@ -73,23 +76,30 @@ public class BaseAxis {
 
         // gl scales everything from 0 to 1
         
-        int[] physicalTextureInfo = getPhysicalTextureInfo(plane.texture);
-        s /= physicalTextureInfo[0]; // width
-        t /= physicalTextureInfo[1]; // height
+        Dimension physicalTextureInfo = getPhysicalTextureInfo(plane.texture);
+        s /= physicalTextureInfo.width;
+        t /= physicalTextureInfo.height;
 
         return new Point(s,t,0);
 
 	}
 
 	// CACHE THE IMAGE STUFF
-	private static int[] getPhysicalTextureInfo(String texture) {
-		// int [] wh = new int[2];
+	
+	static HashMap<String, Dimension> cache = new HashMap<String, Dimension>();;
+	
+	private static Dimension getPhysicalTextureInfo(String texture) {
 		String Materials = "D:\\Action\\Steam\\steamapps\\common\\Prodeus\\Prodeus_Data\\StreamingAssets\\Materials";
-		System.out.println("getPhysicalTextureInfo: " + new File(Materials,texture+".png"));
+		
+		if(cache.containsKey(texture))
+			return cache.get(texture);
+		
+		//System.out.println("getPhysicalTextureInfo: " + new File(Materials,texture+".png"));
 		try {
 			BufferedImage image = ImageIO.read(new File(Materials,texture+".png"));
-			System.out.println("width: " + image.getWidth());
-			return new int[] {image.getWidth(), image.getHeight()};
+			Dimension d = new Dimension(image.getWidth(), image.getHeight());
+			cache.put(texture, d);
+			return d;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 			
