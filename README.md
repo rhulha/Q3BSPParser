@@ -1,7 +1,13 @@
 # Q3BSPParser
 A Quake3Arena BSP and MAP file parser written in Java
 
-Update: Now contains a Quake2 Map to Prodeus Map Converter!
+Update: Now contains a Quake2 to Prodeus Map Converter!
+
+Please Note: If you have issues with getting the converter to run,
+I have uploaded the resulting file (base1.emap) and the needed Materials to the downloads page as well.
+You can find the converted map and the Materials here: https://github.com/rhulha/Q3BSPParser/releases
+
+Please click on "Assets" to open up the hidden file section.
 
 Here are the steps needed to convert Quake2 Base1 to Prodeus:
 
