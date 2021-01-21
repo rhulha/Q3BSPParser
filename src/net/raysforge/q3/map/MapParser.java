@@ -72,7 +72,7 @@ public class MapParser extends GenericParser {
 	}
 
 	public Point getNextPoint() throws IOException {
-		return Point.getPointSwapZY(getNextInt(),getNextInt(),getNextInt());
+		return Point.getPointSwapZY(getNextDouble(),getNextDouble(),getNextDouble());
 	}
 
 	public String getNextStringWithSlashes() throws IOException {

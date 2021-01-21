@@ -16,13 +16,17 @@ public class Map2Emap {
 
 	private static final String SKYBOX_ASTEROID_SURFACE = "Skybox/Asteroid_Surface";
 
-	public static void convert(String mapFile, String emapFile) throws IOException {
+	public static void convert(String mapFile, String emapFile, String materialsFolder) throws IOException {
 
 		Emap emap = new Emap();
 
 		MapParser mapParser = new MapParser(mapFile);
 		
 		List<String> allUsedTextures = mapParser.getAllUsedTextures();
+		
+		int clear_calm1 = allUsedTextures.indexOf("Shaders/liquids/clear_calm1");
+		if( clear_calm1 != -1)
+			allUsedTextures.set(clear_calm1, SKYBOX_ASTEROID_SURFACE); // Shaders/liquids/clear_calm1 currently crashes Prodeus Level Editor
 		
 		emap.setMaterials(allUsedTextures);
 		int skybox_nr = emap.addMaterial(SKYBOX_ASTEROID_SURFACE);
@@ -44,11 +48,17 @@ public class Map2Emap {
 					plane.texture = SKYBOX_ASTEROID_SURFACE;
 					System.out.println(plane.texture);
 				}
+				
+				if( plane.texture.equals("Shaders/liquids/clear_calm1")) {
+					plane.texture = SKYBOX_ASTEROID_SURFACE;
+					System.out.println(plane.texture);
+				}
+				
 				EmapFace face = new EmapFace(allUsedTextures.indexOf(plane.texture));
 				for (Point p : points) {
 					int pointNr = brush.addPoint(p.x / 30, p.y / 30, p.z / 30);
 					face.points.add(pointNr);
-					face.uvs.add(BaseAxis.getUV(plane, new Point(p.x, p.y, p.z)));
+					face.uvs.add(BaseAxis.getUV(materialsFolder, plane, new Point(p.x, p.y, p.z)));
 				}
 				brush.faces.add(face);
 				planeNr++;

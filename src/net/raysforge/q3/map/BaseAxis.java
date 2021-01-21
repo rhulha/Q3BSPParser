@@ -3,12 +3,15 @@ package net.raysforge.q3.map;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileFilter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.imageio.ImageIO;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import net.raysforge.q2.bsp.Vertex;
 
@@ -44,7 +47,7 @@ public class BaseAxis {
 
 	}
 	
-	public static Point getUV(Plane plane, Point vertex) {
+	public static Point getUV(String materialsFolder, Plane plane, Point vertex) {
 		
 		Point v = vertex;
 		
@@ -76,7 +79,7 @@ public class BaseAxis {
 
         // gl scales everything from 0 to 1
         
-        Dimension physicalTextureInfo = getPhysicalTextureInfo(plane.texture);
+        Dimension physicalTextureInfo = getPhysicalTextureInfo(materialsFolder, plane.texture);
         s /= physicalTextureInfo.width;
         t /= physicalTextureInfo.height;
 
@@ -88,19 +91,20 @@ public class BaseAxis {
 	
 	static HashMap<String, Dimension> cache = new HashMap<String, Dimension>();;
 	
-	private static Dimension getPhysicalTextureInfo(String texture) {
-		String Materials = "D:\\Action\\Steam\\steamapps\\common\\Prodeus\\Prodeus_Data\\StreamingAssets\\Materials";
+	private static Dimension getPhysicalTextureInfo(String materialsFolder, String texture) {
 		
 		if(cache.containsKey(texture))
 			return cache.get(texture);
 		
 		//System.out.println("getPhysicalTextureInfo: " + new File(Materials,texture+".png"));
 		try {
-			BufferedImage image = ImageIO.read(new File(Materials,texture+".png"));
+			BufferedImage image = ImageIO.read(new File(materialsFolder, texture+".png"));
 			Dimension d = new Dimension(image.getWidth(), image.getHeight());
 			cache.put(texture, d);
 			return d;
 		} catch (IOException e) {
+			System.out.println(texture);
+			//FileNameExtensionFilter ff;
 			throw new RuntimeException(e);
 			
 		}

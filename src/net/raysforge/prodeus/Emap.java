@@ -2,13 +2,11 @@ package net.raysforge.prodeus;
 
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.raysforge.commons.StreamUtils;
 import net.raysforge.q2.bsp.Vertex;
 
 public class Emap {
@@ -20,8 +18,8 @@ public class Emap {
 
 	public Emap()  {
 		try {
-			URL emap_start = Emap.class.getResource("emap_start.txt");
-			emap_start_text = Files.readString( Path.of(emap_start.toURI()), StandardCharsets.UTF_8);
+			InputStream resourceAsStream = Emap.class.getResourceAsStream("emap_start.txt");
+			emap_start_text = StreamUtils.readCompleteInputStream(resourceAsStream, "UTF-8");
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

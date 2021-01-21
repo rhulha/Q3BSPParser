@@ -14,7 +14,8 @@ public class Quake2PLY1 {
 	
 	public static void main(String[] args) throws IOException {
 
-		String bsp_path = "D:\\GameDev\\Tests\\test_q2.bsp";
+		String bsp_path = "C:\\Users\\Ray\\OneDrive\\Media\\Games\\ShooterPaks\\Q2\\baseq2\\maps\\base1.bsp";
+		// bsp_path =  "D:\\GameDev\\Tests\\test_q2.bsp";
 				
 		Quake2BSP bsp = new Quake2BSP(bsp_path);
 
