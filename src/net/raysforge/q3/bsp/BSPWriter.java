@@ -127,11 +127,11 @@ public class BSPWriter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("verts written");
+		System.out.println(vertexes.size() + " verts written (4bytes*3xyz*num_written)");
 	}
 	
 	public void writeIndexes(List<String> skip, Surface[] surfaces, List<Integer> indexes, Shader[] shaders, String filename) throws IOException {
-		
+		long counter=0;
 		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
 			
 			for (Surface surface : surfaces) {
@@ -141,13 +141,14 @@ public class BSPWriter {
 				for(int k = 0; k < surface.numIndexes; ++k) {
 					int i = surface.firstVert + indexes.get(surface.firstIndex + k);
 					fos.write( BSPWriter.char2ByteArray( (char)i) );
+					counter++;
                 }
 			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("indices written");
+		System.out.println(counter + " indices written (currently short = 2 bytes)");
 	}
 
 	public void writeNormals(List<Vertex> vertexes, String filename) {

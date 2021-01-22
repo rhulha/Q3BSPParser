@@ -9,7 +9,9 @@ import net.raysforge.q3.map.Point;
 
 public class Main {
 	
-	static String basePath = "C:\\Users\\Ray\\dart\\Instagib\\web\\data\\";
+	//static String basePath = "C:\\Users\\Ray\\dart\\Instagib\\web\\data\\";
+	static String basePath = "D:\\GameDev\\Tests\\gltf\\";
+	
 	
 	public static void test() throws IOException {
 		Q3BSPReader bsp = new Q3BSPReader("q3dm17.bsp", Q3LumpTypes.size);
