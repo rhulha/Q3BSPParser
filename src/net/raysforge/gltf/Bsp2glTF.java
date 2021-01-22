@@ -19,8 +19,8 @@ public class Bsp2glTF {
 		
 		BufferView bufferViewPos = new BufferView(buffer, 0, 576, 12);
 		
-		Accessor pos = new Accessor(bufferViewPos, GltfConstants.GL_FLOAT, 0, 24, "VEC3");
-		Accessor normal = new Accessor(bufferViewPos, GltfConstants.GL_FLOAT, 288, 24, "VEC3");
+		Accessor normal = new Accessor(bufferViewPos, GltfConstants.GL_FLOAT, 0, 24, "VEC3");
+		Accessor pos = new Accessor(bufferViewPos, GltfConstants.GL_FLOAT, 288, 24, "VEC3");
 
 		Attribute attr_p = new Attribute("POSITION", pos);
 		Attribute attr_n = new Attribute("NORMAL", normal);

@@ -71,64 +71,33 @@ public class GlTF {
 				
 				for (int p = 0; p < node.mesh.primitives.size(); p++) {
 					Primitive primitive = node.mesh.primitives.get(p);
-					cache.add(primitive.indices);
+
+					cacheAccessor(buffers, bufferViews, accessors, primitive.indices);
 
 					for (int a = 0; a < primitive.attributes.size(); a++) {
 						Attribute attribute = primitive.attributes.get(a);
-						Accessor accessor = attribute.accessor;
-						BufferView bufferView = accessor.bufferView;
-						Buffer buffer = bufferView.buffer;
-						
-						if( !cache.contains(buffer) ) {
-							cache.add(buffer);
-							buffers.write("{");
-							writeStr(buffers, "uri", buffer.uri);
-							buffers.write(",");
-							writeNbr(buffers, "byteLength", buffer.byteLength);
-							buffers.write("},");
-						}
-						
-						if( !cache.contains(bufferView) ) {
-							cache.add(bufferView);
-							bufferViews.write("{");
-							writeNbr(bufferViews, "buffer", cache.getIndex(bufferView.buffer));
-							bufferViews.write(",");
-							writeNbr(bufferViews, "byteOffset", bufferView.byteOffset);
-							bufferViews.write(",");
-							writeNbr(bufferViews, "byteLength", bufferView.byteLength);
-							if( bufferView.byteStride > 0 ) {
-								bufferViews.write(",");
-								writeNbr(bufferViews, "byteStride", bufferView.byteStride);
-							}
-							bufferViews.write("},");
-						}
-						
-						if( !cache.contains(accessor) ) {
-							cache.add(accessor);
-							accessors.write("{");
-							writeNbr(accessors, "bufferView", cache.getIndex(accessor.bufferView));
-							accessors.write(",");
-							writeNbr(accessors, "byteOffset", accessor.byteOffset);
-							accessors.write(",");
-							writeNbr(accessors, "count", accessor.count);
-							accessors.write(",");
-							writeNbr(accessors, "componentType", accessor.componentType);
-							accessors.write(",");
-							writeStr(accessors, "type", accessor.type);
-							accessors.write("},");
-						}
+						cacheAccessor(buffers, bufferViews, accessors, attribute.accessor);
 
 					}
 				}
 			}
 		}
 		
+		buffers = removeLastComma(buffers);
+		bufferViews = removeLastComma(bufferViews);
+		accessors = removeLastComma(accessors);
+		
 		buffers.write("],");
 		bufferViews.write("],");
-		accessors.write("],");
+		accessors.write("]");
 
+		fw.write("\"asset\":{");
+		writeStr(fw, "version", "2.0");
+		fw.write("},");
+		
 		writeNbr(fw, "scene", scenes.indexOf(scene));
 		fw.write(",");
+		
 		writeScenesBlock(fw);
 		writeNodesBlock(fw);
 		writeMeshesBlock(fw);
@@ -139,6 +108,59 @@ public class GlTF {
 		
 		fw.write("}");
 		fw.close();
+	}
+
+	// TODO very inefficient. Fix later.
+	private StringWriter removeLastComma(StringWriter sw) {
+		String string = sw.toString();
+		string = string.substring(0, string.lastIndexOf(","));
+		StringWriter sw2 = new StringWriter();
+		sw2.write(string);
+		return sw2;
+	}
+
+	private void cacheAccessor(StringWriter buffers, StringWriter bufferViews, StringWriter accessors, Accessor accessor) throws IOException {
+		BufferView bufferView = accessor.bufferView;
+		Buffer buffer = bufferView.buffer;
+		
+		if( !cache.contains(buffer) ) {
+			cache.add(buffer);
+			buffers.write("{");
+			writeStr(buffers, "uri", buffer.uri);
+			buffers.write(",");
+			writeNbr(buffers, "byteLength", buffer.byteLength);
+			buffers.write("},");
+		}
+		
+		if( !cache.contains(bufferView) ) {
+			cache.add(bufferView);
+			bufferViews.write("{");
+			writeNbr(bufferViews, "buffer", cache.getIndex(bufferView.buffer));
+			bufferViews.write(",");
+			writeNbr(bufferViews, "byteOffset", bufferView.byteOffset);
+			bufferViews.write(",");
+			writeNbr(bufferViews, "byteLength", bufferView.byteLength);
+			if( bufferView.byteStride > 0 ) {
+				bufferViews.write(",");
+				writeNbr(bufferViews, "byteStride", bufferView.byteStride);
+			}
+			bufferViews.write("},");
+		}
+		
+		if( !cache.contains(accessor) ) {
+			cache.add(accessor);
+			accessors.write("{");
+			writeNbr(accessors, "bufferView", cache.getIndex(accessor.bufferView));
+			accessors.write(",");
+			writeNbr(accessors, "byteOffset", accessor.byteOffset);
+			accessors.write(",");
+			writeNbr(accessors, "count", accessor.count);
+			accessors.write(",");
+			writeNbr(accessors, "componentType", accessor.componentType);
+			accessors.write(",");
+			writeStr(accessors, "type", accessor.type);
+			accessors.write("},");
+		}
 	}
 
 	private void writeMeshesBlock(FileWriter fw) throws IOException {
@@ -162,9 +184,10 @@ public class GlTF {
 						fw.write(",");
 					Attribute attr = primitive.attributes.get(a);
 					writeNbr(fw, attr.type, cache.getIndex(attr.accessor));
+					System.out.println(attr.type + ": " + cache.getIndex(attr.accessor));
 					
 				}
-				fw.write("}");
+				fw.write("},");
 				
 				writeNbr(fw, "indices", cache.getIndex(primitive.indices));
 				fw.write(",");
@@ -175,7 +198,7 @@ public class GlTF {
 				fw.write("}");
 			}
 			fw.write("]"); // primitives
-			fw.write("},");
+			fw.write("}");
 		}
 		fw.write("],");
 	}
