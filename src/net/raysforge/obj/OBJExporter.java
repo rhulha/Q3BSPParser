@@ -1,10 +1,12 @@
-package net.raysforge.bsp.q3;
+package net.raysforge.obj;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.raysforge.bsp.q3.Q3BSPReader;
+import net.raysforge.bsp.q3.Tessellate;
 import net.raysforge.bsp.q3.model.Shader;
 import net.raysforge.bsp.q3.model.Surface;
 import net.raysforge.bsp.q3.model.Vertex;
