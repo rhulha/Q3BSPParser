@@ -51,19 +51,24 @@ public class BSP2glTF {
 	private void writeGLTF(Q3BSP q3bsp, int indexCount) throws IOException {
 		BufferView bufferViewVerts = getBufferAndView(".verts", 12);
 		BufferView bufferViewNormals = getBufferAndView(".normals", 12);
+		BufferView bufferViewColors = getBufferAndView(".colors", 12);
 		
 		Accessor normal = new Accessor(bufferViewNormals, GltfConstants.GL_FLOAT, 0, q3bsp.vertices.size(), "VEC3");
 		Accessor pos = new Accessor(bufferViewVerts, GltfConstants.GL_FLOAT, 0, q3bsp.vertices.size(), "VEC3");
+		Accessor color = new Accessor(bufferViewColors, GltfConstants.GL_FLOAT, 0, q3bsp.vertices.size(), "VEC3");
+		
 
 		Attribute attr_p = new Attribute("POSITION", pos);
 		Attribute attr_n = new Attribute("NORMAL", normal);
 		//Attribute attr_t = new Attribute("TEXCOORD_0", t);
-
+		Attribute attr_c = new Attribute("COLOR_0", color);
+		
 		Primitive prim = new Primitive();
 		Accessor i = getIndexAccessor(indexCount);
 		prim.setIndices(i);
 		prim.addAttribute(attr_p);
 		prim.addAttribute(attr_n);
+		prim.addAttribute(attr_c);
 		
 		Mesh mesh = new Mesh(prim);
 		//mesh.setMaterial(0);
