@@ -8,6 +8,10 @@ import net.raysforge.map.Point;
 
 public class Tessellate {
 	
+	/*
+	 * This class turns Quake 3 curved surfaces into normal brushes.
+	 */
+	
 	public static Point getCurvePoint3( Point c0, Point c1, Point c2, double dist) {
 		double b = 1.0 - dist;
 	    return c0.scale(b*b).add(c1.scale(2*b*dist)).add(c2.scale(dist*dist));

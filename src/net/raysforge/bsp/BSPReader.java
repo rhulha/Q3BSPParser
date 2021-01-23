@@ -1,5 +1,6 @@
 package net.raysforge.bsp;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 
@@ -9,9 +10,9 @@ public class BSPReader {
 
 	protected byte[][] lumps;
 
-	public BSPReader(String fileName, int lumpSize, int version) throws IOException {
+	public BSPReader(File file, int lumpSize, int version) throws IOException {
 
-		BinaryReader br = new BinaryReader(new RandomAccessFile(fileName, "r"));
+		BinaryReader br = new BinaryReader(new RandomAccessFile(file, "r"));
 
 		String magic = br.readString(4);
 		int bsp_version = br.readInt();

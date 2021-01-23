@@ -9,7 +9,7 @@ public class Bsp2glTF {
 
 	public static void convert(File bspFile, File outputDirectory) throws IOException {
 		
-		BSPSplitter bspSplitter = new BSPSplitter(bspFile.toString(), outputDirectory.toString());
+		BSPSplitter bspSplitter = new BSPSplitter(bspFile, outputDirectory.toString());
 		bspSplitter.partsWriterJson.writeEntitiesAsJSON( bspSplitter.q3BspReader.getEntities(), "q3dm17.ents");
 		bspSplitter.writeBasics();
 		

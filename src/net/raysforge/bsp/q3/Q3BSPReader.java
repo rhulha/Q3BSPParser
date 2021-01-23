@@ -1,5 +1,6 @@
 package net.raysforge.bsp.q3;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,8 +23,8 @@ import net.raysforge.map.Point;
 
 public class Q3BSPReader extends BSPReader {
 
-	public Q3BSPReader(String fileName) throws IOException {
-		super( fileName, Q3LumpTypes.size, 46);
+	public Q3BSPReader(File file) throws IOException {
+		super( file, Q3LumpTypes.size, 46);
 	}
 
 	public Node[] getNodes() throws IOException {

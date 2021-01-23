@@ -1,5 +1,6 @@
 package net.raysforge.bsp.q3;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -10,7 +11,7 @@ import net.raysforge.bsp.q3.model.Surface;
 public class BSPVerifier {
 
 	public static void main(String[] args) throws IOException {
-		Q3BSPReader bsp = new Q3BSPReader("q3dm17.bsp");
+		Q3BSPReader bsp = new Q3BSPReader(new File("q3dm17.bsp"));
 
 		printAllBrushSidesShader(bsp);
 		// verifyValues(bsp);

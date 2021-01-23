@@ -1,5 +1,6 @@
 package net.raysforge.bsp.q3;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public class BSPSplitter {
 	private PartsWriter partsWriter;
 	public PartsWriterJson partsWriterJson;
 
-	public BSPSplitter(String bspFile, String outputPath) throws IOException {
+	public BSPSplitter(File bspFile, String outputPath) throws IOException {
 		this.outputPath = outputPath;
 		q3BspReader = new Q3BSPReader(bspFile);
 		partsWriter = new PartsWriter( outputPath);
