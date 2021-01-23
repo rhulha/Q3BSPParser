@@ -2,6 +2,9 @@ package net.raysforge.bsp.q3;
 
 import java.io.IOException;
 
+import net.raysforge.bsp.q3.model.Q3LumpTypes;
+import net.raysforge.bsp.q3.model.Shader;
+
 public class TestBSPSplitter {
 	
 	public static void test() throws IOException {

@@ -7,6 +7,10 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.List;
 
+import net.raysforge.bsp.q3.model.Shader;
+import net.raysforge.bsp.q3.model.Surface;
+import net.raysforge.bsp.q3.model.Vertex;
+
 public class PartsWriter {
 
 	private String basePath;

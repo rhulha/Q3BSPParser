@@ -8,6 +8,8 @@ import java.util.Map;
 
 import com.google.gson.Gson;
 
+import net.raysforge.bsp.q3.model.Leaf;
+import net.raysforge.bsp.q3.model.Node;
 import net.raysforge.map.Plane;
 
 public class PartsWriterJson {

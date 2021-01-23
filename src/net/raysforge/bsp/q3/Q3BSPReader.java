@@ -6,6 +6,16 @@ import java.util.List;
 import java.util.Map;
 
 import net.raysforge.bsp.BSPReader;
+import net.raysforge.bsp.q3.model.Fog;
+import net.raysforge.bsp.q3.model.Leaf;
+import net.raysforge.bsp.q3.model.LightGrid;
+import net.raysforge.bsp.q3.model.Model;
+import net.raysforge.bsp.q3.model.Node;
+import net.raysforge.bsp.q3.model.Q3LumpTypes;
+import net.raysforge.bsp.q3.model.Shader;
+import net.raysforge.bsp.q3.model.Surface;
+import net.raysforge.bsp.q3.model.Vertex;
+import net.raysforge.bsp.q3.model.Visibility;
 import net.raysforge.generic.BinaryReader;
 import net.raysforge.map.Plane;
 import net.raysforge.map.Point;

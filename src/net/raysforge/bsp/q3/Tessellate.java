@@ -2,6 +2,8 @@ package net.raysforge.bsp.q3;
 
 import java.util.List;
 
+import net.raysforge.bsp.q3.model.Surface;
+import net.raysforge.bsp.q3.model.Vertex;
 import net.raysforge.map.Point;
 
 public class Tessellate {

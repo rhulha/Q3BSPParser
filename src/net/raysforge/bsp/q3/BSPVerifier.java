@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import net.raysforge.bsp.q3.model.Shader;
+import net.raysforge.bsp.q3.model.Surface;
+
 public class BSPVerifier {
 
 	public static void main(String[] args) throws IOException {

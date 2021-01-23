@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.raysforge.bsp.q3.model.Q3LumpTypes;
+import net.raysforge.bsp.q3.model.Shader;
+import net.raysforge.bsp.q3.model.Surface;
+import net.raysforge.bsp.q3.model.Vertex;
 import net.raysforge.map.Point;
 
 public class BSPSplitter {
