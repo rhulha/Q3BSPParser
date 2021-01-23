@@ -3,9 +3,9 @@ package net.raysforge.q2.test;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import net.raysforge.bsp.q2.Face;
 import net.raysforge.bsp.q2.Quake2BSP;
-import net.raysforge.bsp.q2.Vertex;
+import net.raysforge.bsp.q2.model.Face;
+import net.raysforge.bsp.q2.model.Vertex;
 
 // USING FACES
 

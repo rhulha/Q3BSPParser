@@ -6,8 +6,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.raysforge.bsp.q2.model.Vertex;
 import net.raysforge.commons.StreamUtils;
-import net.raysforge.bsp.q2.Vertex;
 
 public class Emap {
 	

@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.raysforge.bsp.q2.Vertex;
+import net.raysforge.bsp.q2.model.Vertex;
 
 public class EmapBrush {
 

@@ -1,4 +1,4 @@
-package net.raysforge.bsp.q2;
+package net.raysforge.bsp.q2.model;
 
 import java.io.IOException;
 

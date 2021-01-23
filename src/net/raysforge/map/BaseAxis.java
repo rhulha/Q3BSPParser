@@ -13,7 +13,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import net.raysforge.bsp.q2.Vertex;
+import net.raysforge.bsp.q2.model.Vertex;
 
 public class BaseAxis {
 

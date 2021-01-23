@@ -1,5 +1,9 @@
 package net.raysforge.bsp.q2;
 
+import net.raysforge.bsp.q2.model.Brush;
+import net.raysforge.bsp.q2.model.BrushSide;
+import net.raysforge.bsp.q2.model.Face;
+
 public class BSPDebugTools {
 
 	public static void printBrushes2(Quake2BSP bsp) {

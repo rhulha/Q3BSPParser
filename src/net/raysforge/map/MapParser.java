@@ -13,8 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.raysforge.bsp.q2.model.Vertex;
 import net.raysforge.generic.GenericParser;
-import net.raysforge.bsp.q2.Vertex;
 
 public class MapParser extends GenericParser {
 

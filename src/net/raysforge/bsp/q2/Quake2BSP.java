@@ -4,6 +4,12 @@ import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import net.raysforge.bsp.q2.model.Brush;
+import net.raysforge.bsp.q2.model.BrushSide;
+import net.raysforge.bsp.q2.model.Edge;
+import net.raysforge.bsp.q2.model.Face;
+import net.raysforge.bsp.q2.model.TextureInfo;
+import net.raysforge.bsp.q2.model.Vertex;
 import net.raysforge.generic.LittleEndianDataInputStream;
 
 public class Quake2BSP {
