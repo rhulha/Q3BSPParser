@@ -16,9 +16,18 @@ import net.raysforge.gltf.model.Primitive;
 import net.raysforge.gltf.model.Scene;
 
 public class BSP2glTF {
+	
+	private File bspFile;
+	private File outputDirectory;
+	private String bspFileNameSansExt;
 
-	public static void convert(File bspFile, File outputDirectory) throws IOException {
-		
+	public BSP2glTF(File bspFile, File outputDirectory) {
+		this.bspFile = bspFile;
+		this.outputDirectory = outputDirectory;
+		bspFileNameSansExt = bspFile.getName().replaceFirst("[.][^.]+$", "");
+	}
+
+	public void convert() throws IOException {
 		Q3BSP q3bsp = new Q3BSP(bspFile);
 		
 		q3bsp.flipYZ();
@@ -29,37 +38,23 @@ public class BSP2glTF {
 		PartsWriterJson partsWriterJson = new PartsWriterJson(outputDirectory);
 		partsWriterJson.writeEntitiesAsJSON( q3bsp.entities, "q3dm17.ents");
 		partsWriterJson.writeObjectAsJSON( q3bsp.shaders, "q3dm17.textures");
-		q3bsp.writeBasics(partsWriter);
+
+		// 16714 verts written (4bytes*3xyz*num_written)
+		// 54612 indices written (currently short = 2 bytes)
+		int indexCount = q3bsp.writeBasics(partsWriter);
 		
 
-		// List<Integer> drawIndexes = bsp.getDrawIndexes();
-		// List<Vertex> drawVerts = bsp.getDrawVerts();
-		
-//		16714 verts written (4bytes*3xyz*num_written)
-	
-//		54612 indices written (currently short = 2 bytes)
-		
-		String nameSansExt = bspFile.getName().replaceFirst("[.][^.]+$", "");
-		
-		File verts_file = new File(outputDirectory, nameSansExt + ".verts");
-		File indices_file = new File(outputDirectory, nameSansExt + ".indices");
-		
-		Buffer verts_buffer = new Buffer(nameSansExt + ".verts", (int)verts_file.length());
-		Buffer indices_buffer = new Buffer(nameSansExt + ".indices", (int)indices_file.length());
-		
-		BufferView bufferViewVerts = new BufferView(verts_buffer, 0, (int)verts_file.length(), 12);
+		BufferView bufferViewVerts = getBufferAndView(".verts", 12);
 		
 		//Accessor normal = new Accessor(bufferViewPos, GltfConstants.GL_FLOAT, 0, 24, "VEC3");
-		Accessor pos = new Accessor(bufferViewVerts, GltfConstants.GL_FLOAT, 0, 16714, "VEC3");
+		Accessor pos = new Accessor(bufferViewVerts, GltfConstants.GL_FLOAT, 0, q3bsp.vertices.size(), "VEC3");
 
 		Attribute attr_p = new Attribute("POSITION", pos);
 		//Attribute attr_n = new Attribute("NORMAL", normal);
 		//Attribute attr_t = new Attribute("TEXCOORD_0", t);
-	
-		BufferView bufferViewIndex = new BufferView(indices_buffer, 0, (int)indices_file.length());
 
 		Primitive prim = new Primitive();
-		Accessor i = new Accessor(bufferViewIndex, GltfConstants.GL_UNSIGNED_SHORT, 0, 54612, "SCALAR");
+		Accessor i = getIndexAccessor(indexCount);
 		prim.setIndices(i);
 		prim.addAttribute(attr_p);
 		//prim.addAttribute(attr_n);
@@ -71,7 +66,18 @@ public class BSP2glTF {
 		GlTF glTF = new GlTF(scene);
 		
 		
-		glTF.write(new File(outputDirectory, nameSansExt + ".gltf"));
+		glTF.write(new File(outputDirectory, bspFileNameSansExt + ".gltf"));
 
+	}
+	
+	private Accessor getIndexAccessor(int indexCount) 	{
+		BufferView bufferViewIndex =  getBufferAndView(".indices", -1);
+		return new Accessor(bufferViewIndex, GltfConstants.GL_UNSIGNED_SHORT, 0, indexCount, "SCALAR");
+	}
+
+	private BufferView getBufferAndView(String ext, int byteStride) {
+		File file = new File(outputDirectory, bspFileNameSansExt + ext);
+		Buffer buffer = new Buffer(bspFileNameSansExt + ext, (int)file.length());
+		return new BufferView(buffer, 0, (int)file.length(), byteStride);
 	}
 }

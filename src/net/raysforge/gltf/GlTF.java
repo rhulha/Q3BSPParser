@@ -8,9 +8,6 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-
 import net.raysforge.gltf.model.Accessor;
 import net.raysforge.gltf.model.Attribute;
 import net.raysforge.gltf.model.Buffer;

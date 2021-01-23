@@ -16,7 +16,7 @@ public class Q3BSP {
 	public int[][] brushes;
 	public int[][] brushSides;
 	public List<Integer> indexes;
-	public List<Vertex> vertexes;
+	public List<Vertex> vertices;
 	public Map<String, List<Map<String, String>>> entities;
 	public Surface[] surfaces;
 	public Shader[] shaders;
@@ -26,7 +26,7 @@ public class Q3BSP {
 		brushes = reader.getBrushes();
 		brushSides = reader.getBrushSides();
 		indexes = reader.getDrawIndexes();
-		vertexes = reader.getDrawVerts();
+		vertices = reader.getDrawVerts();
 		entities = reader.getEntities();
 		surfaces = reader.getSurfaces();
 		shaders = reader.getShaders();
@@ -35,25 +35,26 @@ public class Q3BSP {
 
 	public void flipYZ() {
 		System.out.println("flipping YZ");
-		for (Vertex v : vertexes) {
+		for (Vertex v : vertices) {
 			v.xyz = v.xyz.getPointSwapZY();
 		}
 	}
 	
-	public void writeBasics(PartsWriter partsWriter) throws IOException {
-		partsWriter.writeIndexes( SkipList.getSkipList(), surfaces, indexes, shaders, "q3dm17.indices");
-		partsWriter.writeVerts( vertexes, "q3dm17.verts");
-		partsWriter.writeNormals( vertexes, "q3dm17.normals");
-		partsWriter.writeTexCoords( vertexes, "q3dm17.texCoords");
-		partsWriter.writeLmCoords( vertexes, "q3dm17.lmCoords");
-		partsWriter.writeColors( vertexes, "q3dm17.colors");
+	public int writeBasics(PartsWriter partsWriter) throws IOException {
+		int indexesCount = partsWriter.writeIndexes( SkipList.getSkipList(), surfaces, indexes, shaders, "q3dm17.indices");
+		partsWriter.writeVerts( vertices, "q3dm17.verts");
+		partsWriter.writeNormals( vertices, "q3dm17.normals");
+		partsWriter.writeTexCoords( vertices, "q3dm17.texCoords");
+		partsWriter.writeLmCoords( vertices, "q3dm17.lmCoords");
+		partsWriter.writeColors( vertices, "q3dm17.colors");
+		return indexesCount;
 	}
 
 	public void tessellateAllPatchFaces() {
 		System.out.println("tessellateAllPatchFaces");
 		for (Surface face : surfaces) {
 			if( face.surfaceType == Surface.patch) {
-				Tessellate.tessellate(face, vertexes, indexes, 10);
+				Tessellate.tessellate(face, vertices, indexes, 10);
 			}
 		}
 	}
@@ -85,22 +86,22 @@ public class Q3BSP {
 			if( blue.contains( shaders[face.shaderNum].shader) ) {
 				for(int k = 0; k < face.numIndexes; ++k) {
 					int i = face.firstVert + indexes.get(face.firstIndex + k);
-					vertexes.get(i).color=new Point(vertexes.get(i).color.x,vertexes.get(i).color.y,1);
+					vertices.get(i).color=new Point(vertices.get(i).color.x,vertices.get(i).color.y,1);
                 }
 			}
 			if( red.contains( shaders[face.shaderNum].shader) ) {
 				for(int k = 0; k < face.numIndexes; ++k) {
 					int i = face.firstVert + indexes.get(face.firstIndex + k);
-					vertexes.get(i).color=new Point(1, vertexes.get(i).color.y,vertexes.get(i).color.z);
+					vertices.get(i).color=new Point(1, vertices.get(i).color.y,vertices.get(i).color.z);
                 }
 			}
 			
 			if( shaders[face.shaderNum].shader.equals("textures/base_floor/diamond2c") ) { // special middle jump pad handling
 				for(int k = 0; k < face.numIndexes; ++k) {
 					int i = face.firstVert + indexes.get(face.firstIndex + k);
-					double z = vertexes.get(i).xyz.z;
+					double z = vertices.get(i).xyz.z;
 					if( z >= 95 && z <= 108 ) {
-						vertexes.get(i).color=new Point( 0.25, 0.25, 1);
+						vertices.get(i).color=new Point( 0.25, 0.25, 1);
 					}
 					
                 }

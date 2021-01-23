@@ -7,7 +7,7 @@ public class TestBSP2glTF {
 
 	public static void main(String[] args) throws IOException {
 		
-		BSP2glTF.convert(new File("q3dm17.bsp"), new File("D:\\GameDev\\Tests\\gltf\\"));
+		new BSP2glTF(new File("q3dm17.bsp"), new File("D:\\GameDev\\Tests\\gltf\\")).convert();
 
 	}
 
