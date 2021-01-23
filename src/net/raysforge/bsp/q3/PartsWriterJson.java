@@ -14,9 +14,9 @@ import net.raysforge.map.Plane;
 
 public class PartsWriterJson {
 
-	private String basePath;
+	private File basePath;
 
-	public PartsWriterJson(String basePath) {
+	public PartsWriterJson(File basePath) {
 		this.basePath = basePath;
 	}
 

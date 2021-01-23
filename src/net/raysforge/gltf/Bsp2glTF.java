@@ -3,18 +3,27 @@ package net.raysforge.gltf;
 import java.io.File;
 import java.io.IOException;
 
-import net.raysforge.bsp.q3.BSPSplitter;
+import net.raysforge.bsp.q3.PartsWriter;
+import net.raysforge.bsp.q3.PartsWriterJson;
+import net.raysforge.bsp.q3.Q3BSP;
 
 public class Bsp2glTF {
 
 	public static void convert(File bspFile, File outputDirectory) throws IOException {
 		
-		BSPSplitter bspSplitter = new BSPSplitter(bspFile, outputDirectory.toString());
-		bspSplitter.partsWriterJson.writeEntitiesAsJSON( bspSplitter.q3BspReader.getEntities(), "q3dm17.ents");
-		bspSplitter.writeBasics();
+		Q3BSP q3bsp = new Q3BSP(bspFile);
 		
-		// TODO FLIP YZ
+		q3bsp.flipYZ();
+		q3bsp.tessellateAllPatchFaces();
+		q3bsp.changeColors();
 		
+		PartsWriter partsWriter = new PartsWriter(outputDirectory); 
+		PartsWriterJson partsWriterJson = new PartsWriterJson(outputDirectory);
+		partsWriterJson.writeEntitiesAsJSON( q3bsp.entities, "q3dm17.ents");
+		partsWriterJson.writeObjectAsJSON( q3bsp.shaders, "q3dm17.textures");
+		q3bsp.writeBasics(partsWriter);
+		
+
 		// List<Integer> drawIndexes = bsp.getDrawIndexes();
 		// List<Vertex> drawVerts = bsp.getDrawVerts();
 		

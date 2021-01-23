@@ -8,10 +8,6 @@ public class Point {
 	public final double y;
 	public final double z;
 	
-	public static Point getPointSwapZY( double x, double z, double y) {
-		return new Point( x, y, z);
-	}
-
 	public Point(double x, double y, double z) {
 		this.x = x;
 		this.y = y;
@@ -28,6 +24,10 @@ public class Point {
 		this( (b[0]&0xFF)/255.0, (b[1]&0xFF)/255.0, (b[2]&0xFF)/255.0);
 	}
 
+	public Point getPointSwapZY() {
+		return new Point( x, z, y);
+	}
+
 	public String getXDividedBy128() {
 		return f1.format(x/128);
 	}
@@ -36,11 +36,6 @@ public class Point {
 	}
 	public String getZDividedBy128() {
 		return f1.format(z/128);
-	}
-
-	@Override
-	public String toString() {
-		return "( " + x + " " + y + " " + z +" )";
 	}
 
 	public Point minus(Point p2) {
@@ -99,4 +94,14 @@ public class Point {
 	public Point add(Point p) {
 		return new Point(this.x+p.x, this.y+p.y, this.z+p.z);
 	}
+
+	public static Point getPointSwapZY( double x, double z, double y) {
+		return new Point( x, y, z);
+	}
+
+	@Override
+	public String toString() {
+		return "( " + x + " " + y + " " + z +" )";
+	}
+
 }

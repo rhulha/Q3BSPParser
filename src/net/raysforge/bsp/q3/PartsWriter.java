@@ -13,9 +13,9 @@ import net.raysforge.bsp.q3.model.Vertex;
 
 public class PartsWriter {
 
-	private String basePath;
+	private File basePath;
 
-	public PartsWriter(String basePath) {
+	public PartsWriter(File basePath) {
 		this.basePath = basePath;
 	}
 
@@ -99,7 +99,7 @@ public class PartsWriter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("texCoords written");
+		System.out.println("lightmap texCoords written");
 	}
 
 	public void writeColors(List<Vertex> vertexes, String filename) {
@@ -112,6 +112,6 @@ public class PartsWriter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println("texCoords written");
+		System.out.println("colors written");
 	}
 }
