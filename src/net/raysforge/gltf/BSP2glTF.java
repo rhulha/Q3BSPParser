@@ -16,7 +16,6 @@ import net.raysforge.gltf.model.Primitive;
 import net.raysforge.gltf.model.Scene;
 
 public class BSP2glTF {
-	
 	private File bspFile;
 	private File outputDirectory;
 	private String bspFileNameSansExt;
@@ -29,21 +28,27 @@ public class BSP2glTF {
 
 	public void convert() throws IOException {
 		Q3BSP q3bsp = new Q3BSP(bspFile);
-		
+		int indexCount = writeBSPParts(q3bsp);
+		writeGLTF(q3bsp, indexCount);
+	}
+
+	private int writeBSPParts(Q3BSP q3bsp) throws IOException {
 		q3bsp.flipYZ();
 		q3bsp.tessellateAllPatchFaces();
 		q3bsp.changeColors();
 		
-		PartsWriter partsWriter = new PartsWriter(outputDirectory); 
+		PartsWriter partsWriter = new PartsWriter(q3bsp, outputDirectory); 
 		PartsWriterJson partsWriterJson = new PartsWriterJson(outputDirectory);
 		partsWriterJson.writeEntitiesAsJSON( q3bsp.entities, "q3dm17.ents");
 		partsWriterJson.writeObjectAsJSON( q3bsp.shaders, "q3dm17.textures");
 
 		// 16714 verts written (4bytes*3xyz*num_written)
 		// 54612 indices written (currently short = 2 bytes)
-		int indexCount = q3bsp.writeBasics(partsWriter);
-		
+		int indexCount = partsWriter.writeBasics(bspFileNameSansExt);
+		return indexCount;
+	}
 
+	private void writeGLTF(Q3BSP q3bsp, int indexCount) throws IOException {
 		BufferView bufferViewVerts = getBufferAndView(".verts", 12);
 		
 		//Accessor normal = new Accessor(bufferViewPos, GltfConstants.GL_FLOAT, 0, 24, "VEC3");
@@ -64,12 +69,10 @@ public class BSP2glTF {
 		Node node = new Node(mesh);
 		Scene scene = new Scene(node);
 		GlTF glTF = new GlTF(scene);
-		
-		
-		glTF.write(new File(outputDirectory, bspFileNameSansExt + ".gltf"));
 
+		glTF.write(new File(outputDirectory, bspFileNameSansExt + ".gltf"));
 	}
-	
+
 	private Accessor getIndexAccessor(int indexCount) 	{
 		BufferView bufferViewIndex =  getBufferAndView(".indices", -1);
 		return new Accessor(bufferViewIndex, GltfConstants.GL_UNSIGNED_SHORT, 0, indexCount, "SCALAR");

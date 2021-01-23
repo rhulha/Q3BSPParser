@@ -7,16 +7,27 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.List;
 
-import net.raysforge.bsp.q3.model.Shader;
 import net.raysforge.bsp.q3.model.Surface;
 import net.raysforge.bsp.q3.model.Vertex;
 
 public class PartsWriter {
 
+	private Q3BSP q3bsp;
 	private File basePath;
 
-	public PartsWriter(File basePath) {
+	public PartsWriter(Q3BSP q3bsp, File basePath) {
+		this.q3bsp = q3bsp;
 		this.basePath = basePath;
+	}
+
+	public int writeBasics(String fileNameSansExt) throws IOException {
+		int indexesCount = writeIndexes( SkipList.getSkipList(), fileNameSansExt + ".indices");
+		writeVerts( fileNameSansExt + ".verts");
+		writeNormals( fileNameSansExt + ".normals");
+		writeTexCoords( fileNameSansExt + ".texCoords");
+		writeLmCoords( fileNameSansExt + ".lmCoords");
+		writeColors( fileNameSansExt + ".colors");
+		return indexesCount;
 	}
 
 	public static byte[] int2ByteArray (int value) {
@@ -31,30 +42,30 @@ public class PartsWriter {
 		return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(value).array();
 	}
 	
-	public void writeVerts(List<Vertex> vertexes, String filename) throws IOException {
+	public void writeVerts(String filename) throws IOException {
 		try ( FileOutputStream fos = new FileOutputStream(new File(basePath, filename))) {
-			for (Vertex vertex : vertexes) {
-				fos.write( PartsWriter.float2ByteArray( (float)vertex.xyz.x) );
-				fos.write( PartsWriter.float2ByteArray( (float)vertex.xyz.y) );
-				fos.write( PartsWriter.float2ByteArray( (float)vertex.xyz.z) );
+			for (Vertex vertex : q3bsp.vertices) {
+				fos.write( float2ByteArray( (float)vertex.xyz.x) );
+				fos.write( float2ByteArray( (float)vertex.xyz.y) );
+				fos.write( float2ByteArray( (float)vertex.xyz.z) );
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		System.out.println(vertexes.size() + " verts written (4bytes*3xyz*num_written)");
+		System.out.println(q3bsp.vertices.size() + " verts written (4bytes*3xyz*num_written)");
 	}
 	
-	public int writeIndexes(List<String> skip, Surface[] surfaces, List<Integer> indexes, Shader[] shaders, String filename) throws IOException {
+	public int writeIndexes(List<String> skip, String filename) throws IOException {
 		int counter=0;
 		try ( FileOutputStream fos = new FileOutputStream(new File(basePath, filename))) {
 			
-			for (Surface surface : surfaces) {
+			for (Surface surface : q3bsp.surfaces) {
 				
-				if( skip.contains( shaders[surface.shaderNum].shader))
+				if( skip.contains( q3bsp.shaders[surface.shaderNum].shader))
 					continue;
 				for(int k = 0; k < surface.numIndexes; ++k) {
-					int i = surface.firstVert + indexes.get(surface.firstIndex + k);
-					fos.write( PartsWriter.char2ByteArray( (char)i) );
+					int i = surface.firstVert + q3bsp.indexes.get(surface.firstIndex + k);
+					fos.write( char2ByteArray( (char)i) );
 					counter++;
                 }
 			}
@@ -66,12 +77,12 @@ public class PartsWriter {
 		return counter;
 	}
 
-	public void writeNormals(List<Vertex> vertexes, String filename) {
+	public void writeNormals(String filename) {
 		try ( FileOutputStream fos = new FileOutputStream(new File(basePath, filename))) {
-			for (Vertex vertex : vertexes) {
-				fos.write( PartsWriter.float2ByteArray( (float)vertex.normal.x) );
-				fos.write( PartsWriter.float2ByteArray( (float)vertex.normal.y) );
-				fos.write( PartsWriter.float2ByteArray( (float)vertex.normal.z) );
+			for (Vertex vertex : q3bsp.vertices) {
+				fos.write( float2ByteArray( (float)vertex.normal.x) );
+				fos.write( float2ByteArray( (float)vertex.normal.y) );
+				fos.write( float2ByteArray( (float)vertex.normal.z) );
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -79,11 +90,11 @@ public class PartsWriter {
 		System.out.println("normals written");
 	}
 
-	public void writeTexCoords(List<Vertex> vertexes, String filename) {
+	public void writeTexCoords(String filename) {
 		try ( FileOutputStream fos = new FileOutputStream(new File(basePath, filename))) {
-			for (Vertex vertex : vertexes) {
-				fos.write( PartsWriter.float2ByteArray( (float)vertex.st.x) );
-				fos.write( PartsWriter.float2ByteArray( (float)vertex.st.y) );
+			for (Vertex vertex : q3bsp.vertices) {
+				fos.write( float2ByteArray( (float)vertex.st.x) );
+				fos.write( float2ByteArray( (float)vertex.st.y) );
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -91,11 +102,11 @@ public class PartsWriter {
 		System.out.println("texCoords written");
 	}
 
-	public void writeLmCoords(List<Vertex> vertexes, String filename) {
+	public void writeLmCoords(String filename) {
 		try ( FileOutputStream fos = new FileOutputStream(new File(basePath, filename))) {
-			for (Vertex vertex : vertexes) {
-				fos.write( PartsWriter.float2ByteArray( (float)vertex.lightmap.x) );
-				fos.write( PartsWriter.float2ByteArray( (float)vertex.lightmap.y) );
+			for (Vertex vertex : q3bsp.vertices) {
+				fos.write( float2ByteArray( (float)vertex.lightmap.x) );
+				fos.write( float2ByteArray( (float)vertex.lightmap.y) );
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -103,12 +114,12 @@ public class PartsWriter {
 		System.out.println("lightmap texCoords written");
 	}
 
-	public void writeColors(List<Vertex> vertexes, String filename) {
+	public void writeColors( String filename) {
 		try ( FileOutputStream fos = new FileOutputStream(new File(basePath, filename))) {
-			for (Vertex vertex : vertexes) {
-				fos.write( PartsWriter.float2ByteArray( (float)vertex.color.x) );
-				fos.write( PartsWriter.float2ByteArray( (float)vertex.color.y) );
-				fos.write( PartsWriter.float2ByteArray( (float)vertex.color.z) );
+			for (Vertex vertex : q3bsp.vertices) {
+				fos.write( float2ByteArray( (float)vertex.color.x) );
+				fos.write( float2ByteArray( (float)vertex.color.y) );
+				fos.write( float2ByteArray( (float)vertex.color.z) );
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

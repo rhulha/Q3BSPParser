@@ -40,16 +40,6 @@ public class Q3BSP {
 		}
 	}
 	
-	public int writeBasics(PartsWriter partsWriter) throws IOException {
-		int indexesCount = partsWriter.writeIndexes( SkipList.getSkipList(), surfaces, indexes, shaders, "q3dm17.indices");
-		partsWriter.writeVerts( vertices, "q3dm17.verts");
-		partsWriter.writeNormals( vertices, "q3dm17.normals");
-		partsWriter.writeTexCoords( vertices, "q3dm17.texCoords");
-		partsWriter.writeLmCoords( vertices, "q3dm17.lmCoords");
-		partsWriter.writeColors( vertices, "q3dm17.colors");
-		return indexesCount;
-	}
-
 	public void tessellateAllPatchFaces() {
 		System.out.println("tessellateAllPatchFaces");
 		for (Surface face : surfaces) {
@@ -59,7 +49,6 @@ public class Q3BSP {
 		}
 	}
 
-	
 	public void changeColors() throws IOException {
 		System.out.println("changing Colors");
 		List<String> blue = new ArrayList<String>();
