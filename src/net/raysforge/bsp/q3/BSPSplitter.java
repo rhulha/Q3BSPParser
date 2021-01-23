@@ -8,28 +8,36 @@ import java.util.List;
 import net.raysforge.map.Point;
 
 public class BSPSplitter {
+	
+	private String outputPath;
+	private Q3BSPReader q3BspReader;
+	private PartsWriter partsWriter;
+	private PartsWriterJson partsWriterJson;
 
-	public static void writeBSPPartsToFiles(String bspFile, String outputPath) throws IOException {
-
-		Q3BSPReader bsp = new Q3BSPReader(bspFile);
-		PartsWriter bspWriter = new PartsWriter( outputPath);
-		
-		writeBasics(bsp, bspWriter);
-
-		writeFile( outputPath + "q3dm17.brushes", bsp.getLump(Q3LumpTypes.Brushes.ordinal()));
-		writeFile( outputPath + "q3dm17.brushsides", bsp.getLump(Q3LumpTypes.BrushSides.ordinal()));
-		writeFile( outputPath + "q3dm17.leafbrushes", bsp.getLump(Q3LumpTypes.LeafBrushes.ordinal()));
-		writeFile( outputPath + "q3dm17.leafs", bsp.getLump(Q3LumpTypes.Leafs.ordinal()));
-		writeFile( outputPath + "q3dm17.nodes", bsp.getLump(Q3LumpTypes.Nodes.ordinal()));
-		writeFile( outputPath + "q3dm17.planes", bsp.getLump(Q3LumpTypes.Planes.ordinal()));
-		
-		bspWriter.writeEntitiesAsJSON( bsp.getEntities(), "q3dm17.ents");
+	public BSPSplitter(String bspFile, String outputPath) throws IOException {
+		this.outputPath = outputPath;
+		q3BspReader = new Q3BSPReader(bspFile);
+		partsWriter = new PartsWriter( outputPath);
+		partsWriterJson = new PartsWriterJson( outputPath);
 	}
 
-	public static void writeBasics(Q3BSPReader bsp, PartsWriter bspWriter) throws IOException {
-		Surface[] surfaces = bsp.getSurfaces();
-		List<Vertex> vertexes = bsp.getDrawVerts();
-		List<Integer> indexes = bsp.getDrawIndexes();
+	public void writeBSPPartsToFiles() throws IOException {
+		writeBasics();
+
+		writeFile( outputPath + "q3dm17.brushes", q3BspReader.getLump(Q3LumpTypes.Brushes.ordinal()));
+		writeFile( outputPath + "q3dm17.brushsides", q3BspReader.getLump(Q3LumpTypes.BrushSides.ordinal()));
+		writeFile( outputPath + "q3dm17.leafbrushes", q3BspReader.getLump(Q3LumpTypes.LeafBrushes.ordinal()));
+		writeFile( outputPath + "q3dm17.leafs", q3BspReader.getLump(Q3LumpTypes.Leafs.ordinal()));
+		writeFile( outputPath + "q3dm17.nodes", q3BspReader.getLump(Q3LumpTypes.Nodes.ordinal()));
+		writeFile( outputPath + "q3dm17.planes", q3BspReader.getLump(Q3LumpTypes.Planes.ordinal()));
+		
+		partsWriterJson.writeEntitiesAsJSON( q3BspReader.getEntities(), "q3dm17.ents");
+	}
+
+	public void writeBasics() throws IOException {
+		Surface[] surfaces = q3BspReader.getSurfaces();
+		List<Vertex> vertexes = q3BspReader.getDrawVerts();
+		List<Integer> indexes = q3BspReader.getDrawIndexes();
 
 		for (Surface face : surfaces) {
 			if( face.surfaceType == Surface.patch) {
@@ -38,10 +46,10 @@ public class BSPSplitter {
 			}
 		}
 
-		bspWriter.writeVerts( vertexes, "q3dm17.verts");
+		partsWriter.writeVerts( vertexes, "q3dm17.verts");
 
-		Shader[] shaders = bsp.getShaders();
-		bspWriter.writeObjectAsJSON( shaders, "q3dm17.textures");
+		Shader[] shaders = q3BspReader.getShaders();
+		partsWriterJson.writeObjectAsJSON( shaders, "q3dm17.textures");
 		
 		List<String> skip = new ArrayList<String>();
 		skip.add("flareShader");
@@ -60,14 +68,14 @@ public class BSPSplitter {
 		//skip.add("models/mapobjects/kmlamp1"); // stand lights
 		//skip.add("models/mapobjects/kmlamp_white");
 
-		bspWriter.writeIndexes( skip, surfaces, indexes, shaders, "q3dm17.indices");
-		bspWriter.writeNormals( vertexes, "q3dm17.normals");
-		bspWriter.writeTexCoords( vertexes, "q3dm17.texCoords");
-		bspWriter.writeLmCoords( vertexes, "q3dm17.lmCoords");
+		partsWriter.writeIndexes( skip, surfaces, indexes, shaders, "q3dm17.indices");
+		partsWriter.writeNormals( vertexes, "q3dm17.normals");
+		partsWriter.writeTexCoords( vertexes, "q3dm17.texCoords");
+		partsWriter.writeLmCoords( vertexes, "q3dm17.lmCoords");
 		
 		changeColors(surfaces, indexes, shaders, vertexes);
 		
-		bspWriter.writeColors( vertexes, "q3dm17.colors");
+		partsWriter.writeColors( vertexes, "q3dm17.colors");
 
 	}
 	

@@ -20,8 +20,8 @@ public class TestBSPSplitter {
 	public static void main(String[] args) throws IOException {
 		// String basePath = "C:\\Users\\Ray\\dart\\Instagib\\web\\data\\";
 		String basePath = "D:\\GameDev\\Tests\\gltf\\";
-		
-		BSPSplitter.writeBSPPartsToFiles("q3dm17.bsp", basePath);
+		BSPSplitter bspSplitter = new BSPSplitter("q3dm17.bsp", basePath);
+		bspSplitter.writeBSPPartsToFiles();
 		
 	}
 

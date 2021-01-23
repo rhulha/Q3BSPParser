@@ -3,6 +3,8 @@ package net.raysforge.gltf;
 import java.io.File;
 import java.io.IOException;
 
+import net.raysforge.bsp.q3.BSPSplitter;
+import net.raysforge.bsp.q3.PartsWriterJson;
 import net.raysforge.bsp.q3.Q3BSPReader;
 
 public class Bsp2glTF {
@@ -10,6 +12,11 @@ public class Bsp2glTF {
 	public static void convert(File bspFile, File outputDirectory) throws IOException {
 		
 		Q3BSPReader bsp = new Q3BSPReader(bspFile.toString());
+		PartsWriterJson partsWriterJson = new PartsWriterJson( outputDirectory.toString());
+		BSPSplitter bspSplitter = new BSPSplitter(bspFile.toString(), outputDirectory.toString());
+		
+		bspSplitter.writeBasics();
+		partsWriterJson.writeEntitiesAsJSON( bsp.getEntities(), "q3dm17.ents");
 		
 		// List<Integer> drawIndexes = bsp.getDrawIndexes();
 		// List<Vertex> drawVerts = bsp.getDrawVerts();

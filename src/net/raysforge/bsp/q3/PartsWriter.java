@@ -1,16 +1,11 @@
 package net.raysforge.bsp.q3;
 
+import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.List;
-import java.util.Map;
-
-import net.raysforge.map.Plane;
-
-import com.google.gson.Gson;
 
 public class PartsWriter {
 
@@ -19,18 +14,6 @@ public class PartsWriter {
 	public PartsWriter(String basePath) {
 		this.basePath = basePath;
 	}
-
-	/*
-	public void example( BSPReader bsp, BSPWriter bspWriter) throws IOException {
-		bspWriter.writeArrayAsJSON( bsp.getLeafBrushes(), "q3dm17.leafbrushes");
-		bspWriter.writeArrayAsJSON( bsp.getBrushSides(), "q3dm17.brushsides");
-		bspWriter.writeArrayAsJSON( bsp.getBrushes(), "q3dm17.brushes");
-		bspWriter.writeObjectAsJSON( bsp.getLeafs(), "q3dm17.leafs");
-		bspWriter.writePlanesAsJSON( bsp.getPlanes(), "q3dm17.planes");
-		bspWriter.writeEntitiesAsJSON( bsp.getEntities(), "q3dm17.ents");
-		bspWriter.writeNodesAsJSON( bsp.getNodes(), "q3dm17.nodes");
-	}
-	*/
 
 	public static byte[] int2ByteArray (int value) {
 		return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putInt(value).array();
@@ -44,81 +27,8 @@ public class PartsWriter {
 		return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(value).array();
 	}
 	
-	public void writeObjectAsJSON( Object obj, String filename) {
-		Gson gson = new Gson();
-		String json = gson.toJson(obj);
-		json = json.replace("},{", "},\n{");
-		try ( FileWriter fw = new FileWriter(basePath + filename)) {
-			fw.write(json);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println(filename + " written");
-	}
-
-	public void writeArrayAsJSON( Object obj, String filename) {
-		Gson gson = new Gson();
-		String json = gson.toJson(obj);
-		json = json.replace("],[", "],\n[");
-		try ( FileWriter fw = new FileWriter(basePath + filename)) {
-			fw.write(json);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println(filename + " written");
-	}
-	
-	
-	public void writeLeafsAsJSON(Leaf[] leafs, String filename) {
-		Gson gson = new Gson();
-		String json = gson.toJson(leafs);
-		json = json.replace("},{", "},\n{");
-		try ( FileWriter fw = new FileWriter(basePath + filename)) {
-			fw.write(json);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println("leafs written");
-	}
-
-	public void writePlanesAsJSON(Plane[] planes, String filename) {
-		Gson gson = new Gson();
-		String json = gson.toJson(planes);
-		json = json.replace("},{", "},\n{");
-		try ( FileWriter fw = new FileWriter(basePath + filename)) {
-			fw.write(json);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println("planes written");
-	}
-
-	public void writeEntitiesAsJSON(Map<String, List<Map<String, String>>> entitites, String filename) {
-		Gson gson = new Gson();
-		String json = gson.toJson(entitites);
-		json = json.replace("],\"", "],\n\"");
-		try ( FileWriter fw = new FileWriter(basePath + filename)) {
-			fw.write(json);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println("entitites written");
-	}
-
-	public void writeNodesAsJSON(Node[] nodes, String filename) {
-		Gson gson = new Gson();
-		String json = gson.toJson(nodes);
-		json = json.replace("},{", "},\n{");
-		try ( FileWriter fw = new FileWriter(basePath + filename)) {
-			fw.write(json);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		System.out.println("nodes written");
-	}
-
 	public void writeVerts(List<Vertex> vertexes, String filename) throws IOException {
-		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
+		try ( FileOutputStream fos = new FileOutputStream(new File(basePath, filename))) {
 			for (Vertex vertex : vertexes) {
 				fos.write( PartsWriter.float2ByteArray( (float)vertex.xyz.x) );
 				fos.write( PartsWriter.float2ByteArray( (float)vertex.xyz.y) );
@@ -132,7 +42,7 @@ public class PartsWriter {
 	
 	public void writeIndexes(List<String> skip, Surface[] surfaces, List<Integer> indexes, Shader[] shaders, String filename) throws IOException {
 		long counter=0;
-		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
+		try ( FileOutputStream fos = new FileOutputStream(new File(basePath, filename))) {
 			
 			for (Surface surface : surfaces) {
 				
@@ -152,7 +62,7 @@ public class PartsWriter {
 	}
 
 	public void writeNormals(List<Vertex> vertexes, String filename) {
-		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
+		try ( FileOutputStream fos = new FileOutputStream(new File(basePath, filename))) {
 			for (Vertex vertex : vertexes) {
 				fos.write( PartsWriter.float2ByteArray( (float)vertex.normal.x) );
 				fos.write( PartsWriter.float2ByteArray( (float)vertex.normal.y) );
@@ -165,7 +75,7 @@ public class PartsWriter {
 	}
 
 	public void writeTexCoords(List<Vertex> vertexes, String filename) {
-		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
+		try ( FileOutputStream fos = new FileOutputStream(new File(basePath, filename))) {
 			for (Vertex vertex : vertexes) {
 				fos.write( PartsWriter.float2ByteArray( (float)vertex.st.x) );
 				fos.write( PartsWriter.float2ByteArray( (float)vertex.st.y) );
@@ -177,7 +87,7 @@ public class PartsWriter {
 	}
 
 	public void writeLmCoords(List<Vertex> vertexes, String filename) {
-		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
+		try ( FileOutputStream fos = new FileOutputStream(new File(basePath, filename))) {
 			for (Vertex vertex : vertexes) {
 				fos.write( PartsWriter.float2ByteArray( (float)vertex.lightmap.x) );
 				fos.write( PartsWriter.float2ByteArray( (float)vertex.lightmap.y) );
@@ -189,7 +99,7 @@ public class PartsWriter {
 	}
 
 	public void writeColors(List<Vertex> vertexes, String filename) {
-		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
+		try ( FileOutputStream fos = new FileOutputStream(new File(basePath, filename))) {
 			for (Vertex vertex : vertexes) {
 				fos.write( PartsWriter.float2ByteArray( (float)vertex.color.x) );
 				fos.write( PartsWriter.float2ByteArray( (float)vertex.color.y) );
