@@ -12,8 +12,8 @@ import net.raysforge.q3.map.Point;
 
 public class Q3BSPReader extends BSPReader {
 
-	public Q3BSPReader(String name, int lumpSize) throws IOException {
-		super( name, lumpSize, 46);
+	public Q3BSPReader(String fileName) throws IOException {
+		super( fileName, Q3LumpTypes.size, 46);
 	}
 
 	public Node[] getNodes() throws IOException {

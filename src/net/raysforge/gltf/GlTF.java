@@ -1,5 +1,6 @@
 package net.raysforge.gltf;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -43,7 +44,7 @@ public class GlTF {
 
 	GlTFInternalCache cache = new GlTFInternalCache();
 
-	public void write(String fileName) throws IOException {
+	public void write(File file) throws IOException {
 		cache = new GlTFInternalCache();
 		
 		StringWriter buffers = new StringWriter(); 
@@ -55,59 +56,61 @@ public class GlTF {
 		StringWriter accessors = new StringWriter(); 
 		writeArrayBegin(accessors, "accessors");
 
-		FileWriter fw = new FileWriter(fileName);
+		try(FileWriter fw = new FileWriter(file))
+		{
 		
-		fw.write("{");
-		
-		for (int s = 0; s < scenes.size(); s++) {
-			Scene scene = scenes.get(s);
-			for (int n = 0; n < scene.nodes.size(); n++) {
-				Node node = scene.nodes.get(n);
-				cache.addMesh(node.mesh);
-				// TODO nodes cache
-				
-				if( node.children.size() > 0 )
-					throw new RuntimeException("only one Mesh allowed at the moment.");
-				
-				for (int p = 0; p < node.mesh.primitives.size(); p++) {
-					Primitive primitive = node.mesh.primitives.get(p);
-
-					cacheAccessor(buffers, bufferViews, accessors, primitive.indices);
-
-					for (int a = 0; a < primitive.attributes.size(); a++) {
-						Attribute attribute = primitive.attributes.get(a);
-						cacheAccessor(buffers, bufferViews, accessors, attribute.accessor);
-
+			fw.write("{");
+			
+			for (int s = 0; s < scenes.size(); s++) {
+				Scene scene = scenes.get(s);
+				for (int n = 0; n < scene.nodes.size(); n++) {
+					Node node = scene.nodes.get(n);
+					cache.addMesh(node.mesh);
+					// TODO nodes cache
+					
+					if( node.children.size() > 0 )
+						throw new RuntimeException("only one Mesh allowed at the moment.");
+					
+					for (int p = 0; p < node.mesh.primitives.size(); p++) {
+						Primitive primitive = node.mesh.primitives.get(p);
+	
+						cacheAccessor(buffers, bufferViews, accessors, primitive.indices);
+	
+						for (int a = 0; a < primitive.attributes.size(); a++) {
+							Attribute attribute = primitive.attributes.get(a);
+							cacheAccessor(buffers, bufferViews, accessors, attribute.accessor);
+	
+						}
 					}
 				}
 			}
+			
+			buffers = removeLastComma(buffers);
+			bufferViews = removeLastComma(bufferViews);
+			accessors = removeLastComma(accessors);
+			
+			buffers.write("],");
+			bufferViews.write("],");
+			accessors.write("]");
+	
+			fw.write("\"asset\":{");
+			writeStr(fw, "version", "2.0");
+			fw.write("},");
+			
+			writeNbr(fw, "scene", scenes.indexOf(scene));
+			fw.write(",");
+			
+			writeScenesBlock(fw);
+			writeNodesBlock(fw);
+			writeMeshesBlock(fw);
+			
+			fw.write(buffers.toString());
+			fw.write(bufferViews.toString());
+			fw.write(accessors.toString());
+			
+			fw.write("}");
+		
 		}
-		
-		buffers = removeLastComma(buffers);
-		bufferViews = removeLastComma(bufferViews);
-		accessors = removeLastComma(accessors);
-		
-		buffers.write("],");
-		bufferViews.write("],");
-		accessors.write("]");
-
-		fw.write("\"asset\":{");
-		writeStr(fw, "version", "2.0");
-		fw.write("},");
-		
-		writeNbr(fw, "scene", scenes.indexOf(scene));
-		fw.write(",");
-		
-		writeScenesBlock(fw);
-		writeNodesBlock(fw);
-		writeMeshesBlock(fw);
-		
-		fw.write(buffers.toString());
-		fw.write(bufferViews.toString());
-		fw.write(accessors.toString());
-		
-		fw.write("}");
-		fw.close();
 	}
 
 	// TODO very inefficient. Fix later.
@@ -236,17 +239,5 @@ public class GlTF {
 		fw.write("],"); // scenes
 	}
 
-	public void writeGson(String fileName) throws IOException {
-		FileWriter fw = new FileWriter(fileName);
-		
-		JsonObject glTF = new JsonObject();
-		glTF.addProperty("scene", 0);
-		
-		JsonArray scenes = new JsonArray();
-		glTF.add("scenes", scenes);
-		
-		
-		fw.write(glTF.toString());
-		fw.close();
-	}
+	
 }

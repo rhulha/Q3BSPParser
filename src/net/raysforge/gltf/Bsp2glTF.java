@@ -3,10 +3,14 @@ package net.raysforge.gltf;
 import java.io.File;
 import java.io.IOException;
 
+import net.raysforge.q3.bsp.Q3BSPReader;
+
 public class Bsp2glTF {
 
-	public static void main(String[] args) throws IOException {
-		// Q3BSPReader bsp = new Q3BSPReader("q3dm17.bsp", Q3LumpTypes.size);
+	public static void convert(File bspFile, File outputDirectory) throws IOException {
+		
+		
+		Q3BSPReader bsp = new Q3BSPReader(bspFile.toString());
 		
 		// List<Integer> drawIndexes = bsp.getDrawIndexes();
 		// List<Vertex> drawVerts = bsp.getDrawVerts();
@@ -15,13 +19,13 @@ public class Bsp2glTF {
 	
 //		54612 indices written (currently short = 2 bytes)
 		
-		String basePath = "D:\\GameDev\\Tests\\gltf\\";
+		String nameSansExt = bspFile.getName().replaceFirst("[.][^.]+$", "");
 		
-		File verts_file = new File(basePath + "q3dm17.verts");
-		File indices_file = new File(basePath + "q3dm17.indices");
+		File verts_file = new File(outputDirectory + nameSansExt + ".verts");
+		File indices_file = new File(outputDirectory + nameSansExt + ".indices");
 		
-		Buffer verts_buffer = new Buffer("q3dm17.verts", (int)verts_file.length());
-		Buffer indices_buffer = new Buffer("q3dm17.indices", (int)indices_file.length());
+		Buffer verts_buffer = new Buffer(nameSansExt + ".verts", (int)verts_file.length());
+		Buffer indices_buffer = new Buffer(nameSansExt + ".indices", (int)indices_file.length());
 		
 		BufferView bufferViewVerts = new BufferView(verts_buffer, 0, (int)verts_file.length(), 12);
 		
@@ -47,7 +51,7 @@ public class Bsp2glTF {
 		GlTF glTF = new GlTF(scene);
 		
 		
-		glTF.write("D:\\GameDev\\Tests\\gltf\\test.gltf");
+		glTF.write(new File(outputDirectory, nameSansExt + ".gltf"));
 
 	}
 }

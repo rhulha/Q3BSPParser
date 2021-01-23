@@ -1,5 +1,6 @@
 package net.raysforge.gltf;
 
+import java.io.File;
 import java.io.IOException;
 
 public class CreateBox {
@@ -30,7 +31,7 @@ public class CreateBox {
 		Scene scene = new Scene(node);
 		GlTF glTF = new GlTF(scene);
 
-		glTF.write("D:\\GameDev\\Tests\\gltf\\test.gltf");
+		glTF.write(new File("D:\\GameDev\\Tests\\gltf\\box.gltf"));
 	}
 
 }

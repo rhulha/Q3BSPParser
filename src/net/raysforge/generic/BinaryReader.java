@@ -26,6 +26,7 @@ public class BinaryReader {
 
 	// not yet used, untested, may needs .order(ByteOrder.LITTLE_ENDIAN)
 	public static float byteArray2float( byte[] b) {
+		System.out.println("warning untested.");
 		return ByteBuffer.wrap(b).getFloat();
 	}
 

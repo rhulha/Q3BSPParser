@@ -14,7 +14,7 @@ public class Main {
 	
 	
 	public static void test() throws IOException {
-		Q3BSPReader bsp = new Q3BSPReader("q3dm17.bsp", Q3LumpTypes.size);
+		Q3BSPReader bsp = new Q3BSPReader("q3dm17.bsp");
 		
 		byte[] lump = bsp.getLump(Q3LumpTypes.Lightmaps.ordinal());
 		
@@ -28,7 +28,7 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 
-		Q3BSPReader bsp = new Q3BSPReader("q3dm17.bsp", Q3LumpTypes.size);
+		Q3BSPReader bsp = new Q3BSPReader("q3dm17.bsp");
 		BSPWriter bspWriter = new BSPWriter( basePath);
 		
 		writeBasics(bsp, bspWriter);

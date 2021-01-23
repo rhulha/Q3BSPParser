@@ -7,9 +7,9 @@ public class BSPReader {
 
 	protected byte[][] lumps;
 
-	public BSPReader(String name, int lumpSize, int version) throws IOException {
+	public BSPReader(String fileName, int lumpSize, int version) throws IOException {
 
-		BinaryReader br = new BinaryReader(new RandomAccessFile(name, "r"));
+		BinaryReader br = new BinaryReader(new RandomAccessFile(fileName, "r"));
 
 		String magic = br.readString(4);
 		int bsp_version = br.readInt();

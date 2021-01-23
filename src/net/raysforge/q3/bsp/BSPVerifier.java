@@ -7,7 +7,7 @@ import java.util.Set;
 public class BSPVerifier {
 
 	public static void main(String[] args) throws IOException {
-		Q3BSPReader bsp = new Q3BSPReader("q3dm17.bsp", Q3LumpTypes.size);
+		Q3BSPReader bsp = new Q3BSPReader("q3dm17.bsp");
 
 		printAllBrushSidesShader(bsp);
 		// verifyValues(bsp);
