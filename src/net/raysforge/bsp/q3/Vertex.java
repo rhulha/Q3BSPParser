@@ -1,10 +1,11 @@
 package net.raysforge.bsp.q3;
 
+import static net.raysforge.generic.DecimalFormater.f;
+
 import java.io.IOException;
 
 import net.raysforge.generic.BinaryReader;
-import net.raysforge.map.Point;
-import static net.raysforge.bsp.q3.DecimalFormater.f; 
+import net.raysforge.map.Point; 
 
 public class Vertex {
 	

@@ -1,4 +1,4 @@
-package net.raysforge.bsp.q3;
+package net.raysforge.generic;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
