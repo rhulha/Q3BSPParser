@@ -11,6 +11,15 @@ import java.util.List;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import net.raysforge.gltf.model.Accessor;
+import net.raysforge.gltf.model.Attribute;
+import net.raysforge.gltf.model.Buffer;
+import net.raysforge.gltf.model.BufferView;
+import net.raysforge.gltf.model.Mesh;
+import net.raysforge.gltf.model.Node;
+import net.raysforge.gltf.model.Primitive;
+import net.raysforge.gltf.model.Scene;
+
 public class GlTF {
 	
 	List<Scene> scenes = new ArrayList<Scene>();

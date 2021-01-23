@@ -1,4 +1,4 @@
-package net.raysforge.gltf;
+package net.raysforge.gltf.model;
 
 public class Asset {
 	

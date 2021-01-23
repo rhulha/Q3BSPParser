@@ -1,16 +1,16 @@
-package net.raysforge.gltf;
+package net.raysforge.gltf.model;
 
 public class Accessor {
 	
-	BufferView bufferView;
-	int componentType=-1;
-	int count=-1;
-	String type; // "VEC3", SCALAR, VEC2
+	public BufferView bufferView;
+	public int componentType=-1;
+	public int count=-1;
+	public String type; // "VEC3", SCALAR, VEC2
 	
-	int byteOffset=-1;
+	public int byteOffset=-1;
 	
-	int max[] = new int[3];
-	int min[] = new int[3];
+	public int max[] = new int[3];
+	public int min[] = new int[3];
 
 	public Accessor(BufferView bufferView, int componentType, int byteOffset, int count, String type) {
 		this.bufferView = bufferView;

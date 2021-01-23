@@ -1,15 +1,15 @@
-package net.raysforge.gltf;
+package net.raysforge.gltf.model;
 
 public class BufferView {
 	
 	// a buffer view cannot be used for mixed data (i.e., it cannot contain both indices and vertex attributes).
 	// https://github.com/KhronosGroup/glTF/issues/1440
 	
-	Buffer buffer;
-	int byteLength=-1;
-	int byteOffset=-1;
-	int byteStride=-1;
-	int target=-1;
+	public Buffer buffer;
+	public int byteLength=-1;
+	public int byteOffset=-1;
+	public int byteStride=-1;
+	public int target=-1;
 	
 	// GltfConstants.GL_ELEMENT_ARRAY_BUFFER
     // public static final int GL_ARRAY_BUFFER =  34962;

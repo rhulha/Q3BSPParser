@@ -2,6 +2,11 @@ package net.raysforge.gltf;
 
 import java.util.ArrayList;
 
+import net.raysforge.gltf.model.Accessor;
+import net.raysforge.gltf.model.Buffer;
+import net.raysforge.gltf.model.BufferView;
+import net.raysforge.gltf.model.Mesh;
+
 public class GlTFInternalCache {
 
 	ArrayList<Buffer> buffers = new ArrayList<Buffer>();

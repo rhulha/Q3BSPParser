@@ -1,4 +1,4 @@
-package net.raysforge.gltf;
+package net.raysforge.gltf.model;
 
 import java.util.ArrayList;
 import java.util.List;

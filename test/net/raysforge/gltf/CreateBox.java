@@ -3,6 +3,15 @@ package net.raysforge.gltf;
 import java.io.File;
 import java.io.IOException;
 
+import net.raysforge.gltf.model.Accessor;
+import net.raysforge.gltf.model.Attribute;
+import net.raysforge.gltf.model.Buffer;
+import net.raysforge.gltf.model.BufferView;
+import net.raysforge.gltf.model.Mesh;
+import net.raysforge.gltf.model.Node;
+import net.raysforge.gltf.model.Primitive;
+import net.raysforge.gltf.model.Scene;
+
 public class CreateBox {
 
 	public static void main(String[] args) throws IOException {

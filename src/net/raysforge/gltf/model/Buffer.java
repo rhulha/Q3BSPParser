@@ -1,9 +1,9 @@
-package net.raysforge.gltf;
+package net.raysforge.gltf.model;
 
 public class Buffer {
 
-	String uri;
-	int byteLength=-1;
+	public String uri;
+	public int byteLength=-1;
 	
 	public Buffer(String uri, int byteLength) {
 		this.uri = uri;

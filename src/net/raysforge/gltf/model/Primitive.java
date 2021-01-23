@@ -1,7 +1,9 @@
-package net.raysforge.gltf;
+package net.raysforge.gltf.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import net.raysforge.gltf.GltfConstants;
 
 public class Primitive {
 	
