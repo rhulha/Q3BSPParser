@@ -12,7 +12,7 @@ public class BSPSplitter {
 	public static void writeBSPPartsToFiles(String bspFile, String outputPath) throws IOException {
 
 		Q3BSPReader bsp = new Q3BSPReader(bspFile);
-		BSP_PartsWriter bspWriter = new BSP_PartsWriter( outputPath);
+		PartsWriter bspWriter = new PartsWriter( outputPath);
 		
 		writeBasics(bsp, bspWriter);
 
@@ -26,7 +26,7 @@ public class BSPSplitter {
 		bspWriter.writeEntitiesAsJSON( bsp.getEntities(), "q3dm17.ents");
 	}
 
-	public static void writeBasics(Q3BSPReader bsp, BSP_PartsWriter bspWriter) throws IOException {
+	public static void writeBasics(Q3BSPReader bsp, PartsWriter bspWriter) throws IOException {
 		Surface[] surfaces = bsp.getSurfaces();
 		List<Vertex> vertexes = bsp.getDrawVerts();
 		List<Integer> indexes = bsp.getDrawIndexes();
