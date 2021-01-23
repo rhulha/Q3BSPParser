@@ -9,7 +9,6 @@ public class Bsp2glTF {
 
 	public static void convert(File bspFile, File outputDirectory) throws IOException {
 		
-		
 		Q3BSPReader bsp = new Q3BSPReader(bspFile.toString());
 		
 		// List<Integer> drawIndexes = bsp.getDrawIndexes();

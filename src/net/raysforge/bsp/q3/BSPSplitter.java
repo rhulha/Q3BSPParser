@@ -7,43 +7,26 @@ import java.util.List;
 
 import net.raysforge.map.Point;
 
-public class Main {
-	
-	//static String basePath = "C:\\Users\\Ray\\dart\\Instagib\\web\\data\\";
-	static String basePath = "D:\\GameDev\\Tests\\gltf\\";
-	
-	
-	public static void test() throws IOException {
-		Q3BSPReader bsp = new Q3BSPReader("q3dm17.bsp");
-		
-		byte[] lump = bsp.getLump(Q3LumpTypes.Lightmaps.ordinal());
-		
-		System.out.println(lump.length / (128*128*3));
-		
-		Shader[] textures = bsp.getShaders();
-		for (Shader texture : textures) {
-			System.out.println(texture.shader);
-		}
-	}
-	
-	public static void main(String[] args) throws IOException {
+public class BSPSplitter {
 
-		Q3BSPReader bsp = new Q3BSPReader("q3dm17.bsp");
-		BSPWriter bspWriter = new BSPWriter( basePath);
+	public static void writeBSPPartsToFiles(String bspFile, String outputPath) throws IOException {
+
+		Q3BSPReader bsp = new Q3BSPReader(bspFile);
+		BSP_PartsWriter bspWriter = new BSP_PartsWriter( outputPath);
 		
 		writeBasics(bsp, bspWriter);
 
-		writeFile( basePath + "q3dm17.brushes", bsp.getLump(Q3LumpTypes.Brushes.ordinal()));
-		writeFile( basePath + "q3dm17.brushsides", bsp.getLump(Q3LumpTypes.BrushSides.ordinal()));
-		writeFile( basePath + "q3dm17.leafbrushes", bsp.getLump(Q3LumpTypes.LeafBrushes.ordinal()));
-		writeFile( basePath + "q3dm17.leafs", bsp.getLump(Q3LumpTypes.Leafs.ordinal()));
-		writeFile( basePath + "q3dm17.nodes", bsp.getLump(Q3LumpTypes.Nodes.ordinal()));
-		writeFile( basePath + "q3dm17.planes", bsp.getLump(Q3LumpTypes.Planes.ordinal()));
+		writeFile( outputPath + "q3dm17.brushes", bsp.getLump(Q3LumpTypes.Brushes.ordinal()));
+		writeFile( outputPath + "q3dm17.brushsides", bsp.getLump(Q3LumpTypes.BrushSides.ordinal()));
+		writeFile( outputPath + "q3dm17.leafbrushes", bsp.getLump(Q3LumpTypes.LeafBrushes.ordinal()));
+		writeFile( outputPath + "q3dm17.leafs", bsp.getLump(Q3LumpTypes.Leafs.ordinal()));
+		writeFile( outputPath + "q3dm17.nodes", bsp.getLump(Q3LumpTypes.Nodes.ordinal()));
+		writeFile( outputPath + "q3dm17.planes", bsp.getLump(Q3LumpTypes.Planes.ordinal()));
 		
 		bspWriter.writeEntitiesAsJSON( bsp.getEntities(), "q3dm17.ents");
 	}
 
-	public static void writeBasics(Q3BSPReader bsp, BSPWriter bspWriter) throws IOException {
+	public static void writeBasics(Q3BSPReader bsp, BSP_PartsWriter bspWriter) throws IOException {
 		Surface[] surfaces = bsp.getSurfaces();
 		List<Vertex> vertexes = bsp.getDrawVerts();
 		List<Integer> indexes = bsp.getDrawIndexes();
@@ -66,7 +49,7 @@ public class Main {
 		skip.add("textures/sfx/beam");
 		skip.add("models/mapobjects/spotlamp/beam");
 		skip.add("models/mapobjects/lamps/flare03");
-		skip.add("models/mapobjects/teleporter/energy"); // TODO readd and make blue ?
+		skip.add("models/mapobjects/teleporter/energy"); // TODO read and make blue ?
 		skip.add("models/mapobjects/spotlamp/spotlamp");
 		skip.add("models/mapobjects/spotlamp/spotlamp_l");
 		skip.add("models/mapobjects/lamps/bot_lamp"); // head on the railgun pad

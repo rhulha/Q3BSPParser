@@ -12,11 +12,11 @@ import net.raysforge.map.Plane;
 
 import com.google.gson.Gson;
 
-public class BSPWriter {
+public class BSP_PartsWriter {
 
 	private String basePath;
 
-	public BSPWriter(String basePath) {
+	public BSP_PartsWriter(String basePath) {
 		this.basePath = basePath;
 	}
 
@@ -120,9 +120,9 @@ public class BSPWriter {
 	public void writeVerts(List<Vertex> vertexes, String filename) throws IOException {
 		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
 			for (Vertex vertex : vertexes) {
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.xyz.x) );
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.xyz.y) );
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.xyz.z) );
+				fos.write( BSP_PartsWriter.float2ByteArray( (float)vertex.xyz.x) );
+				fos.write( BSP_PartsWriter.float2ByteArray( (float)vertex.xyz.y) );
+				fos.write( BSP_PartsWriter.float2ByteArray( (float)vertex.xyz.z) );
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -140,7 +140,7 @@ public class BSPWriter {
 					continue;
 				for(int k = 0; k < surface.numIndexes; ++k) {
 					int i = surface.firstVert + indexes.get(surface.firstIndex + k);
-					fos.write( BSPWriter.char2ByteArray( (char)i) );
+					fos.write( BSP_PartsWriter.char2ByteArray( (char)i) );
 					counter++;
                 }
 			}
@@ -154,9 +154,9 @@ public class BSPWriter {
 	public void writeNormals(List<Vertex> vertexes, String filename) {
 		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
 			for (Vertex vertex : vertexes) {
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.normal.x) );
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.normal.y) );
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.normal.z) );
+				fos.write( BSP_PartsWriter.float2ByteArray( (float)vertex.normal.x) );
+				fos.write( BSP_PartsWriter.float2ByteArray( (float)vertex.normal.y) );
+				fos.write( BSP_PartsWriter.float2ByteArray( (float)vertex.normal.z) );
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -167,8 +167,8 @@ public class BSPWriter {
 	public void writeTexCoords(List<Vertex> vertexes, String filename) {
 		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
 			for (Vertex vertex : vertexes) {
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.st.x) );
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.st.y) );
+				fos.write( BSP_PartsWriter.float2ByteArray( (float)vertex.st.x) );
+				fos.write( BSP_PartsWriter.float2ByteArray( (float)vertex.st.y) );
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -179,8 +179,8 @@ public class BSPWriter {
 	public void writeLmCoords(List<Vertex> vertexes, String filename) {
 		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
 			for (Vertex vertex : vertexes) {
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.lightmap.x) );
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.lightmap.y) );
+				fos.write( BSP_PartsWriter.float2ByteArray( (float)vertex.lightmap.x) );
+				fos.write( BSP_PartsWriter.float2ByteArray( (float)vertex.lightmap.y) );
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -191,9 +191,9 @@ public class BSPWriter {
 	public void writeColors(List<Vertex> vertexes, String filename) {
 		try ( FileOutputStream fos = new FileOutputStream(basePath + filename)) {
 			for (Vertex vertex : vertexes) {
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.color.x) );
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.color.y) );
-				fos.write( BSPWriter.float2ByteArray( (float)vertex.color.z) );
+				fos.write( BSP_PartsWriter.float2ByteArray( (float)vertex.color.x) );
+				fos.write( BSP_PartsWriter.float2ByteArray( (float)vertex.color.y) );
+				fos.write( BSP_PartsWriter.float2ByteArray( (float)vertex.color.z) );
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
