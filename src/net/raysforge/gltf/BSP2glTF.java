@@ -15,7 +15,7 @@ import net.raysforge.gltf.model.Node;
 import net.raysforge.gltf.model.Primitive;
 import net.raysforge.gltf.model.Scene;
 
-public class Bsp2glTF {
+public class BSP2glTF {
 
 	public static void convert(File bspFile, File outputDirectory) throws IOException {
 		
