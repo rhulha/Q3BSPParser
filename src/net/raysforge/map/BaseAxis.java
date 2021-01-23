@@ -1,4 +1,4 @@
-package net.raysforge.q3.map;
+package net.raysforge.map;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
@@ -13,7 +13,7 @@ import java.util.Map;
 import javax.imageio.ImageIO;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import net.raysforge.q2.bsp.Vertex;
+import net.raysforge.bsp.q2.Vertex;
 
 public class BaseAxis {
 

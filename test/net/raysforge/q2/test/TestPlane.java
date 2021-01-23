@@ -1,7 +1,7 @@
 package net.raysforge.q2.test;
 
-import net.raysforge.q3.map.Plane;
-import net.raysforge.q3.map.Point;
+import net.raysforge.map.Plane;
+import net.raysforge.map.Point;
 
 public class TestPlane {
 

@@ -3,7 +3,7 @@ package net.raysforge.prodeus;
 import java.io.IOException;
 import java.util.List;
 
-import net.raysforge.q3.map.MapParser;
+import net.raysforge.map.MapParser;
 
 public class TestGetAllUsedTextures {
 	

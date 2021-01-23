@@ -3,7 +3,7 @@ package net.raysforge.gltf;
 import java.io.File;
 import java.io.IOException;
 
-import net.raysforge.q3.bsp.Q3BSPReader;
+import net.raysforge.bsp.q3.Q3BSPReader;
 
 public class Bsp2glTF {
 

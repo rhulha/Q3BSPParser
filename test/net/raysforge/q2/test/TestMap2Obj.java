@@ -2,7 +2,7 @@ package net.raysforge.q2.test;
 
 import java.io.IOException;
 
-import net.raysforge.q3.map.Q3Map2Obj;
+import net.raysforge.map.Q3Map2Obj;
 
 public class TestMap2Obj {
 

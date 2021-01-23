@@ -1,5 +1,4 @@
-package net.raysforge.q3.bsp;
-
+package net.raysforge.bsp.q3;
 public class Fog  {
 	
 	/*

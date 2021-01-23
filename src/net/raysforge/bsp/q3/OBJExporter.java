@@ -1,4 +1,4 @@
-package net.raysforge.q3.bsp;
+package net.raysforge.bsp.q3;
 
 import java.io.FileWriter;
 import java.io.IOException;

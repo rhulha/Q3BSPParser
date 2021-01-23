@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.raysforge.q2.bsp.Vertex;
-import net.raysforge.q3.map.BaseAxis;
-import net.raysforge.q3.map.Brush;
-import net.raysforge.q3.map.MapParser;
-import net.raysforge.q3.map.Plane;
-import net.raysforge.q3.map.Point;
+import net.raysforge.bsp.q2.Vertex;
+import net.raysforge.map.BaseAxis;
+import net.raysforge.map.Brush;
+import net.raysforge.map.MapParser;
+import net.raysforge.map.Plane;
+import net.raysforge.map.Point;
 
 public class Map2Emap {
 

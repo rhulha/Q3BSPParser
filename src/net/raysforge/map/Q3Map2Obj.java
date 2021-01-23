@@ -1,4 +1,4 @@
-package net.raysforge.q3.map;
+package net.raysforge.map;
 
 import java.io.FileWriter;
 import java.io.IOException;

@@ -1,11 +1,11 @@
-package net.raysforge.q3.bsp;
+package net.raysforge.bsp.q3;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.raysforge.q3.map.Point;
+import net.raysforge.map.Point;
 
 public class Main {
 	

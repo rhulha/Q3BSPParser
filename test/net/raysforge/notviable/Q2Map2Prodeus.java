@@ -11,9 +11,9 @@ import java.util.List;
 
 import net.raysforge.prodeus.Emap;
 import net.raysforge.prodeus.ProdeusFolders;
-import net.raysforge.q3.map.Brush;
-import net.raysforge.q3.map.MapParser;
-import net.raysforge.q3.map.Point;
+import net.raysforge.map.Brush;
+import net.raysforge.map.MapParser;
+import net.raysforge.map.Point;
 
 public class Q2Map2Prodeus {
 	

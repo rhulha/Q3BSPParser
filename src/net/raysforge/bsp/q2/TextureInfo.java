@@ -1,9 +1,9 @@
-package net.raysforge.q2.bsp;
+package net.raysforge.bsp.q2;
 
 import java.io.IOException;
 
 import net.raysforge.generic.LittleEndianDataInputStream;
-import net.raysforge.q3.map.Point;
+import net.raysforge.map.Point;
 
 public class TextureInfo {
 

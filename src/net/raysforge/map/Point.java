@@ -1,6 +1,6 @@
-package net.raysforge.q3.map;
+package net.raysforge.map;
 
-import static net.raysforge.q3.bsp.DecimalFormater.f1;
+import static net.raysforge.bsp.q3.DecimalFormater.f1;
 
 public class Point {
 

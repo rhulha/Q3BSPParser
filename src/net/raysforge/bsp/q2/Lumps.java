@@ -1,4 +1,4 @@
-package net.raysforge.q2.bsp;
+package net.raysforge.bsp.q2;
 
 public class Lumps {
 

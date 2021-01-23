@@ -3,7 +3,7 @@ package net.raysforge.prodeus;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.raysforge.q3.map.Point;
+import net.raysforge.map.Point;
 
 public class EmapFace {
 	

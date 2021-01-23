@@ -1,14 +1,14 @@
-package net.raysforge.q3.bsp;
+package net.raysforge.bsp.q3;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import net.raysforge.generic.BSPReader;
+import net.raysforge.bsp.BSPReader;
 import net.raysforge.generic.BinaryReader;
-import net.raysforge.q3.map.Plane;
-import net.raysforge.q3.map.Point;
+import net.raysforge.map.Plane;
+import net.raysforge.map.Point;
 
 public class Q3BSPReader extends BSPReader {
 

@@ -1,6 +1,6 @@
 package net.raysforge.prodeus;
 
-import net.raysforge.q2.bsp.Vertex;
+import net.raysforge.bsp.q2.Vertex;
 
 public class EmapNode {
 

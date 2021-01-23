@@ -1,7 +1,9 @@
-package net.raysforge.generic;
+package net.raysforge.bsp;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+
+import net.raysforge.generic.BinaryReader;
 
 public class BSPReader {
 

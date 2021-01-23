@@ -1,8 +1,8 @@
-package net.raysforge.q3.bsp;
+package net.raysforge.bsp.q3;
 
 import java.util.List;
 
-import net.raysforge.q3.map.Point;
+import net.raysforge.map.Point;
 
 public class Tessellate {
 	

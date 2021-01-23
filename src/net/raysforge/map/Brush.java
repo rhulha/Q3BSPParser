@@ -1,4 +1,4 @@
-package net.raysforge.q3.map;
+package net.raysforge.map;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,7 +77,7 @@ public class Brush {
 		//System.out.println("a: " + a.toString2());
 		//System.out.println("b: " + b.toString2());
 		//System.out.println("c: " + c.toString2());
-		// p = -d1 * ( n2.Cross ( n3 ) ) – d2 * ( n3.Cross ( n1 ) ) – d3 * ( n1.Cross ( n2 ) ) / denom;
+		// p = -d1 * ( n2.Cross ( n3 ) ) ï¿½ d2 * ( n3.Cross ( n1 ) ) ï¿½ d3 * ( n1.Cross ( n2 ) ) / denom;
 		Point temp1 = b.normal.cross(c.normal).times(-a.distance);
 		Point temp2 = c.normal.cross(a.normal).times(b.distance);
 		Point temp3 = a.normal.cross(b.normal).times(c.distance);

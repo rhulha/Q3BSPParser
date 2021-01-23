@@ -1,4 +1,4 @@
-package net.raysforge.q3.map;
+package net.raysforge.map;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 import net.raysforge.generic.GenericParser;
-import net.raysforge.q2.bsp.Vertex;
+import net.raysforge.bsp.q2.Vertex;
 
 public class MapParser extends GenericParser {
 

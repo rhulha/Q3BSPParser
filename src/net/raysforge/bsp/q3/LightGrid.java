@@ -1,5 +1,4 @@
-package net.raysforge.q3.bsp;
-
+package net.raysforge.bsp.q3;
 import java.io.IOException;
 
 import net.raysforge.generic.BinaryReader;

@@ -1,4 +1,4 @@
-package net.raysforge.q3.bsp;
+package net.raysforge.bsp.q3;
 
 import java.io.FileOutputStream;
 import java.io.FileWriter;
@@ -8,7 +8,7 @@ import java.nio.ByteOrder;
 import java.util.List;
 import java.util.Map;
 
-import net.raysforge.q3.map.Plane;
+import net.raysforge.map.Plane;
 
 import com.google.gson.Gson;
 
