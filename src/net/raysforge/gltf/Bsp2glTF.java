@@ -4,19 +4,16 @@ import java.io.File;
 import java.io.IOException;
 
 import net.raysforge.bsp.q3.BSPSplitter;
-import net.raysforge.bsp.q3.PartsWriterJson;
-import net.raysforge.bsp.q3.Q3BSPReader;
 
 public class Bsp2glTF {
 
 	public static void convert(File bspFile, File outputDirectory) throws IOException {
 		
-		Q3BSPReader bsp = new Q3BSPReader(bspFile.toString());
-		PartsWriterJson partsWriterJson = new PartsWriterJson( outputDirectory.toString());
 		BSPSplitter bspSplitter = new BSPSplitter(bspFile.toString(), outputDirectory.toString());
-		
+		bspSplitter.partsWriterJson.writeEntitiesAsJSON( bspSplitter.q3BspReader.getEntities(), "q3dm17.ents");
 		bspSplitter.writeBasics();
-		partsWriterJson.writeEntitiesAsJSON( bsp.getEntities(), "q3dm17.ents");
+		
+		// TODO FLIP YZ
 		
 		// List<Integer> drawIndexes = bsp.getDrawIndexes();
 		// List<Vertex> drawVerts = bsp.getDrawVerts();
@@ -27,8 +24,8 @@ public class Bsp2glTF {
 		
 		String nameSansExt = bspFile.getName().replaceFirst("[.][^.]+$", "");
 		
-		File verts_file = new File(outputDirectory + nameSansExt + ".verts");
-		File indices_file = new File(outputDirectory + nameSansExt + ".indices");
+		File verts_file = new File(outputDirectory, nameSansExt + ".verts");
+		File indices_file = new File(outputDirectory, nameSansExt + ".indices");
 		
 		Buffer verts_buffer = new Buffer(nameSansExt + ".verts", (int)verts_file.length());
 		Buffer indices_buffer = new Buffer(nameSansExt + ".indices", (int)indices_file.length());

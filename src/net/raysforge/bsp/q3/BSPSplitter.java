@@ -10,9 +10,9 @@ import net.raysforge.map.Point;
 public class BSPSplitter {
 	
 	private String outputPath;
-	private Q3BSPReader q3BspReader;
+	public Q3BSPReader q3BspReader;
 	private PartsWriter partsWriter;
-	private PartsWriterJson partsWriterJson;
+	public PartsWriterJson partsWriterJson;
 
 	public BSPSplitter(String bspFile, String outputPath) throws IOException {
 		this.outputPath = outputPath;
