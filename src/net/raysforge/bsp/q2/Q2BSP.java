@@ -12,7 +12,7 @@ import net.raysforge.bsp.q2.model.TextureInfo;
 import net.raysforge.bsp.q2.model.Vertex;
 import net.raysforge.generic.LittleEndianDataInputStream;
 
-public class Quake2BSP {
+public class Q2BSP {
 
 	private LittleEndianDataInputStream ledis;
 
@@ -26,7 +26,7 @@ public class Quake2BSP {
 	public Vertex vertices[];
 	public TextureInfo tis[];
 
-	public Quake2BSP(String path) throws IOException {
+	public Q2BSP(String path) throws IOException {
 		FileInputStream fis = new FileInputStream(path);
 		byte data[] = fis.readAllBytes();
 		fis.close();

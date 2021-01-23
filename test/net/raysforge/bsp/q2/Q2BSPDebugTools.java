@@ -4,9 +4,9 @@ import net.raysforge.bsp.q2.model.Brush;
 import net.raysforge.bsp.q2.model.BrushSide;
 import net.raysforge.bsp.q2.model.Face;
 
-public class BSPDebugTools {
+public class Q2BSPDebugTools {
 
-	public static void printBrushes2(Quake2BSP bsp) {
+	public static void printBrushes2(Q2BSP bsp) {
 		int b = 0;
 		for (Brush brush : bsp.brushes) {
 			for (int i = 0; i < brush.n_brushsides; i++) {
@@ -22,7 +22,7 @@ public class BSPDebugTools {
 		}
 	}
 
-	public static void printBrushes(Quake2BSP bsp, int skip_content) {
+	public static void printBrushes(Q2BSP bsp, int skip_content) {
 		for (Brush brush : bsp.brushes) {
 			if (brush.content == skip_content)
 				continue;
@@ -36,7 +36,7 @@ public class BSPDebugTools {
 		}
 	}
 
-	public static void printFaces(Quake2BSP bsp) {
+	public static void printFaces(Q2BSP bsp) {
 		for (Face face : bsp.faces) {
 			System.out.print("plane: ");
 			System.out.print((int) face.plane);

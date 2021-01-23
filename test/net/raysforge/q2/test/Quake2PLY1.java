@@ -3,7 +3,7 @@ package net.raysforge.q2.test;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import net.raysforge.bsp.q2.Quake2BSP;
+import net.raysforge.bsp.q2.Q2BSP;
 import net.raysforge.bsp.q2.model.Face;
 import net.raysforge.bsp.q2.model.Vertex;
 
@@ -17,7 +17,7 @@ public class Quake2PLY1 {
 		String bsp_path = "C:\\Users\\Ray\\OneDrive\\Media\\Games\\ShooterPaks\\Q2\\baseq2\\maps\\base1.bsp";
 		// bsp_path =  "D:\\GameDev\\Tests\\test_q2.bsp";
 				
-		Quake2BSP bsp = new Quake2BSP(bsp_path);
+		Q2BSP bsp = new Q2BSP(bsp_path);
 
 		FileWriter fw = new FileWriter("D:\\GameDev\\Tests\\test.ply");
 		fw.write("ply\n");
