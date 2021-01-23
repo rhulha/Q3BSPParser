@@ -4,9 +4,9 @@ import static net.raysforge.generic.DecimalFormater.f1;
 
 public class Point {
 
-	public final double x;
-	public final double y;
-	public final double z;
+	public double x;
+	public double y;
+	public double z;
 	
 	public Point(double x, double y, double z) {
 		this.x = x;
@@ -85,6 +85,12 @@ public class Point {
 
 	public Point plus(Point p) {
 		return new Point(x + p.x, y + p.y, z + p.z);
+	}
+
+	public void scaleInPlace(double d) {
+		this.x*=d;
+		this.y*=d;
+		this.z*=d;
 	}
 
 	public Point scale(double d) {

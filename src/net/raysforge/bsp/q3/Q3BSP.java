@@ -33,6 +33,12 @@ public class Q3BSP {
 		
 	}
 
+	public void scaleYZ(double d) {
+		for (Vertex v : vertices) {
+			v.xyz.scaleInPlace(d);
+		}
+	}
+
 	public void flipYZ() {
 		System.out.println("flipping YZ");
 		for (Vertex v : vertices) {
@@ -97,6 +103,5 @@ public class Q3BSP {
 			}
 		}
 	}
-
 
 }

@@ -34,6 +34,7 @@ public class BSP2glTF {
 
 	private int writeBSPParts(Q3BSP q3bsp) throws IOException {
 		q3bsp.flipYZ();
+		q3bsp.scaleYZ(0.33);
 		q3bsp.tessellateAllPatchFaces();
 		q3bsp.changeColors();
 		
