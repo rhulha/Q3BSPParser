@@ -42,7 +42,7 @@ public class MapParser extends GenericParser {
 	}
 
 	public Point getNextPoint() throws IOException {
-		return Point.getPointSwapZY(getNextDouble(),getNextDouble(),getNextDouble());
+		return Point.getPointSwapZY(getNextInt(),getNextInt(),getNextInt());
 	}
 
 	public String getNextStringWithSlashes() throws IOException {
@@ -168,9 +168,22 @@ public class MapParser extends GenericParser {
 			while( peekNextToken() != '}')
 			{
 				if( peekNextToken() == '{' ) {
-					// skip brushes inside entities, like in trigger_push
-					swallowUntil('}');
-					swallowEOLs();
+					// brushes inside entities, like in trigger_push
+					assertNextToken('{');
+					assertNextToken(10);
+					Brush brush = parseBrush();
+					List<Plane> planes = brush.getPlanes();
+					int i=0;
+					for (Plane plane : planes) {
+						ent.put("plane"+(i++), "( "+(int)plane.p1.x+ " " +(int)plane.p1.y+ " " +(int)plane.p1.z+ " ) ( "
+								                   +(int)plane.p2.x+ " " +(int)plane.p2.y+ " " +(int)plane.p2.z+ " ) ( "
+								                   +(int)plane.p3.x+ " " +(int)plane.p3.y+ " " +(int)plane.p3.z+ " )");
+					}
+					if(i>0) {
+						ent.put("plane_count", ""+i);
+					}
+					assertNextToken('}');
+					assertNextToken(10);
 					continue;
 				}
 					
