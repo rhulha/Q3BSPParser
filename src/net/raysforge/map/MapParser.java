@@ -17,14 +17,19 @@ import net.raysforge.generic.GenericParser;
 
 public class MapParser extends GenericParser {
 
+	boolean swapYZ=true;
+	boolean includeTriggerBrushes=true;
+	
 	public MapParser(String file) throws IOException {
 		super(initStreamTokenizer(file));
-		parseMap(false);
+		parseMap();
 	}
 
-	public MapParser(String file, boolean includeTriggerBrushes) throws IOException {
+	public MapParser(String file, boolean includeTriggerBrushes, boolean swapYZ) throws IOException {
 		super(initStreamTokenizer(file));
-		parseMap(includeTriggerBrushes);
+		this.includeTriggerBrushes=includeTriggerBrushes;
+		this.swapYZ=swapYZ;
+		parseMap();
 	}
 	
 	private static StreamTokenizer initStreamTokenizer(String file) throws IOException {
@@ -47,7 +52,10 @@ public class MapParser extends GenericParser {
 	}
 
 	public Point getNextPoint() throws IOException {
-		return Point.getPointSwapZY(getNextInt(),getNextInt(),getNextInt());
+		if( swapYZ)
+			return Point.getPointSwapZY(getNextInt(),getNextInt(),getNextInt());
+		else
+			return new Point(getNextInt(),getNextInt(),getNextInt());
 	}
 
 	public String getNextStringWithSlashes() throws IOException {
@@ -124,7 +132,7 @@ public class MapParser extends GenericParser {
 	List<Brush> brushList = new ArrayList<Brush>();
 	Map<String, List<Map<String, String>>> entities = new HashMap<>();
 	
-	public void parseMap(boolean includeTriggerBrushes) throws IOException {
+	public void parseMap() throws IOException {
 		assertNextToken('{');
 		swallowUntil('{');
 		st.pushBack();
@@ -243,6 +251,8 @@ public class MapParser extends GenericParser {
 			swallowEOLs();
 		}
 		entities.remove("func_group"); // ignore func_group for now.
+		entities.remove("misc_model"); // ignore for now.
+		entities.remove("target_speaker"); // ignore for now.
 	} // pareseMap()
 	
 	public Map<String, List<Map<String, String>>> getEntities()	{

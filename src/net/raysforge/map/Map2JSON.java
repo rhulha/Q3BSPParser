@@ -8,8 +8,8 @@ public class Map2JSON {
 	
 	private MapParser mapParser;
 
-	public Map2JSON(String file, boolean includeTriggerBrushes) throws IOException {
-		mapParser = new MapParser(file, includeTriggerBrushes);
+	public Map2JSON(String file, boolean includeTriggerBrushes, boolean swapYZ) throws IOException {
+		mapParser = new MapParser(file, includeTriggerBrushes, swapYZ);
 	}
 	
 	public StringBuffer convert() {

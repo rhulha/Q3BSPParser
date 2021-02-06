@@ -46,11 +46,11 @@ public class Q3BSP {
 		}
 	}
 	
-	public void tessellateAllPatchFaces() {
+	public void tessellateAllPatchFaces(int level) {
 		System.out.println("tessellateAllPatchFaces");
 		for (Surface face : surfaces) {
 			if( face.surfaceType == Surface.patch) {
-				Tessellate.tessellate(face, vertices, indexes, 10);
+				Tessellate.tessellate(face, vertices, indexes, level);
 			}
 		}
 	}
