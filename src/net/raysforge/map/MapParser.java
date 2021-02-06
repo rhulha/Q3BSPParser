@@ -1,11 +1,10 @@
 package net.raysforge.map;
 
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StreamTokenizer;
+import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -23,52 +22,23 @@ public class MapParser extends GenericParser {
 		parseMap();
 	}
 	
-	private static StreamTokenizer initStreamTokenizer(String file) throws FileNotFoundException {
-		
-		try {
-			List<String> lines = Files.readAllLines(Path.of(file));
-			boolean foundComments=false;
-			for (String line : lines) {
-				if( line.startsWith("//"))
-				{
-					foundComments=true;
-					break;
-				}
-			
-			}
-			if( foundComments ) {
-				FileWriter fw = new FileWriter(file);
-				for (String line : lines) {
-					if( line.startsWith("//"))
-						continue;
-					fw.write(line+"\r\n");
-				}
-				fw.close();
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+	private static StreamTokenizer initStreamTokenizer(String file) throws IOException {
+		List<String> lines = Files.readAllLines(Path.of(file));
+		StringWriter sw = new StringWriter(); 
+		for (String line : lines) {
+			// skip comments
+			if( line.startsWith("//"))
+				continue;
+			sw.write(line+"\r\n");
 		}
-		
-		BufferedReader br = new BufferedReader(new FileReader(file));
+		sw.close();
+		BufferedReader br = new BufferedReader(new StringReader(sw.toString()));
 		StreamTokenizer st = new StreamTokenizer(br);
 		st.eolIsSignificant(true);
 		st.ordinaryChar('/');
 		st.wordChars('_', '_');
 		st.slashSlashComments(true);
 		return st;
-	}
-	
-	public double getNextDouble() throws IOException {
-		assertNextToken( StreamTokenizer.TT_NUMBER);
-		return st.nval;
-	}
-
-	public int getNextInt() throws IOException {
-		assertNextToken( StreamTokenizer.TT_NUMBER);
-		int i = (int)st.nval;
-		if( i != st.nval)
-			throwErrorAtCurrentLine("i != st.nval");
-		return (int)st.nval;
 	}
 
 	public Point getNextPoint() throws IOException {
@@ -198,7 +168,7 @@ public class MapParser extends GenericParser {
 			while( peekNextToken() != '}')
 			{
 				if( peekNextToken() == '{' ) {
-					// skip brushes inside entities, like in trigger_once
+					// skip brushes inside entities, like in trigger_push
 					swallowUntil('}');
 					swallowEOLs();
 					continue;

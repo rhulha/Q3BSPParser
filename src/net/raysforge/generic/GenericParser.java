@@ -36,7 +36,19 @@ public class GenericParser {
 
 	public int getNextToken() throws IOException {
 		return st.nextToken();
-		
+	}
+	
+	public double getNextDouble() throws IOException {
+		assertNextToken( StreamTokenizer.TT_NUMBER);
+		return st.nval;
+	}
+
+	public int getNextInt() throws IOException {
+		assertNextToken( StreamTokenizer.TT_NUMBER);
+		int i = (int)st.nval;
+		if( i != st.nval)
+			throwErrorAtCurrentLine("token is not an integer.");
+		return i;
 	}
 
 	public String getNextString() throws IOException {
