@@ -54,11 +54,6 @@ public class EntitiesParser extends GenericParser {
 		return st;
 	}
 
-	public String getNextString() throws IOException {
-		assertNextToken('"');
-		return st.sval;
-	}
-
 	// the outer map contains the classname of the entities
 	// so you can get all "info_player_deathmatch" for example
 	// the inner map contains all name value pairs of the entity
@@ -74,8 +69,8 @@ public class EntitiesParser extends GenericParser {
 
 			while( peekNextToken() != '}')
 			{
-				String key = getNextString();
-				String value = getNextString();
+				String key = getNextQuotetString();
+				String value = getNextQuotetString();
 				ent.put(key, value);
 				assertNextToken(10);
 			}

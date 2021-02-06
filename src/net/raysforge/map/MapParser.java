@@ -255,11 +255,6 @@ public class MapParser extends GenericParser {
 		entities.remove("func_group"); // ignore func_group for now.
 	} // pareseMap()
 	
-	public String getNextQuotetString() throws IOException {
-		assertNextToken('"');
-		return st.sval;
-	}
-
 	public Map<String, List<Map<String, String>>> getEntities()	{
 		return entities;
 	}

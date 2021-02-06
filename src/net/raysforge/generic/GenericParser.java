@@ -43,6 +43,14 @@ public class GenericParser {
 		assertNextToken( StreamTokenizer.TT_WORD);
 		return st.sval;
 	}
+	
+	/*
+	 * Make sure to call st.quoteChar('"'); before you use this...
+	 */
+	public String getNextQuotetString() throws IOException {
+		assertNextToken('"');
+		return st.sval;
+	}
 
 	public void assertNextString(String s) throws IOException {
 		String ns = getNextString();
