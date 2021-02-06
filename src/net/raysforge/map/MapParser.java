@@ -160,10 +160,12 @@ public class MapParser extends GenericParser {
 			swallowEOLs();
 			
 			if( peekNextToken() == StreamTokenizer.TT_WORD) {
-				// this is a patchDef2 part probably
-				System.out.println("patchDef2");
+				// this is a patchDef2 part probably, outside of a patchCapped
+				//System.out.println("patchDef2");
+				assertNextString("patchDef2");
 				swallowUntil('}');
 				swallowUntil('}'); // two closing braces for pathDef2
+				swallowEOLs();
 				continue;
 			}
 			
@@ -177,18 +179,22 @@ public class MapParser extends GenericParser {
 		
 		assertNextToken('}'); // done reading world spawn block
 		
+		System.out.println("Done parsing brushes. Now parsing entities. Line No.: " + st.lineno());
+		
 		// Parse Entities
 		st.quoteChar('"');
 		
 		if( peekNextToken() == StreamTokenizer.TT_EOL)
 			st.nextToken();
 		
+		// HERE STARTS THE BEGINNING OF A NEW ENTITY
 		while (peekNextToken() == '{') {
 			assertNextToken('{');
 			swallowEOLs();
 
 			HashMap<String, String> ent = new HashMap<>();
 
+			// WHILE ENTITY NOT CLOSED OFF 
 			while( peekNextToken() != '}')
 			{
 				if( peekNextToken() == '{' ) {
@@ -200,8 +206,37 @@ public class MapParser extends GenericParser {
 					
 				String key = getNextQuotetString();
 				String value = getNextQuotetString();
-				ent.put(key, value);
 				assertNextToken(10);
+				if( key.equals("classname") && value.equals("func_group")) {
+					// SKIP FUNC_GROUP CONTENTS FOR NOW 
+					while( peekNextToken() != '}')
+					{
+						if(peekNextToken() == '"') {
+							// catch these cases:
+							// "classname" "func_group" is second
+							// "type" "patchCapped" is first 
+							getNextQuotetString();
+							getNextQuotetString();
+							assertNextToken(10);
+						}
+						assertNextToken('{');
+						assertNextToken(10);
+						if(peekNextToken() == StreamTokenizer.TT_WORD) {
+							assertNextString("patchDef2");
+							assertNextToken(10);
+							assertNextToken('{');
+							swallowUntil('}');
+							swallowUntil('}');
+							swallowEOLs();
+						} else {
+							swallowUntil('}');
+							swallowEOLs();
+							continue;
+						}
+					}
+				}
+				ent.put(key, value);
+				
 			}
 
 			String cn = ent.get("classname");
@@ -209,13 +244,16 @@ public class MapParser extends GenericParser {
 				entities.put(cn, new ArrayList<Map<String, String>>());
 			}
 			
+			// System.out.println(cn);
+			
 			entities.get(cn).add(ent);
 
 			swallowEOLs();
 			assertNextToken('}');
 			swallowEOLs();
 		}
-	}
+		entities.remove("func_group"); // ignore func_group for now.
+	} // pareseMap()
 	
 	public String getNextQuotetString() throws IOException {
 		assertNextToken('"');

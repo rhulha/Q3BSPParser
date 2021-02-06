@@ -34,7 +34,7 @@ public class BSP2glTF {
 
 	private int writeBSPParts(Q3BSP q3bsp) throws IOException {
 		q3bsp.flipYZ();
-		q3bsp.scaleYZ(0.33);
+		q3bsp.scaleYZ(0.038); // this is the official Q3 conversion ratio https://www.quake3world.com/forum/viewtopic.php?f=10&t=50384
 		q3bsp.tessellateAllPatchFaces();
 		q3bsp.changeColors();
 		

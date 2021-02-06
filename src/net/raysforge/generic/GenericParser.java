@@ -44,6 +44,12 @@ public class GenericParser {
 		return st.sval;
 	}
 
+	public void assertNextString(String s) throws IOException {
+		String ns = getNextString();
+		if( !ns.equals(s))
+			throwErrorAtCurrentLine("string is: " + ns + ", expected was: " + s );
+	}
+
 	public int getCurrentLine() {
 		return st.lineno();
 	}
