@@ -6,6 +6,9 @@ import java.util.List;
 public class Scene {
 	public List<Node> nodes = new ArrayList<Node>();
 	
+	public Scene() {
+	}
+
 	public Scene(Node node) {
 		nodes.add(node);
 	}

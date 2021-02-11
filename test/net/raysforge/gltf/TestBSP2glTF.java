@@ -12,17 +12,21 @@ public class TestBSP2glTF {
 
 	public static void main(String[] args) throws IOException {
 		
-		List<String> skipList = SpecialTexturesList.getSkipList();
-		
-		skipList.addAll(SpecialTexturesList.getQ3DM17BorderHighlightList());
 		
 		// write black surfaces
-		new BSP2glTF(new File("q3dm17.bsp"), new File(outDir)).convert(skipList, false);
+		BSP2glTF bsp2glTF = new BSP2glTF(new File("q3dm17.bsp"), new File(outDir), true);
 		
-		skipList.clear();
+		List<String> skipList = SpecialTexturesList.getSkipList();
 		skipList.addAll(SpecialTexturesList.getQ3DM17BorderHighlightList());
+		bsp2glTF.addMeshFromBSP(skipList, false);
 		
-		new BSP2glTF(new File("q3dm17blue.bsp"), new File(outDir)).convert(skipList, true);
+		List<String> includeList = SpecialTexturesList.getQ3DM17BorderHighlightList();
+		bsp2glTF.addMeshFromBSP(includeList, true);
+		
+		bsp2glTF.writeGLTF();
+		
+		
+		
 
 	}
 

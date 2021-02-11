@@ -17,56 +17,83 @@ import net.raysforge.gltf.model.Primitive;
 import net.raysforge.gltf.model.Scene;
 
 public class BSP2glTF {
-	private File bspFile;
 	private File outputDirectory;
 	private String bspFileNameSansExt;
+	private GlTF glTF;
+	private Scene scene;
+	private Q3BSP q3bsp;
+	private PartsWriter partsWriter;
+	private int meshCounter=0;
+	private BufferView bufferViewVerts;
+	private BufferView bufferViewNormals;
+	private BufferView bufferViewColors;
+	private boolean colorsAsFloats;
+	private Accessor pos;
+	private Accessor normal;
+	private int componentType;
+	private Accessor color;
 
-	public BSP2glTF(File bspFile, File outputDirectory) {
-		this.bspFile = bspFile;
+	public BSP2glTF(File bspFile, File outputDirectory, boolean colorsAsFloats) throws IOException {
 		this.outputDirectory = outputDirectory;
+		this.colorsAsFloats = colorsAsFloats;
 		bspFileNameSansExt = bspFile.getName().replaceFirst("[.][^.]+$", "");
-	}
-
-	public void convert(List<String> skipList, boolean skipListIsIncludeList) throws IOException {
-		Q3BSP q3bsp = new Q3BSP(bspFile);
-		int indexCount = writeBSPParts(q3bsp, skipList, skipListIsIncludeList);
-		writeGLTF(q3bsp, indexCount);
-	}
-
-	private int writeBSPParts(Q3BSP q3bsp, List<String> skipList, boolean skipListIsIncludeList) throws IOException {
+		
+		q3bsp = new Q3BSP(bspFile);
 		q3bsp.flipYZ();
 		q3bsp.scaleYZ(0.038); // this is the official Q3 conversion ratio https://www.quake3world.com/forum/viewtopic.php?f=10&t=50384
-		q3bsp.tessellateAllPatchFaces(24);
+		q3bsp.tessellateAllPatchFaces(12);
 		q3bsp.changeColors();
-		
-		PartsWriter partsWriter = new PartsWriter(q3bsp, outputDirectory); 
+
+		partsWriter = new PartsWriter(q3bsp, outputDirectory); 
+		scene = new Scene();
+		glTF = new GlTF(scene);
+
 		PartsWriterJson partsWriterJson = new PartsWriterJson(outputDirectory);
 		partsWriterJson.writeEntitiesAsJSON( q3bsp.entities, "q3dm17.ents");
 		partsWriterJson.writeObjectAsJSON( q3bsp.shaders, "q3dm17.textures");
+		partsWriter.writeBasics(bspFileNameSansExt, true);
 
-		// 16714 verts written (4bytes*3xyz*num_written)
-		// 54612 indices written (currently short = 2 bytes)
-		int indexCount = partsWriter.writeBasics(bspFileNameSansExt, skipList, skipListIsIncludeList);
-		return indexCount;
+		bufferViewVerts = getBufferAndView(".verts", 12);
+		bufferViewNormals = getBufferAndView(".normals", 12);
+		bufferViewColors = getBufferAndView(".colors", colorsAsFloats ? 12 : 3);
+
+		pos = new Accessor(bufferViewVerts, GltfConstants.GL_FLOAT, 0, q3bsp.vertices.size(), "VEC3");
+		normal = new Accessor(bufferViewNormals, GltfConstants.GL_FLOAT, 0, q3bsp.vertices.size(), "VEC3");
+		componentType = colorsAsFloats ? GltfConstants.GL_FLOAT : GltfConstants.GL_BYTE;
+		color = new Accessor(bufferViewColors, componentType, 0, q3bsp.vertices.size(), "VEC3");
 	}
 
-	private void writeGLTF(Q3BSP q3bsp, int indexCount) throws IOException {
-		BufferView bufferViewVerts = getBufferAndView(".verts", 12);
-		BufferView bufferViewNormals = getBufferAndView(".normals", 12);
-		BufferView bufferViewColors = getBufferAndView(".colors", 12);
-		
-		Accessor normal = new Accessor(bufferViewNormals, GltfConstants.GL_FLOAT, 0, q3bsp.vertices.size(), "VEC3");
-		Accessor pos = new Accessor(bufferViewVerts, GltfConstants.GL_FLOAT, 0, q3bsp.vertices.size(), "VEC3");
-		Accessor color = new Accessor(bufferViewColors, GltfConstants.GL_FLOAT, 0, q3bsp.vertices.size(), "VEC3");
-		
+	// suffix can be used to differentiate between different mesh indices in the same scene.
+	// example: getIndexAccessor( indexCount, ".0" );
+	private Accessor getIndexAccessor(int indexCount, String suffix) 	{
+		BufferView bufferViewIndex =  getBufferAndView(suffix+".indices", -1);
+		return new Accessor(bufferViewIndex, GltfConstants.GL_UNSIGNED_SHORT, 0, indexCount, "SCALAR");
+	}
 
+	private BufferView getBufferAndView(String ext, int byteStride) {
+		File file = new File(outputDirectory, bspFileNameSansExt + ext);
+		Buffer buffer = new Buffer(bspFileNameSansExt + ext, (int)file.length());
+		return new BufferView(buffer, 0, (int)file.length(), byteStride);
+	}
+
+	public void addMeshFromBSP(List<String> skipList, boolean skipListIsIncludeList) throws IOException {
+		
 		Attribute attr_p = new Attribute("POSITION", pos);
 		Attribute attr_n = new Attribute("NORMAL", normal);
 		//Attribute attr_t = new Attribute("TEXCOORD_0", t);
 		Attribute attr_c = new Attribute("COLOR_0", color);
 		
 		Primitive prim = new Primitive();
-		Accessor i = getIndexAccessor(indexCount);
+
+		String suffix = "."+meshCounter;
+		// 16714 verts written (4bytes*3xyz*num_written)
+		// 54612 indices written (currently short = 2 bytes)
+		int indexCount = partsWriter.writeIndexes( bspFileNameSansExt + suffix + ".indices", skipList, skipListIsIncludeList);
+
+		Accessor i = getIndexAccessor(indexCount, suffix);
+
+		meshCounter++;
+		
 		prim.setIndices(i);
 		prim.addAttribute(attr_p);
 		prim.addAttribute(attr_n);
@@ -75,20 +102,12 @@ public class BSP2glTF {
 		Mesh mesh = new Mesh(prim);
 		//mesh.setMaterial(0);
 		Node node = new Node(mesh);
-		Scene scene = new Scene(node);
-		GlTF glTF = new GlTF(scene);
+		scene.nodes.add(node);
+	}
 
+	public void writeGLTF() throws IOException {
+		//int indexCount = writeBSPParts(q3bsp, skipList, skipListIsIncludeList);
 		glTF.write(new File(outputDirectory, bspFileNameSansExt + ".gltf"));
-	}
-
-	private Accessor getIndexAccessor(int indexCount) 	{
-		BufferView bufferViewIndex =  getBufferAndView(".indices", -1);
-		return new Accessor(bufferViewIndex, GltfConstants.GL_UNSIGNED_SHORT, 0, indexCount, "SCALAR");
-	}
-
-	private BufferView getBufferAndView(String ext, int byteStride) {
-		File file = new File(outputDirectory, bspFileNameSansExt + ext);
-		Buffer buffer = new Buffer(bspFileNameSansExt + ext, (int)file.length());
-		return new BufferView(buffer, 0, (int)file.length(), byteStride);
+		
 	}
 }

@@ -20,14 +20,15 @@ public class PartsWriter {
 		this.basePath = basePath;
 	}
 
-	public int writeBasics(String fileNameSansExt, List<String> skip, boolean skipListIsIncludeList) throws IOException {
-		int indexesCount = writeIndexes( skip, fileNameSansExt + ".indices", skipListIsIncludeList);
+	public void writeBasics(String fileNameSansExt, boolean colorsAsFloats) throws IOException {
 		writeVerts( fileNameSansExt + ".verts");
 		writeNormals( fileNameSansExt + ".normals");
 		writeTexCoords( fileNameSansExt + ".texCoords");
 		writeLmCoords( fileNameSansExt + ".lmCoords");
-		writeColors( fileNameSansExt + ".colors");
-		return indexesCount;
+		if( colorsAsFloats )
+			writeColorsAsFloats( fileNameSansExt + ".colors");
+		else
+			writeColorsAsBytes( fileNameSansExt + ".colors");
 	}
 
 	public static byte[] int2ByteArray (int value) {
@@ -40,6 +41,10 @@ public class PartsWriter {
 
 	public static byte[] float2ByteArray (float value) {
 		return ByteBuffer.allocate(4).order(ByteOrder.LITTLE_ENDIAN).putFloat(value).array();
+	}
+
+	public static byte colorFloat2ColorByte (float value) {
+		return (byte)(value*255);
 	}
 	
 	public void writeVerts(String filename) throws IOException {
@@ -55,7 +60,7 @@ public class PartsWriter {
 		System.out.println(q3bsp.vertices.size() + " verts written (4bytes*3xyz*num_written)");
 	}
 	
-	public int writeIndexes(List<String> skip, String filename, boolean skipListIsIncludeList) throws IOException {
+	public int writeIndexes(String filename, List<String> skip, boolean skipListIsIncludeList) throws IOException {
 		int counter=0;
 		try ( FileOutputStream fos = new FileOutputStream(new File(basePath, filename))) {
 			
@@ -114,12 +119,26 @@ public class PartsWriter {
 		System.out.println("lightmap texCoords written");
 	}
 
-	public void writeColors( String filename) {
+	public void writeColorsAsFloats( String filename) {
 		try ( FileOutputStream fos = new FileOutputStream(new File(basePath, filename))) {
 			for (Vertex vertex : q3bsp.vertices) {
-				fos.write( float2ByteArray( (float)vertex.color.x) );
-				fos.write( float2ByteArray( (float)vertex.color.y) );
+				fos.write( float2ByteArray( (float)vertex.color.x)  );
+				fos.write( float2ByteArray( (float)vertex.color.y)  );
 				fos.write( float2ByteArray( (float)vertex.color.z) );
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		System.out.println("colors written");
+	}
+
+	// This methods seems to be buggy. Not sure why. 
+	public void writeColorsAsBytes( String filename) {
+		try ( FileOutputStream fos = new FileOutputStream(new File(basePath, filename))) {
+			for (Vertex vertex : q3bsp.vertices) {
+				fos.write( colorFloat2ColorByte( (float)vertex.color.x) & 0xff );
+				fos.write( colorFloat2ColorByte( (float)vertex.color.y) & 0xff );
+				fos.write( colorFloat2ColorByte( (float)vertex.color.z) & 0xff );
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
