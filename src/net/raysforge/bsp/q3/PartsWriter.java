@@ -20,8 +20,8 @@ public class PartsWriter {
 		this.basePath = basePath;
 	}
 
-	public int writeBasics(String fileNameSansExt) throws IOException {
-		int indexesCount = writeIndexes( SkipList.getSkipList(), fileNameSansExt + ".indices");
+	public int writeBasics(String fileNameSansExt, List<String> skip, boolean skipListIsIncludeList) throws IOException {
+		int indexesCount = writeIndexes( skip, fileNameSansExt + ".indices", skipListIsIncludeList);
 		writeVerts( fileNameSansExt + ".verts");
 		writeNormals( fileNameSansExt + ".normals");
 		writeTexCoords( fileNameSansExt + ".texCoords");
@@ -55,13 +55,13 @@ public class PartsWriter {
 		System.out.println(q3bsp.vertices.size() + " verts written (4bytes*3xyz*num_written)");
 	}
 	
-	public int writeIndexes(List<String> skip, String filename) throws IOException {
+	public int writeIndexes(List<String> skip, String filename, boolean skipListIsIncludeList) throws IOException {
 		int counter=0;
 		try ( FileOutputStream fos = new FileOutputStream(new File(basePath, filename))) {
 			
 			for (Surface surface : q3bsp.surfaces) {
 				
-				if( skip.contains( q3bsp.shaders[surface.shaderNum].shader))
+				if( skipListIsIncludeList != skip.contains( q3bsp.shaders[surface.shaderNum].shader))
 					continue;
 				for(int k = 0; k < surface.numIndexes; ++k) {
 					int i = surface.firstVert + q3bsp.indexes.get(surface.firstIndex + k);

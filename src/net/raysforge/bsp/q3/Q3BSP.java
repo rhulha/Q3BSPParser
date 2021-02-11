@@ -57,26 +57,13 @@ public class Q3BSP {
 
 	public void changeColors() throws IOException {
 		System.out.println("changing Colors");
-		List<String> blue = new ArrayList<String>();
-		blue.add("textures/base_wall/c_met5_2");
-		blue.add("textures/base_trim/border11b");
-		blue.add("textures/base_trim/border11light");
-		blue.add("textures/base_light/lt2_2000");
-		blue.add("textures/base_light/lt2_8000");
-		blue.add("textures/base_light/baslt4_1_4k");
-		blue.add("textures/base_wall/metaltech12final");
-		blue.add("textures/base_light/light5_5k");
-		blue.add("textures/base_wall/main_q3abanner");
-		blue.add("textures/base_support/cable");
-		blue.add("models/mapobjects/kmlamp1");
-		blue.add("models/mapobjects/kmlamp_white");
-		blue.add("models/mapobjects/teleporter/teleporter");
-		blue.add("textures/base_trim/pewter_shiney");
 		
 		List<String> red = new ArrayList<String>();
 		//red.add("textures/base_wall/atech1_e");
 		//red.add("textures/base_light/light5_5k");
 
+		List<String> blue = SpecialTexturesList.getQ3DM17BorderHighlightList();
+		
 		for (Surface face : surfaces) {
 			if( blue.contains( shaders[face.shaderNum].shader) ) {
 				for(int k = 0; k < face.numIndexes; ++k) {

@@ -2,6 +2,7 @@ package net.raysforge.gltf;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import net.raysforge.bsp.q3.PartsWriter;
 import net.raysforge.bsp.q3.PartsWriterJson;
@@ -26,13 +27,13 @@ public class BSP2glTF {
 		bspFileNameSansExt = bspFile.getName().replaceFirst("[.][^.]+$", "");
 	}
 
-	public void convert() throws IOException {
+	public void convert(List<String> skipList, boolean skipListIsIncludeList) throws IOException {
 		Q3BSP q3bsp = new Q3BSP(bspFile);
-		int indexCount = writeBSPParts(q3bsp);
+		int indexCount = writeBSPParts(q3bsp, skipList, skipListIsIncludeList);
 		writeGLTF(q3bsp, indexCount);
 	}
 
-	private int writeBSPParts(Q3BSP q3bsp) throws IOException {
+	private int writeBSPParts(Q3BSP q3bsp, List<String> skipList, boolean skipListIsIncludeList) throws IOException {
 		q3bsp.flipYZ();
 		q3bsp.scaleYZ(0.038); // this is the official Q3 conversion ratio https://www.quake3world.com/forum/viewtopic.php?f=10&t=50384
 		q3bsp.tessellateAllPatchFaces(24);
@@ -45,7 +46,7 @@ public class BSP2glTF {
 
 		// 16714 verts written (4bytes*3xyz*num_written)
 		// 54612 indices written (currently short = 2 bytes)
-		int indexCount = partsWriter.writeBasics(bspFileNameSansExt);
+		int indexCount = partsWriter.writeBasics(bspFileNameSansExt, skipList, skipListIsIncludeList);
 		return indexCount;
 	}
 

@@ -18,6 +18,9 @@ public class Map2JSON {
 		
 		sb.append("{\r\n");
 		
+		
+		// Hmm, I already had a better version of this, check out: PartsWriterJson.writeEntitiesAsJSON
+		
 		Map<String, List<Map<String, String>>> entities = mapParser.getEntities();
 		for (String key : entities.keySet()) {
 			sb.append('"' +key+ "\":[\r\n");
