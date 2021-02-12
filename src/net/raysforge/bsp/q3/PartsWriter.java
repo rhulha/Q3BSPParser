@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.util.List;
+import java.util.Map;
 
 import net.raysforge.bsp.q3.model.Surface;
 import net.raysforge.bsp.q3.model.Vertex;
@@ -60,25 +60,46 @@ public class PartsWriter {
 		System.out.println(q3bsp.vertices.size() + " verts written (4bytes*3xyz*num_written)");
 	}
 	
-	public int writeIndexes(String filename, List<String> skip, boolean skipListIsIncludeList) throws IOException {
+	public int writeIndexes(String filename, Map<String, SkipItem> skip, boolean skipListIsIncludeList) throws IOException {
 		int counter=0;
 		try ( FileOutputStream fos = new FileOutputStream(new File(basePath, filename))) {
 			
 			for (Surface surface : q3bsp.surfaces) {
 				
-				if( skipListIsIncludeList != skip.contains( q3bsp.shaders[surface.shaderNum].shader))
-					continue;
-				for(int k = 0; k < surface.numIndexes; ++k) {
-					int i = surface.firstVert + q3bsp.indexes.get(surface.firstIndex + k);
-					fos.write( char2ByteArray( (char)i) );
-					counter++;
-                }
+				SkipItem skipItem = skip.get( q3bsp.shaders[surface.shaderNum].shader);
+				
+				if( skipListIsIncludeList ) {
+					if( skip.containsKey( q3bsp.shaders[surface.shaderNum].shader) ) {
+						if( skipItem.patchOnly == (surface.surfaceType == Surface.patch)) {
+							counter = writeFace(counter, fos, surface);
+						}
+					}
+				} else {
+					if( skip.containsKey( q3bsp.shaders[surface.shaderNum].shader) ) {
+						if( skipItem.patchOnly == (surface.surfaceType == Surface.patch)) {
+							// skip it
+						} else {
+							counter = writeFace(counter, fos, surface);
+						}
+					} else {
+						counter = writeFace(counter, fos, surface);
+					}
+				}
 			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		System.out.println(counter + " indices written (currently short = 2 bytes)");
+		return counter;
+	}
+
+	private int writeFace(int counter, FileOutputStream fos, Surface surface) throws IOException {
+		for(int k = 0; k < surface.numIndexes; ++k) {
+			int i = surface.firstVert + q3bsp.indexes.get(surface.firstIndex + k);
+			fos.write( char2ByteArray( (char)i) );
+			counter++;
+		}
 		return counter;
 	}
 

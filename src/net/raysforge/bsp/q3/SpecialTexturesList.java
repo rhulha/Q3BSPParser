@@ -1,46 +1,50 @@
 package net.raysforge.bsp.q3;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SpecialTexturesList {
 	
-	public static List<String> getQ3DM17BorderHighlightList() {
-		List<String> blue = new ArrayList<String>();
-		blue.add("textures/base_wall/c_met5_2");
-		blue.add("textures/base_trim/border11b");
-		blue.add("textures/base_trim/border11light");
-		blue.add("textures/base_light/lt2_2000");
-		blue.add("textures/base_light/lt2_8000");
-		blue.add("textures/base_light/baslt4_1_4k");
-		blue.add("textures/base_wall/metaltech12final");
-		blue.add("textures/base_light/light5_5k");
-		blue.add("textures/base_wall/main_q3abanner");
-		blue.add("textures/base_support/cable");
-		blue.add("models/mapobjects/kmlamp1");
-		blue.add("models/mapobjects/kmlamp_white");
-		blue.add("models/mapobjects/teleporter/teleporter");
-		blue.add("textures/base_trim/pewter_shiney");
+	public static void addSkipItemEntry(Map<String, SkipItem> map, SkipItem si) {
+		map.put(si.textureName, si);
+	}
+	
+	public static Map<String, SkipItem> getQ3DM17BorderHighlightList() {
+		Map<String, SkipItem> blue = new HashMap<String, SkipItem>();
+		addSkipItemEntry(blue, new SkipItem("textures/base_wall/c_met5_2", false, -1, false));
+		addSkipItemEntry(blue, new SkipItem("textures/base_trim/border11b", false, -1, false));
+		addSkipItemEntry(blue, new SkipItem("textures/base_trim/border11light", false, -1, false));
+		addSkipItemEntry(blue, new SkipItem("textures/base_light/lt2_2000", false, -1, false));
+		addSkipItemEntry(blue, new SkipItem("textures/base_light/lt2_8000", false, -1, false));
+		addSkipItemEntry(blue, new SkipItem("textures/base_light/baslt4_1_4k", false, -1, false));
+		addSkipItemEntry(blue, new SkipItem("textures/base_wall/metaltech12final", false, -1, false));
+		addSkipItemEntry(blue, new SkipItem("textures/base_light/light5_5k", false, -1, false));
+		addSkipItemEntry(blue, new SkipItem("textures/base_wall/main_q3abanner", false, -1, false));
+		addSkipItemEntry(blue, new SkipItem("textures/base_support/cable", false, -1, false));
+		addSkipItemEntry(blue, new SkipItem("models/mapobjects/kmlamp1", false, -1, false));
+		addSkipItemEntry(blue, new SkipItem("models/mapobjects/kmlamp_white", false, -1, false));
+		addSkipItemEntry(blue, new SkipItem("models/mapobjects/teleporter/teleporter", false, -1, false));
+		addSkipItemEntry(blue, new SkipItem("textures/base_trim/pewter_shiney", false, -1, false));
 		return blue;
 	}
 
-	public static List<String> getSkipList() {
-		List<String> skip = new ArrayList<String>();
-		skip.add("flareShader");
-		skip.add("textures/skies/blacksky");
-		skip.add("textures/sfx/beam");
-		skip.add("models/mapobjects/spotlamp/beam");
-		skip.add("models/mapobjects/lamps/flare03");
-		skip.add("models/mapobjects/teleporter/energy"); // TODO read and make blue ?
-		skip.add("models/mapobjects/spotlamp/spotlamp");
-		skip.add("models/mapobjects/spotlamp/spotlamp_l");
-		skip.add("models/mapobjects/lamps/bot_lamp"); // head on the railgun pad
-		skip.add("models/mapobjects/lamps/bot_lamp2");
-		skip.add("models/mapobjects/lamps/bot_flare");
-		skip.add("models/mapobjects/lamps/bot_flare2");
-		skip.add("models/mapobjects/lamps/bot_wing");
-		//skip.add("models/mapobjects/kmlamp1"); // stand lights
-		//skip.add("models/mapobjects/kmlamp_white");
+	public static Map<String, SkipItem> getSkipList() {
+		Map<String, SkipItem> skip = new HashMap<String, SkipItem>();
+		addSkipItemEntry(skip, new SkipItem("flareShader", false, -1, false));
+		addSkipItemEntry(skip, new SkipItem("textures/skies/blacksky", false, -1, false));
+		addSkipItemEntry(skip, new SkipItem("textures/sfx/beam", false, -1, false));
+		addSkipItemEntry(skip, new SkipItem("models/mapobjects/spotlamp/beam", false, -1, false));
+		addSkipItemEntry(skip, new SkipItem("models/mapobjects/lamps/flare03", false, -1, false));
+		addSkipItemEntry(skip, new SkipItem("models/mapobjects/teleporter/energy", false, -1, false)); // TODO read and make blue ?
+		addSkipItemEntry(skip, new SkipItem("models/mapobjects/spotlamp/spotlamp", false, -1, false));
+		addSkipItemEntry(skip, new SkipItem("models/mapobjects/spotlamp/spotlamp_l", false, -1, false));
+		addSkipItemEntry(skip, new SkipItem("models/mapobjects/lamps/bot_lamp", false, -1, false)); // head on the railgun pad
+		addSkipItemEntry(skip, new SkipItem("models/mapobjects/lamps/bot_lamp2", false, -1, false));
+		addSkipItemEntry(skip, new SkipItem("models/mapobjects/lamps/bot_flare", false, -1, false));
+		addSkipItemEntry(skip, new SkipItem("models/mapobjects/lamps/bot_flare2", false, -1, false));
+		addSkipItemEntry(skip, new SkipItem("models/mapobjects/lamps/bot_wing", false, -1, false));
+		//addSkipItemEntry(skip, new SkipItem("models/mapobjects/kmlamp1", false, -1, false)); // stand lights
+		//addSkipItemEntry(skip, new SkipItem("models/mapobjects/kmlamp_white", false, -1, false));
 		return skip;
 	}
 

@@ -165,6 +165,15 @@ public class GlTF {
 			accessors.write(",");
 			writeNbr(accessors, "count", accessor.count);
 			accessors.write(",");
+			if( accessor.min[0] != 0 || accessor.min[1] != 0 || accessor.min[2] != 0
+					|| accessor.max[0] != 0 || accessor.max[1] != 0 || accessor.max[2] != 0) {
+				writeArrayBegin(accessors, "min");
+				accessors.write(""+accessor.min[0]+","+accessor.min[1]+","+accessor.min[2]+"]");
+				accessors.write(",");
+				writeArrayBegin(accessors, "max");
+				accessors.write(""+accessor.max[0]+","+accessor.max[1]+","+accessor.max[2]+"]");
+				accessors.write(",");
+			}
 			writeNbr(accessors, "componentType", accessor.componentType);
 			accessors.write(",");
 			writeStr(accessors, "type", accessor.type);

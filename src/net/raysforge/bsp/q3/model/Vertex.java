@@ -22,7 +22,10 @@ public class Vertex {
 	public Point normal; // Vertex normal.
 
 	public Point color; // Vertex color. RGBA.
-
+	
+	public static Point min = new Point(0,0,0);
+	public static Point max = new Point(0,0,0);
+	
 	public final static int size = 44;
 
 	public Vertex( Point xyz, Point st, Point lightmap, Point normal, Point color) {
@@ -31,6 +34,14 @@ public class Vertex {
 		this.lightmap = lightmap;
 		this.normal = normal;
 		this.color = color;
+		
+		min.x = Math.min( min.x, xyz.x );
+		min.y = Math.min( min.y, xyz.y );
+		min.z = Math.min( min.z, xyz.z );
+		max.x = Math.max( max.x, xyz.x );
+		max.y = Math.max( max.y, xyz.y );
+		max.z = Math.max( max.z, xyz.z );
+
 	}
 
 	public Vertex(BinaryReader br) throws IOException {

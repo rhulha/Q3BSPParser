@@ -33,10 +33,12 @@ public class Q3BSP {
 		
 	}
 
-	public void scaleYZ(double d) {
+	public void scaleXYZ(double d) {
 		for (Vertex v : vertices) {
 			v.xyz.scaleInPlace(d);
 		}
+		Vertex.min.scaleInPlace(d); 
+		Vertex.max.scaleInPlace(d); 
 	}
 
 	public void flipYZ() {
@@ -44,6 +46,8 @@ public class Q3BSP {
 		for (Vertex v : vertices) {
 			v.xyz = v.xyz.getPointSwapZY();
 		}
+		Vertex.min = Vertex.min.getPointSwapZY(); 
+		Vertex.max = Vertex.max.getPointSwapZY(); 
 	}
 	
 	public void tessellateAllPatchFaces(int level) {
@@ -59,14 +63,18 @@ public class Q3BSP {
 		System.out.println("changing Colors");
 		
 		List<String> red = new ArrayList<String>();
+		red.add("textures/sfx/diamond2cjumppad");
 		//red.add("textures/base_wall/atech1_e");
 		//red.add("textures/base_light/light5_5k");
 
-		List<String> blue = SpecialTexturesList.getQ3DM17BorderHighlightList();
+		Map<String, SkipItem> blue = SpecialTexturesList.getQ3DM17BorderHighlightList();
 		
 		for (Surface face : surfaces) {
-			if( blue.contains( shaders[face.shaderNum].shader) ) {
+			if( blue.containsKey( shaders[face.shaderNum].shader) ) {
+				SkipItem skipItem = blue.get( shaders[face.shaderNum].shader);
 				for(int k = 0; k < face.numIndexes; ++k) {
+					if( skipItem.patchOnly && (face.surfaceType == Surface.patch))
+						continue;
 					int i = face.firstVert + indexes.get(face.firstIndex + k);
 					vertices.get(i).color=new Point(vertices.get(i).color.x,vertices.get(i).color.y,1);
                 }

@@ -2,11 +2,13 @@ package net.raysforge.gltf;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
 
 import net.raysforge.bsp.q3.PartsWriter;
 import net.raysforge.bsp.q3.PartsWriterJson;
 import net.raysforge.bsp.q3.Q3BSP;
+import net.raysforge.bsp.q3.SkipItem;
+import net.raysforge.bsp.q3.model.Vertex;
 import net.raysforge.gltf.model.Accessor;
 import net.raysforge.gltf.model.Attribute;
 import net.raysforge.gltf.model.Buffer;
@@ -27,7 +29,6 @@ public class BSP2glTF {
 	private BufferView bufferViewVerts;
 	private BufferView bufferViewNormals;
 	private BufferView bufferViewColors;
-	private boolean colorsAsFloats;
 	private Accessor pos;
 	private Accessor normal;
 	private int componentType;
@@ -35,12 +36,11 @@ public class BSP2glTF {
 
 	public BSP2glTF(File bspFile, File outputDirectory, boolean colorsAsFloats) throws IOException {
 		this.outputDirectory = outputDirectory;
-		this.colorsAsFloats = colorsAsFloats;
 		bspFileNameSansExt = bspFile.getName().replaceFirst("[.][^.]+$", "");
 		
 		q3bsp = new Q3BSP(bspFile);
 		q3bsp.flipYZ();
-		q3bsp.scaleYZ(0.038); // this is the official Q3 conversion ratio https://www.quake3world.com/forum/viewtopic.php?f=10&t=50384
+		q3bsp.scaleXYZ(0.038); // this is the official Q3 conversion ratio https://www.quake3world.com/forum/viewtopic.php?f=10&t=50384
 		q3bsp.tessellateAllPatchFaces(12);
 		q3bsp.changeColors();
 
@@ -58,6 +58,16 @@ public class BSP2glTF {
 		bufferViewColors = getBufferAndView(".colors", colorsAsFloats ? 12 : 3);
 
 		pos = new Accessor(bufferViewVerts, GltfConstants.GL_FLOAT, 0, q3bsp.vertices.size(), "VEC3");
+		// TODO: FIXME.
+		//pos.min[0] = (int) Vertex.min.x-11; // this is a workaround, without -11 and +11 the level disappears on the edges. I seem to have a bug.
+		//pos.min[1] = (int) Vertex.min.y-11;
+		//pos.min[2] = (int) Vertex.min.z-11;
+		//pos.max[0] = (int) Vertex.max.x+11;
+		//pos.max[1] = (int) Vertex.max.y+11;
+		//pos.max[2] = (int) Vertex.max.z+11;
+		System.out.println("Vertex.min: " + Vertex.min);
+		System.out.println("Vertex.max: " + Vertex.max);
+		
 		normal = new Accessor(bufferViewNormals, GltfConstants.GL_FLOAT, 0, q3bsp.vertices.size(), "VEC3");
 		componentType = colorsAsFloats ? GltfConstants.GL_FLOAT : GltfConstants.GL_BYTE;
 		color = new Accessor(bufferViewColors, componentType, 0, q3bsp.vertices.size(), "VEC3");
@@ -76,7 +86,7 @@ public class BSP2glTF {
 		return new BufferView(buffer, 0, (int)file.length(), byteStride);
 	}
 
-	public void addMeshFromBSP(List<String> skipList, boolean skipListIsIncludeList) throws IOException {
+	public void addMeshFromBSP(Map<String, SkipItem> skipList, boolean skipListIsIncludeList) throws IOException {
 		
 		Attribute attr_p = new Attribute("POSITION", pos);
 		Attribute attr_n = new Attribute("NORMAL", normal);
