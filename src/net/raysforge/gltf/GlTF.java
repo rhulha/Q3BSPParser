@@ -12,10 +12,13 @@ import net.raysforge.gltf.model.Accessor;
 import net.raysforge.gltf.model.Attribute;
 import net.raysforge.gltf.model.Buffer;
 import net.raysforge.gltf.model.BufferView;
+import net.raysforge.gltf.model.Image;
+import net.raysforge.gltf.model.Material;
 import net.raysforge.gltf.model.Mesh;
 import net.raysforge.gltf.model.Node;
 import net.raysforge.gltf.model.Primitive;
 import net.raysforge.gltf.model.Scene;
+import net.raysforge.gltf.model.Texture;
 
 public class GlTF {
 	
@@ -33,11 +36,14 @@ public class GlTF {
 
 	public void setScene(Scene s) {
 		scene = s;
-		
 	}
 	
 	public void writeArrayBegin(Writer fw, String key) throws IOException {
 		fw.write('"'+key+'"'+":[");
+	}
+	
+	public void writeObjectBegin(Writer fw, String key) throws IOException {
+		fw.write('"'+key+'"'+":{");
 	}
 	
 	public void writeStr(Writer fw, String key, String val) throws IOException {
@@ -45,6 +51,10 @@ public class GlTF {
 	}
 
 	public void writeNbr(Writer fw, String key, int val) throws IOException {
+		fw.write('"'+key+"\":"+val);
+	}
+
+	public void writeFloat(Writer fw, String key, float val) throws IOException {
 		fw.write('"'+key+"\":"+val);
 	}
 
@@ -62,6 +72,15 @@ public class GlTF {
 		StringWriter accessors = new StringWriter(); 
 		writeArrayBegin(accessors, "accessors");
 
+		StringWriter materials = new StringWriter(); 
+		writeArrayBegin(materials, "materials");
+
+		StringWriter textures = new StringWriter(); 
+		writeArrayBegin(textures, "textures");
+
+		StringWriter images = new StringWriter(); 
+		writeArrayBegin(images, "images");
+
 		try(FileWriter fw = new FileWriter(file))
 		{
 		
@@ -71,7 +90,7 @@ public class GlTF {
 				Scene scene = scenes.get(s);
 				for (int n = 0; n < scene.nodes.size(); n++) {
 					Node node = scene.nodes.get(n);
-					cache.addMesh(node.mesh);
+					cache.add(node.mesh);
 					// TODO nodes cache
 					
 					if( node.children.size() > 0 )
@@ -79,6 +98,9 @@ public class GlTF {
 					
 					for (int p = 0; p < node.mesh.primitives.size(); p++) {
 						Primitive primitive = node.mesh.primitives.get(p);
+						
+						if(primitive.material!=null)
+							cacheMaterial(materials, textures, images, primitive.material);
 	
 						cacheAccessor(buffers, bufferViews, accessors, primitive.indices);
 	
@@ -91,14 +113,20 @@ public class GlTF {
 				}
 			}
 			
-			buffers = removeLastComma(buffers);
-			bufferViews = removeLastComma(bufferViews);
-			accessors = removeLastComma(accessors);
+			removeLastComma(buffers);
+			removeLastComma(bufferViews);
+			removeLastComma(accessors);
+			removeLastComma(materials);
+			removeLastComma(textures);
+			removeLastComma(images);
 			
 			buffers.write("],");
 			bufferViews.write("],");
-			accessors.write("]");
-	
+			accessors.write("],");
+			materials.write("],");
+			textures.write("],");
+			images.write("]");
+
 			fw.write("\"asset\":{");
 			writeStr(fw, "version", "2.0");
 			fw.write("},");
@@ -113,19 +141,53 @@ public class GlTF {
 			fw.write(buffers.toString());
 			fw.write(bufferViews.toString());
 			fw.write(accessors.toString());
+			fw.write(materials.toString());
+			fw.write(textures.toString());
+			fw.write(images.toString());
 			
 			fw.write("}");
 		
 		}
 	}
 
-	// TODO very inefficient. Fix later.
-	private StringWriter removeLastComma(StringWriter sw) {
-		String string = sw.toString();
-		string = string.substring(0, string.lastIndexOf(","));
-		StringWriter sw2 = new StringWriter();
-		sw2.write(string);
-		return sw2;
+	private void removeLastComma(StringWriter sw) {
+		sw.getBuffer().setLength(sw.getBuffer().lastIndexOf(","));
+	}
+
+	private void cacheMaterial(StringWriter materials, StringWriter textures, StringWriter images, Material material) throws IOException {
+		Texture texture = material.pbr_baseColorTexture;
+		Image image = texture.image;
+
+		if( !cache.contains(image) ) {
+			cache.add(image);
+			images.write("{");
+			writeStr(images, "uri", image.uri);
+			images.write("},");
+		}
+		if( !cache.contains(texture) ) {
+			cache.add(texture);
+			textures.write("{");
+			writeNbr(textures, "source", cache.getIndex(image));
+			textures.write("},");
+		}
+		if( !cache.contains(material) ) {
+			cache.add(material);
+			materials.write("{");
+			 writeObjectBegin(materials, "pbrMetallicRoughness");
+			  writeFloat(materials, "metallicFactor", material.pbr_metallicFactor);
+			  materials.write(",");
+			  writeFloat(materials, "roughnessFactor", material.pbr_roughnessFactor);
+			  materials.write(",");
+			   writeObjectBegin(materials, "baseColorTexture");
+			   writeNbr(materials, "index", cache.getIndex(texture));
+			   //materials.write(",");
+			   //writeNbr(textures, "texCoord", cache.getIndex(texture));
+			   materials.write("}"); // baseColorTexture
+			  materials.write("}"); // pbrMetallicRoughness
+			//materials.write(",");
+			materials.write("},");
+		}
+		
 	}
 
 	private void cacheAccessor(StringWriter buffers, StringWriter bufferViews, StringWriter accessors, Accessor accessor) throws IOException {
@@ -183,11 +245,11 @@ public class GlTF {
 
 	private void writeMeshesBlock(FileWriter fw) throws IOException {
 		writeArrayBegin(fw, "meshes");
-		for (int m = 0; m < cache.meshes.size(); m++) {
+		for (int m = 0; m < cache.getSize(Mesh.class); m++) {
 			if(m>0)
 				fw.write(",");
 			fw.write("{");
-			Mesh mesh = cache.meshes.get(m);
+			Mesh mesh = cache.get(Mesh.class, m);
 			
 			writeArrayBegin(fw, "primitives");
 			for (int p = 0; p < mesh.primitives.size(); p++) {
@@ -202,15 +264,17 @@ public class GlTF {
 						fw.write(",");
 					Attribute attr = primitive.attributes.get(a);
 					writeNbr(fw, attr.type, cache.getIndex(attr.accessor));
-					System.out.println(attr.type + ": " + cache.getIndex(attr.accessor));
+					//System.out.println(attr.type + ": " + cache.getIndex(attr.accessor));
 					
 				}
 				fw.write("},");
 				
 				writeNbr(fw, "indices", cache.getIndex(primitive.indices));
 				fw.write(",");
-				if(primitive.material>=0)
-					writeNbr(fw, "material", primitive.material); // TODO use cache.getIndex(primitive.material)
+				if(primitive.material!=null) {
+					writeNbr(fw, "material", cache.getIndex(primitive.material)); 
+					fw.write(",");
+				}
 				if(primitive.mode>=0)
 					writeNbr(fw, "mode", primitive.mode);
 				fw.write("}");

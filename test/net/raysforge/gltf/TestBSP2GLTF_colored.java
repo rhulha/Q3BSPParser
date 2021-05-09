@@ -7,7 +7,7 @@ import java.util.Map;
 import net.raysforge.bsp.q3.SkipItem;
 import net.raysforge.bsp.q3.SpecialTexturesList;
 
-public class TestBSP2glTF {
+public class TestBSP2GLTF_colored {
 
 	private static final String outDir = "C:\\BackupYes\\Coding\\Projects\\Private\\Games\\Instagib2\\web\\models";
 
@@ -15,7 +15,7 @@ public class TestBSP2glTF {
 		
 		
 		// write black surfaces
-		BSP2glTF bsp2glTF = new BSP2glTF(new File("q3dm17.bsp"), new File(outDir), true);
+		BSP2GLTF_colored bsp2glTF = new BSP2GLTF_colored(new File("q3dm17.bsp"), new File(outDir), true);
 		
 		Map<String, SkipItem> skipList = SpecialTexturesList.getSkipList();
 		skipList.putAll(SpecialTexturesList.getQ3DM17BorderHighlightList());

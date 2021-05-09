@@ -10,7 +10,7 @@ public class Primitive {
 	public List<Attribute> attributes = new ArrayList<Attribute>();  
 	
 	public Accessor indices;
-	public int material=-1;
+	public Material material;
 	public int mode = GltfConstants.GL_TRIANGLES;
 	
 	public void addAttribute(Attribute attr) {
@@ -20,6 +20,11 @@ public class Primitive {
 
 	public void setIndices(Accessor a) {
 		indices=a;
+	}
+
+	public void setMaterial(Material material) {
+		this.material=material;
+		
 	}
 
 }

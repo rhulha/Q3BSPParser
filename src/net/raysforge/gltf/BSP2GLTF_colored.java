@@ -18,7 +18,7 @@ import net.raysforge.gltf.model.Node;
 import net.raysforge.gltf.model.Primitive;
 import net.raysforge.gltf.model.Scene;
 
-public class BSP2glTF {
+public class BSP2GLTF_colored {
 	private File outputDirectory;
 	private String bspFileNameSansExt;
 	private GlTF glTF;
@@ -34,7 +34,7 @@ public class BSP2glTF {
 	private int componentType;
 	private Accessor color;
 
-	public BSP2glTF(File bspFile, File outputDirectory, boolean colorsAsFloats) throws IOException {
+	public BSP2GLTF_colored(File bspFile, File outputDirectory, boolean colorsAsFloats) throws IOException {
 		this.outputDirectory = outputDirectory;
 		bspFileNameSansExt = bspFile.getName().replaceFirst("[.][^.]+$", "");
 		

@@ -1,73 +1,61 @@
 package net.raysforge.gltf;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import net.raysforge.gltf.model.Accessor;
 import net.raysforge.gltf.model.Buffer;
 import net.raysforge.gltf.model.BufferView;
+import net.raysforge.gltf.model.Image;
+import net.raysforge.gltf.model.Material;
 import net.raysforge.gltf.model.Mesh;
+import net.raysforge.gltf.model.Texture;
 
 public class GlTFInternalCache {
-
-	ArrayList<Buffer> buffers = new ArrayList<Buffer>();
-	ArrayList<BufferView> bufferViews = new ArrayList<BufferView>();
-	ArrayList<Accessor> accessors = new ArrayList<Accessor>();
-	ArrayList<Mesh> meshes = new ArrayList<Mesh>();
-
-	public int add(Buffer buffer) {
-		if (buffers.contains(buffer))
-			return buffers.indexOf(buffer);
-		buffers.add(buffer);
-		return buffers.size() - 1;
+	
+	HashMap<Class<?>, ArrayList<?>> map = new HashMap<Class<?>, ArrayList<?>>();
+	
+	public GlTFInternalCache() {
+		map.put(Buffer.class, new ArrayList<Buffer>());
+		map.put(BufferView.class, new ArrayList<BufferView>());
+		map.put(Accessor.class, new ArrayList<Accessor>());
+		map.put(Mesh.class, new ArrayList<Mesh>());
+		map.put(Material.class, new ArrayList<Material>());
+		map.put(Texture.class, new ArrayList<Texture>());
+		map.put(Image.class, new ArrayList<Image>());
 	}
 
-	public int add(BufferView bufferView) {
-		if (bufferViews.contains(bufferView))
-			return bufferViews.indexOf(bufferView);
-		bufferViews.add(bufferView);
-		return bufferViews.size() - 1;
+	@SuppressWarnings("unchecked")
+	public int add(Object instance) {
+		ArrayList<Object> list = (ArrayList<Object>)map.get(instance.getClass());
+		if (list.contains(instance))
+			return list.indexOf(instance);
+		list.add(instance);
+		return list.size() - 1;
 	}
 
-	public boolean contains(Buffer buffer) {
-		return buffers.contains(buffer);
+	@SuppressWarnings("unchecked")
+	public <T> T get(Class<T> clazz, int i) {
+		ArrayList<Object> list = (ArrayList<Object>)map.get(clazz);
+		return (T) list.get(i);
 	}
 
-	public boolean contains(BufferView bufferView) {
-		return bufferViews.contains(bufferView);
+	@SuppressWarnings("unchecked")
+	public boolean contains(Object instance) {
+		ArrayList<Object> list = (ArrayList<Object>)map.get(instance.getClass());
+		return list.contains(instance);
 	}
 
-	public int getIndex(Buffer buffer) {
-		return buffers.indexOf(buffer);
+	@SuppressWarnings("unchecked")
+	public int getIndex(Object instance) {
+		ArrayList<Object> list = (ArrayList<Object>)map.get(instance.getClass());
+		return list.indexOf(instance);
 	}
 
-	public boolean contains(Accessor accessor) {
-		return accessors.contains(accessor);
-	}
-
-	public int add(Accessor accessor) {
-		if (accessors.contains(accessor))
-			return accessors.indexOf(accessor);
-		accessors.add(accessor);
-		return accessors.size() - 1;
-	}
-
-	public int getIndex(BufferView bufferView) {
-		return bufferViews.indexOf(bufferView);
-	}
-
-	public int addMesh(Mesh mesh) {
-		if (meshes.contains(mesh))
-			return meshes.indexOf(mesh);
-		meshes.add(mesh);
-		return meshes.size() - 1;
-	}
-
-	public int getIndex(Mesh mesh) {
-		return meshes.indexOf(mesh);
-	}
-
-	public int getIndex(Accessor accessor) {
-		return accessors.indexOf(accessor);
+	@SuppressWarnings("unchecked")
+	public int getSize(Class<?> clazz) {
+		ArrayList<Object> list = (ArrayList<Object>)map.get(clazz);
+		return list.size();
 	}
 
 }

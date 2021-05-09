@@ -42,7 +42,8 @@ public class Surface {
 
 	public final static int size = 104;
 
-	public Surface(int shaderNum, int fogNum, int surfaceType, int firstVert, int numVerts, int firstIndex, int numIndexes, int lightmapNum, int[] lm_start, int[] lm_size, float[] lightmapOrigin,
+	public Surface(int shaderNum, int fogNum, int surfaceType, int firstVert, int numVerts, int firstIndex, int numIndexes,
+			int lightmapNum, int[] lm_start, int[] lm_size, float[] lightmapOrigin,
 			float[] lightmapVecs, int[] patch_size) {
 		super();
 		this.shaderNum = shaderNum;
