@@ -151,7 +151,8 @@ public class GlTF {
 	}
 
 	private void removeLastComma(StringWriter sw) {
-		sw.getBuffer().setLength(sw.getBuffer().lastIndexOf(","));
+		if( sw.getBuffer().indexOf(",") > 0)
+			sw.getBuffer().setLength(sw.getBuffer().lastIndexOf(","));
 	}
 
 	private void cacheMaterial(StringWriter materials, StringWriter textures, StringWriter images, Material material) throws IOException {

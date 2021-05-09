@@ -38,10 +38,12 @@ public class BSPReader {
 			//System.out.println( LumpTypes.values()[i].toString() + " " +  offset + " " + length);
 		}
 		
-		//System.out.println(br.length());
-		//System.out.println(count+145);
 
-		assert_(count + 145 == br.length());
+		if(count + 145 != br.length()) {
+			System.out.println("Warning: br length != count + 145");
+			System.out.println(br.length());
+			System.out.println(count+145);
+		}
 
 		br.close();
 	}

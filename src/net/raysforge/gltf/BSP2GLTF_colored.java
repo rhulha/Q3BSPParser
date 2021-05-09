@@ -42,15 +42,15 @@ public class BSP2GLTF_colored {
 		q3bsp.flipYZ();
 		q3bsp.scaleXYZ(0.038); // this is the official Q3 conversion ratio https://www.quake3world.com/forum/viewtopic.php?f=10&t=50384
 		q3bsp.tessellateAllPatchFaces(12);
-		q3bsp.changeColors();
+		q3bsp.changeColors(); // THIS IS CURRENTLY VERY Q3DM17 specific
 
 		partsWriter = new PartsWriter(q3bsp, outputDirectory); 
 		scene = new Scene();
 		glTF = new GlTF(scene);
 
 		PartsWriterJson partsWriterJson = new PartsWriterJson(outputDirectory);
-		partsWriterJson.writeEntitiesAsJSON( q3bsp.entities, "q3dm17.ents");
-		partsWriterJson.writeObjectAsJSON( q3bsp.shaders, "q3dm17.textures");
+		partsWriterJson.writeEntitiesAsJSON( q3bsp.entities, bspFileNameSansExt + ".ents");
+		partsWriterJson.writeObjectAsJSON( q3bsp.shaders, bspFileNameSansExt + ".textures");
 		partsWriter.writeBasics(bspFileNameSansExt, true);
 
 		bufferViewVerts = getBufferAndView(".verts", 12);
