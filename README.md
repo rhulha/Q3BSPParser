@@ -17,4 +17,4 @@ Here are the steps needed to convert Quake2 Base1 to Prodeus:
 4. Download MapConverter from https://github.com/rhulha/Q3BSPParser/releases
 5. If you want to decompile BSPs to Maps, I had great success using this: https://github.com/wfowler1/bsp-decompiler
 
-
+Update2: Now contains a Quake3 to glTF Converter!
